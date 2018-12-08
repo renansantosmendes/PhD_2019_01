@@ -45,6 +45,7 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
       double neighborhoodSelectionProbability,
       int maximumNumberOfReplacedSolutions,
       int neighborSize) {
+      
     super(problem, populationSize, resultPopulationSize, maxEvaluations, crossover, mutation, functionType,
         dataDirectory, neighborhoodSelectionProbability, maximumNumberOfReplacedSolutions,
         neighborSize);
@@ -82,7 +83,6 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
         updateNeighborhood(child, subProblemId, neighborType);
       }
     } while (evaluations < maxEvaluations);
-
   }
 
   protected void initializePopulation() {

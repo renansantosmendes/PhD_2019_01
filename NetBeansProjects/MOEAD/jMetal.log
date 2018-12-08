@@ -2,8 +2,8 @@
 <!DOCTYPE log SYSTEM "logger.dtd">
 <log>
 <record>
-  <date>2018-12-05T21:57:01</date>
-  <millis>1544054221911</millis>
+  <date>2018-12-08T11:38:40</date>
+  <millis>1544276320809</millis>
   <sequence>0</sequence>
   <logger>org.uma.jmetal.util.JMetalLogger</logger>
   <level>INFO</level>
@@ -13,8 +13,8 @@
   <message>Loggers configured with null</message>
 </record>
 <record>
-  <date>2018-12-05T21:57:01</date>
-  <millis>1544054221981</millis>
+  <date>2018-12-08T11:38:40</date>
+  <millis>1544276320984</millis>
   <sequence>1</sequence>
   <logger>org.uma.jmetal.util.JMetalLogger</logger>
   <level>SEVERE</level>
@@ -23,31 +23,40 @@
   <thread>1</thread>
   <message>initializeUniformWeight: failed when reading for file: home/renansantos/NetBeansProjects/MOEAD/MOEAD_Weights/W3D_100.dat</message>
   <exception>
-    <message>java.lang.NullPointerException</message>
+    <message>java.io.FileNotFoundException: W3D_100.dat (Arquivo ou diretório não encontrado)</message>
     <frame>
-      <class>java.io.Reader</class>
-      <method>&lt;init&gt;</method>
-      <line>78</line>
+      <class>java.io.FileInputStream</class>
+      <method>open0</method>
     </frame>
     <frame>
-      <class>java.io.InputStreamReader</class>
+      <class>java.io.FileInputStream</class>
+      <method>open</method>
+      <line>195</line>
+    </frame>
+    <frame>
+      <class>java.io.FileInputStream</class>
       <method>&lt;init&gt;</method>
-      <line>72</line>
+      <line>138</line>
+    </frame>
+    <frame>
+      <class>java.util.Scanner</class>
+      <method>&lt;init&gt;</method>
+      <line>611</line>
     </frame>
     <frame>
       <class>Main.AbstractMOEAD</class>
       <method>initializeUniformWeight</method>
-      <line>121</line>
+      <line>133</line>
     </frame>
     <frame>
-      <class>Main.MOEAD_renan</class>
+      <class>Main.MOEAD</class>
       <method>run</method>
-      <line>57</line>
+      <line>58</line>
     </frame>
     <frame>
       <class>Main.MainClass</class>
       <method>main</method>
-      <line>35</line>
+      <line>36</line>
     </frame>
   </exception>
 </record>

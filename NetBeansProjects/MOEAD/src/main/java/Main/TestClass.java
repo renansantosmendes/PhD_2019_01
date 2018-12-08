@@ -31,6 +31,10 @@ public class TestClass {
         while (scnr.hasNextLine()) {
             String line = scnr.nextLine();
             System.out.println(line);
+            String[] parts = line.split(" ");
+            for (int i = 0; i < parts.length; i++) {
+                System.out.println(new Double(parts[i]));
+            }
         }
     }
 }
