@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2018-12-05T21:57:01</date>
+  <millis>1544054221911</millis>
+  <sequence>0</sequence>
+  <logger>org.uma.jmetal.util.JMetalLogger</logger>
+  <level>INFO</level>
+  <class>org.uma.jmetal.util.JMetalLogger</class>
+  <method>configureLoggers</method>
+  <thread>1</thread>
+  <message>Loggers configured with null</message>
+</record>
+<record>
+  <date>2018-12-05T21:57:01</date>
+  <millis>1544054221981</millis>
+  <sequence>1</sequence>
+  <logger>org.uma.jmetal.util.JMetalLogger</logger>
+  <level>SEVERE</level>
+  <class>org.uma.jmetal.util.JMetalException</class>
+  <method>&lt;init&gt;</method>
+  <thread>1</thread>
+  <message>initializeUniformWeight: failed when reading for file: home/renansantos/NetBeansProjects/MOEAD/MOEAD_Weights/W3D_100.dat</message>
+  <exception>
+    <message>java.lang.NullPointerException</message>
+    <frame>
+      <class>java.io.Reader</class>
+      <method>&lt;init&gt;</method>
+      <line>78</line>
+    </frame>
+    <frame>
+      <class>java.io.InputStreamReader</class>
+      <method>&lt;init&gt;</method>
+      <line>72</line>
+    </frame>
+    <frame>
+      <class>Main.AbstractMOEAD</class>
+      <method>initializeUniformWeight</method>
+      <line>121</line>
+    </frame>
+    <frame>
+      <class>Main.MOEAD_renan</class>
+      <method>run</method>
+      <line>57</line>
+    </frame>
+    <frame>
+      <class>Main.MainClass</class>
+      <method>main</method>
+      <line>35</line>
+    </frame>
+  </exception>
+</record>
+</log>
