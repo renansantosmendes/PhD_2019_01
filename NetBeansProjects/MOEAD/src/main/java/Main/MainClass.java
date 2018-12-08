@@ -34,14 +34,6 @@ public class MainClass {
         Algorithm algorithm = new MOEAD(problem, 100, 100, 30000, mutation,
                 crossover, TCHE,
                 "home/renansantos/NetBeansProjects/MOEAD/MOEAD_Weights",
-                0.01, 10, 10);
-        try {
-            //        algorithm.run();
-            new TestClass().test();
-//        InputStream in = getClass().getResourceAsStream("/" + dataDirectory + "/" + dataFileName);
-        } catch (FileNotFoundException ex) {
-            ex.printStackTrace();
-        }
-     
+                0.01, 10, 10);     
     }
 }
