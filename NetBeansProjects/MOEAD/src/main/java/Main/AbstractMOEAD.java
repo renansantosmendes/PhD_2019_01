@@ -10,7 +10,6 @@ package Main;
  * @author renansantos
  */
 import static Main.AbstractMOEAD.FunctionType.TCHE;
-import java.io.BufferedReader;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.multiobjective.moead.util.MOEADUtils;
 import org.uma.jmetal.operator.CrossoverOperator;
@@ -20,14 +19,10 @@ import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.JMetalException;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.StringTokenizer;
-//import Main.AbstractMOEAD.FunctionType.AGG;
-import Main.MOEAD;
+import Main.UniformRandomGenerator;
 
 /**
  * Abstract class for implementing versions of the MOEA/D algorithm.
@@ -151,8 +146,11 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
                     i++;
                 }
             } catch (Exception e) {
-                throw new JMetalException("initializeUniformWeight: failed when reading for file: "
-                        + dataDirectory + "/" + dataFileName, e);
+                  lambda = new UniformRandomGenerator(problem.getNumberOfObjectives(),populationSize)
+                          .generateUniformRandomNumbersInMatrix();              
+//                throw new JMetalException("initializeUniformWeight: failed when reading for file: "
+//                        + dataDirectory + "/" + dataFileName, e);
+                
             }
         }
     }

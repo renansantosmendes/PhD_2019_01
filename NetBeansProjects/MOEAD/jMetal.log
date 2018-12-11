@@ -2,8 +2,8 @@
 <!DOCTYPE log SYSTEM "logger.dtd">
 <log>
 <record>
-  <date>2018-12-08T11:38:40</date>
-  <millis>1544276320809</millis>
+  <date>2018-12-10T21:14:31</date>
+  <millis>1544483671052</millis>
   <sequence>0</sequence>
   <logger>org.uma.jmetal.util.JMetalLogger</logger>
   <level>INFO</level>
@@ -13,17 +13,17 @@
   <message>Loggers configured with null</message>
 </record>
 <record>
-  <date>2018-12-08T11:38:40</date>
-  <millis>1544276320984</millis>
+  <date>2018-12-10T21:14:31</date>
+  <millis>1544483671327</millis>
   <sequence>1</sequence>
   <logger>org.uma.jmetal.util.JMetalLogger</logger>
   <level>SEVERE</level>
   <class>org.uma.jmetal.util.JMetalException</class>
   <method>&lt;init&gt;</method>
   <thread>1</thread>
-  <message>initializeUniformWeight: failed when reading for file: home/renansantos/NetBeansProjects/MOEAD/MOEAD_Weights/W3D_100.dat</message>
+  <message>initializeUniformWeight: failed when reading for file: home/renansantos/NetBeansProjects/MOEAD/MOEAD_Weights/W5D_100.dat</message>
   <exception>
-    <message>java.io.FileNotFoundException: W3D_100.dat (Arquivo ou diretório não encontrado)</message>
+    <message>java.io.FileNotFoundException: /home/renansantos/NetBeansProjects/MOEAD/MOEAD_Weights/W5D_100.dat (Arquivo ou diretório não encontrado)</message>
     <frame>
       <class>java.io.FileInputStream</class>
       <method>open0</method>
@@ -46,7 +46,7 @@
     <frame>
       <class>Main.AbstractMOEAD</class>
       <method>initializeUniformWeight</method>
-      <line>133</line>
+      <line>134</line>
     </frame>
     <frame>
       <class>Main.MOEAD</class>
@@ -56,7 +56,7 @@
     <frame>
       <class>Main.MainClass</class>
       <method>main</method>
-      <line>36</line>
+      <line>33</line>
     </frame>
   </exception>
 </record>
