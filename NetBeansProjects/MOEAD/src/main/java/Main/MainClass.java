@@ -21,19 +21,19 @@ import org.uma.jmetal.problem.multiobjective.dtlz.*;
 public class MainClass {
 
     public static void main(String[] args) throws FileNotFoundException {
-        Problem problem = new DTLZ7(10, 4); // The problem to solve
+        Problem problem = new DTLZ7(10, 2); // The problem to solve
         CrossoverOperator crossover = new DifferentialEvolutionCrossover();
         MutationOperator mutation = new PolynomialMutation();
         SelectionOperator selection = new BinaryTournamentSelection();
+        
         Algorithm algorithm = new MOEAD(problem, 1000, 1000, 300000, mutation,
                 crossover, null,
                 "home/renansantos/NetBeansProjects/MOEAD/MOEAD_Weights",
                 0.01, 10, 10);
 
         algorithm.run();
-        SolutionsOutput s = new SolutionsOutput(algorithm,"/home/renansantos/Área de Trabalho/MOEAD");
+        SolutionsOutput s = new SolutionsOutput(algorithm, "/home/renansantos/Área de Trabalho/MOEAD");
         s.saveResult();
-        UniformRandomGenerator uni = new UniformRandomGenerator(7,100);
-        uni.generateUniformRandomNumbers();
+        
     }
 }

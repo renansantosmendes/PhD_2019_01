@@ -22,7 +22,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import Main.UniformRandomGenerator;
 
 /**
  * Abstract class for implementing versions of the MOEA/D algorithm.
@@ -147,10 +146,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
                 }
             } catch (Exception e) {
                   lambda = new UniformRandomGenerator(problem.getNumberOfObjectives(),populationSize)
-                          .generateUniformRandomNumbersInMatrix();              
-//                throw new JMetalException("initializeUniformWeight: failed when reading for file: "
-//                        + dataDirectory + "/" + dataFileName, e);
-                
+                          .generateUniformRandomNumbersInMatrix();                              
             }
         }
     }
