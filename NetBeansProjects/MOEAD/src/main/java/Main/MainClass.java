@@ -21,20 +21,20 @@ import org.uma.jmetal.problem.multiobjective.dtlz.*;
 public class MainClass {
 
     public static void main(String[] args) throws FileNotFoundException {
-        Problem problem = new DTLZ2(10, 10); // The problem to solve
+        Problem problem = new DTLZ2(10, 2); // The problem to solve
         CrossoverOperator crossover = new DifferentialEvolutionCrossover();
         MutationOperator mutation = new PolynomialMutation();
         SelectionOperator selection = new BinaryTournamentSelection();
         
-        Algorithm algorithm = new MOEAD(problem, 1000, 1000, 300000, mutation,
+        Algorithm algorithm = new MOEAD(problem, 100, 100, 4000, mutation,
                 crossover, null,
                 "home/renansantos/NetBeansProjects/MOEAD/MOEAD_Weights",
                 0.01, 10, 10,
                 "/home/renansantos/Área de Trabalho/Doutorado/WFG/WFG_1.15");
 
         algorithm.run();
-        SolutionsOutput s = new SolutionsOutput(algorithm, "/home/renansantos/Área de Trabalho/Doutorado/MOEAD");
-        s.saveResult();
+//        SolutionsOutput s = new SolutionsOutput(algorithm, "/home/renansantos/Área de Trabalho/Doutorado/MOEAD");
+//        s.saveResult();
         
     }
 }

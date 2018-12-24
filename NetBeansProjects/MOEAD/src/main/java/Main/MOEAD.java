@@ -20,6 +20,8 @@ import org.uma.jmetal.solution.DoubleSolution;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Class implementing the MOEA/D-DE algorithm described in : Hui Li; Qingfu
@@ -35,6 +37,7 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
 
     protected DifferentialEvolutionCrossover differentialEvolutionCrossover;
     protected PrintStream streamForPopulationInCsv;
+    protected PrintStream streamForFinalPopulationInCsv;
 
     public MOEAD(Problem<DoubleSolution> problem,
             int populationSize,
@@ -55,6 +58,7 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
         differentialEvolutionCrossover = (DifferentialEvolutionCrossover) crossoverOperator;
         try {
             streamForPopulationInCsv = new PrintStream(outPutFilePath + "/PARETO_FRONTS.TXT");
+            streamForFinalPopulationInCsv = new PrintStream(outPutFilePath + "/FINAL_PARETO_FRONT.TXT");
         } catch (FileNotFoundException ex) {
             ex.printStackTrace();
         }
@@ -64,6 +68,7 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
     public void run() {
         initializePopulation();
         saveFirstPopulation();
+        insertFirstHashTagInFile();
         savePopulation();
         initializeUniformWeight();
         initializeNeighborhood();
@@ -92,7 +97,13 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
                 updateIdealPoint(child);
                 updateNeighborhood(child, subProblemId, neighborType);
             }
+            savePopulation();
         } while (evaluations < maxEvaluations);
+        saveFinalPopulation();
+    }
+    
+    public void runExperiment(){
+        // implementar o experimento que executa o algoritmo 30 vezes
     }
 
     protected void saveFirstPopulation() {
@@ -111,9 +122,12 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
         }
     }
 
+    protected void insertFirstHashTagInFile(){
+        this.streamForPopulationInCsv.print("#");
+    }
     protected void savePopulation() {
-        List<DoubleSolution> list = this.population;
-        this.streamForPopulationInCsv.print("#\n");
+        List<DoubleSolution> list = this.getResult();
+        this.streamForPopulationInCsv.print("\n");
         for (int i = 0; i < list.size(); i++) {
             for (int j = 0; j < list.get(0).getNumberOfObjectives(); j++) {
                 this.streamForPopulationInCsv.print(list.get(i).getObjective(j) + " ");
@@ -124,6 +138,24 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
 
     }
 
+    protected void saveFinalPopulation() {
+//        try {
+//            this.streamForFinalPopulationInCsv = 
+//                    new PrintStream("/home/renansantos/Área de Trabalho/Doutorado/WFG/WFG_1.15" +
+//                            "/FINAL_PARETO_FRONT.TXT");
+//        } catch (FileNotFoundException ex) {
+//            ex.printStackTrace();
+//        }
+        
+        List<DoubleSolution> list = this.getResult();
+        for (int i = 0; i < list.size(); i++) {
+            for (int j = 0; j < list.get(0).getNumberOfObjectives(); j++) {
+                this.streamForFinalPopulationInCsv.print(list.get(i).getObjective(j) + " ");
+            }
+            this.streamForFinalPopulationInCsv.print("\n");
+        }
+    }
+    
     protected void initializePopulation() {
         population = new ArrayList<>(populationSize);
         for (int i = 0; i < populationSize; i++) {
