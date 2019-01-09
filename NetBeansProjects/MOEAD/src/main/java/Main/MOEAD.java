@@ -107,13 +107,20 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
     }
 
     protected void saveFirstPopulation() {
+        String name = this.problem.getName() + "_" + this.problem.getNumberOfVariables() 
+                + "_" + this.problem.getNumberOfObjectives();
         try {
-            PrintStream streamForDataInCsv = new PrintStream("/home/renansantos/Área de Trabalho/Doutorado/GMM/SOLUTIONS.csv");
+            PrintStream streamForDataInCsv = new PrintStream("/home/renansantos/Área de Trabalho/Doutorado/GMM/"
+                    + name + "_SOLUTIONS.csv");
             List<DoubleSolution> list = this.population;
 
             for (int i = 0; i < list.size(); i++) {
                 for (int j = 0; j < list.get(0).getNumberOfObjectives(); j++) {
-                    streamForDataInCsv.print(list.get(i).getObjective(j) + "|");
+                    streamForDataInCsv.print(list.get(i).getObjective(j));
+                    if (j < list.get(0).getNumberOfObjectives() - 1){
+                        streamForDataInCsv.print("|");
+                    }
+                    
                 }
                 streamForDataInCsv.print("\n");
             }

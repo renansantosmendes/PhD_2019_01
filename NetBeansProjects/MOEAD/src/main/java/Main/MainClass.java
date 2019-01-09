@@ -21,7 +21,7 @@ import org.uma.jmetal.problem.multiobjective.dtlz.*;
 public class MainClass {
 
     public static void main(String[] args) throws FileNotFoundException {
-        Problem problem = new DTLZ2(10, 2); // The problem to solve
+        Problem problem = new DTLZ2(10, 10); // The problem to solve
         CrossoverOperator crossover = new DifferentialEvolutionCrossover();
         MutationOperator mutation = new PolynomialMutation();
         SelectionOperator selection = new BinaryTournamentSelection();
