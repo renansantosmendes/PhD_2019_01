@@ -22,13 +22,13 @@ import org.uma.jmetal.problem.multiobjective.wfg.*;
 public class MainClass {
 
     public static void main(String[] args) throws FileNotFoundException {
-//        Problem problem = new DTLZ4(10, 10); // The problem to solve
-        Problem problem = new WFG2(2, 4, 5); // The problem to solve
+        Problem problem = new DTLZ2(10, 10); // The problem to solve
+//        Problem problem = new WFG2(2, 4, 5); // The problem to solve
         CrossoverOperator crossover = new DifferentialEvolutionCrossover();
         MutationOperator mutation = new PolynomialMutation();
         SelectionOperator selection = new BinaryTournamentSelection();
 
-        Algorithm algorithm = new MOEAD(problem, 2, 100, 100, 10000, mutation,
+        Algorithm algorithm = new MOEAD(problem, 4, 100, 100, 10000, mutation,
                 crossover, null,
                 "home/renansantos/NetBeansProjects/MOEAD/MOEAD_Weights",
                 0.01, 10, 10,

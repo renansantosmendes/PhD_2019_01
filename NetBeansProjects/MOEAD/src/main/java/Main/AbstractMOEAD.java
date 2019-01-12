@@ -444,8 +444,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
     }
     
     protected void reduceDimension(List<Double> parameters) {
-        int numberOfClusters = 2;
-        
+        int numberOfClusters = reducedDimension;
         HierarchicalCluster hc = new HierarchicalCluster(getMatrixOfObjetives(parameters),
                 numberOfClusters,
                 CorrelationType.KENDALL);
@@ -457,13 +456,13 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
     }
     
     protected void reduceDimension() {
-        int numberOfClusters = 2;
-        
+        int numberOfClusters = reducedDimension;
         HierarchicalCluster hc = new HierarchicalCluster(getMatrixOfObjetives(),
                 numberOfClusters,
                 CorrelationType.KENDALL);
         
         hc.reduce();
+        System.out.println("");
         hc.getTransfomationList().forEach(System.out::println);
         //hc.setTransformationList(createTransformationList());
         //hc.getTransfomationList().forEach(System.out::println);
