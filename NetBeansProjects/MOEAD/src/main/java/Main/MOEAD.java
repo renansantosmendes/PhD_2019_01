@@ -20,8 +20,6 @@ import org.uma.jmetal.solution.DoubleSolution;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Class implementing the MOEA/D-DE algorithm described in : Hui Li; Qingfu

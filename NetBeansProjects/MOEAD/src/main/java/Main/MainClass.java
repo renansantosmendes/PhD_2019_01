@@ -12,6 +12,7 @@ import org.uma.jmetal.operator.impl.mutation.PolynomialMutation;
 import org.uma.jmetal.operator.impl.selection.BinaryTournamentSelection;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.multiobjective.dtlz.*;
+import org.uma.jmetal.problem.multiobjective.wfg.*;
 
 
 /**
@@ -21,7 +22,8 @@ import org.uma.jmetal.problem.multiobjective.dtlz.*;
 public class MainClass {
 
     public static void main(String[] args) throws FileNotFoundException {
-        Problem problem = new DTLZ2(10, 10); // The problem to solve
+//        Problem problem = new DTLZ4(10, 10); // The problem to solve
+        Problem problem = new WFG2(2, 4, 5); // The problem to solve
         CrossoverOperator crossover = new DifferentialEvolutionCrossover();
         MutationOperator mutation = new PolynomialMutation();
         SelectionOperator selection = new BinaryTournamentSelection();

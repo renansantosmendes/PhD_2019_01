@@ -80,12 +80,50 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
 
     protected int evaluations;
     protected int maxEvaluations;
+    
+    protected List<S> reducedPopulation;
+    protected int reducedDimension;
+    protected int originalDimension;
 
     protected JMetalRandom randomGenerator;
 
     protected CrossoverOperator<S> crossoverOperator;
     protected MutationOperator<S> mutationOperator;
 
+    public AbstractMOEAD(Problem<S> problem, int reducedDimension, int populationSize, int resultPopulationSize,
+            int maxEvaluations, CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutation,
+            FunctionType functionType, String dataDirectory, double neighborhoodSelectionProbability,
+            int maximumNumberOfReplacedSolutions, int neighborSize) {
+        this.problem = problem;
+        this.populationSize = populationSize;
+        this.resultPopulationSize = resultPopulationSize;
+        this.maxEvaluations = maxEvaluations;
+        this.mutationOperator = mutation;
+        this.crossoverOperator = crossoverOperator;
+        this.functionType = functionType;
+        this.dataDirectory = dataDirectory;
+        this.neighborhoodSelectionProbability = neighborhoodSelectionProbability;
+        this.maximumNumberOfReplacedSolutions = maximumNumberOfReplacedSolutions;
+        this.neighborSize = neighborSize;
+        this.originalDimension = problem.getNumberOfObjectives();
+        this.reducedDimension = reducedDimension;
+        
+        randomGenerator = JMetalRandom.getInstance();
+
+        population = new ArrayList<>(populationSize);
+        indArray = new Solution[problem.getNumberOfObjectives()];
+        neighborhood = new int[populationSize][neighborSize];
+        idealPoint = new double[problem.getNumberOfObjectives()];
+        nadirPoint = new double[problem.getNumberOfObjectives()];
+        lambda = new double[populationSize][problem.getNumberOfObjectives()];
+        
+        
+
+        if (functionType == null) {
+            this.functionType = TCHE;
+        }
+    }
+    
     public AbstractMOEAD(Problem<S> problem, int populationSize, int resultPopulationSize,
             int maxEvaluations, CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutation,
             FunctionType functionType, String dataDirectory, double neighborhoodSelectionProbability,
@@ -101,7 +139,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
         this.neighborhoodSelectionProbability = neighborhoodSelectionProbability;
         this.maximumNumberOfReplacedSolutions = maximumNumberOfReplacedSolutions;
         this.neighborSize = neighborSize;
-
+        
         randomGenerator = JMetalRandom.getInstance();
 
         population = new ArrayList<>(populationSize);
@@ -110,7 +148,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
         idealPoint = new double[problem.getNumberOfObjectives()];
         nadirPoint = new double[problem.getNumberOfObjectives()];
         lambda = new double[populationSize][problem.getNumberOfObjectives()];
-
+        
         if (functionType == null) {
             this.functionType = TCHE;
         }
@@ -377,5 +415,18 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
         } else {
             return population;
         }
+    }
+    
+    protected double[][] getMatrixOfObjetives(List<Double> parameters) {
+        int rows = population.size();
+        int columns = problem.getNumberOfObjectives();
+        double[][] matrix = new double[rows][columns];
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                matrix[i][j] = population.get(i).getObjective(j) * parameters.get(j);
+            }
+        }
+        return matrix;
     }
 }
