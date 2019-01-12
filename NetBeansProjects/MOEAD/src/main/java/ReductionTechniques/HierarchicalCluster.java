@@ -56,10 +56,8 @@ public class HierarchicalCluster {
     }
 
     public HierarchicalCluster() {
-        
+
     }
-    
-    
 
     public HierarchicalCluster(double[][] data, int numberOfClusters, CorrelationType corr) {
         this.data = data;
@@ -72,7 +70,7 @@ public class HierarchicalCluster {
         calculateSilimarity();
         calculateDissilimarity();
     }
-    
+
     public HierarchicalCluster(double[][] data, int numberOfClusters) {
         this.data = data;
         this.numberOfClusters = numberOfClusters;
@@ -124,8 +122,8 @@ public class HierarchicalCluster {
         this.correlationType = correlationType;
         return this;
     }
-    
-    public void setTransformationList(List<List<Integer>>  list){
+
+    public void setTransformationList(List<List<Integer>> list) {
         this.transformationList = new ArrayList<>();
         this.transformationList = list;
     }
@@ -260,9 +258,9 @@ public class HierarchicalCluster {
         dissimilarity = new double[similarity.length][similarity.length];
         for (int j = 0; j < similarity.length; j++) {
             for (int i = 0; i < similarity.length; i++) {
-                if(!Double.isNaN(similarity[j][i])){
+                if (!Double.isNaN(similarity[j][i])) {
                     dissimilarity[j][i] = 1 - similarity[j][i];
-                }else{
+                } else {
                     dissimilarity[j][i] = 20;
                 }
             }
@@ -291,7 +289,7 @@ public class HierarchicalCluster {
                 }
             }
         }
-        if(column == 0 && row == 0){
+        if (column == 0 && row == 0) {
             System.out.println("problem with dissimilarity = " + minDissimilarity);
             this.printMatrixData();
             this.printDissimilarity();
@@ -319,20 +317,14 @@ public class HierarchicalCluster {
         Matrix m = matrix;
         Matrix reducedData;
         int numberOfObjectives = this.numberOfColumns;
-
         reducedData = null;
+        reducedData = new Matrix(m.getRowDimension(), m.getColumnDimension() - 1);
+        reducedData.setMatrix(0, m.getRowDimension() - 1, 0, column1 - 1, m.getMatrix(0, m.getRowDimension() - 1, 0, column1 - 1));
+        reducedData.setMatrix(0, m.getRowDimension() - 1, column1, column1, m.getMatrix(0, m.getRowDimension() - 1, column1, column1)
+                .plus(m.getMatrix(0, m.getRowDimension() - 1, column2, column2)));
+        reducedData.setMatrix(0, m.getRowDimension() - 1, column1 + 1, column2 - 1, m.getMatrix(0, m.getRowDimension() - 1, column1 + 1, column2 - 1));
+        reducedData.setMatrix(0, m.getRowDimension() - 1, column2, m.getColumnDimension() - 2, m.getMatrix(0, m.getRowDimension() - 1, column2 + 1, m.getColumnDimension() - 1));
 
-//        System.out.println("column1 " + column1 + " column2 " + column2);
-//        try {
-            reducedData = new Matrix(m.getRowDimension(), m.getColumnDimension() - 1);
-            reducedData.setMatrix(0, m.getRowDimension() - 1, 0, column1 - 1, m.getMatrix(0, m.getRowDimension() - 1, 0, column1 - 1));
-            reducedData.setMatrix(0, m.getRowDimension() - 1, column1, column1, m.getMatrix(0, m.getRowDimension() - 1, column1, column1)
-                    .plus(m.getMatrix(0, m.getRowDimension() - 1, column2, column2)));
-            reducedData.setMatrix(0, m.getRowDimension() - 1, column1 + 1, column2 - 1, m.getMatrix(0, m.getRowDimension() - 1, column1 + 1, column2 - 1));
-            reducedData.setMatrix(0, m.getRowDimension() - 1, column2, m.getColumnDimension() - 2, m.getMatrix(0, m.getRowDimension() - 1, column2 + 1, m.getColumnDimension() - 1));
-//        } catch (NegativeArraySizeException e) {
-//            e.printStackTrace();
-//        }
         return reducedData;
     }
 

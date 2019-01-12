@@ -10,6 +10,8 @@ package Main;
  * @author renansantos
  */
 import static Main.AbstractMOEAD.FunctionType.TCHE;
+import ReductionTechniques.CorrelationType;
+import ReductionTechniques.HierarchicalCluster;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.multiobjective.moead.util.MOEADUtils;
 import org.uma.jmetal.operator.CrossoverOperator;
@@ -80,7 +82,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
 
     protected int evaluations;
     protected int maxEvaluations;
-    
+
     protected List<S> reducedPopulation;
     protected int reducedDimension;
     protected int originalDimension;
@@ -107,7 +109,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
         this.neighborSize = neighborSize;
         this.originalDimension = problem.getNumberOfObjectives();
         this.reducedDimension = reducedDimension;
-        
+
         randomGenerator = JMetalRandom.getInstance();
 
         population = new ArrayList<>(populationSize);
@@ -116,14 +118,12 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
         idealPoint = new double[problem.getNumberOfObjectives()];
         nadirPoint = new double[problem.getNumberOfObjectives()];
         lambda = new double[populationSize][problem.getNumberOfObjectives()];
-        
-        
 
         if (functionType == null) {
             this.functionType = TCHE;
         }
     }
-    
+
     public AbstractMOEAD(Problem<S> problem, int populationSize, int resultPopulationSize,
             int maxEvaluations, CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutation,
             FunctionType functionType, String dataDirectory, double neighborhoodSelectionProbability,
@@ -139,7 +139,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
         this.neighborhoodSelectionProbability = neighborhoodSelectionProbability;
         this.maximumNumberOfReplacedSolutions = maximumNumberOfReplacedSolutions;
         this.neighborSize = neighborSize;
-        
+
         randomGenerator = JMetalRandom.getInstance();
 
         population = new ArrayList<>(populationSize);
@@ -148,7 +148,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
         idealPoint = new double[problem.getNumberOfObjectives()];
         nadirPoint = new double[problem.getNumberOfObjectives()];
         lambda = new double[populationSize][problem.getNumberOfObjectives()];
-        
+
         if (functionType == null) {
             this.functionType = TCHE;
         }
@@ -183,8 +183,8 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
                     i++;
                 }
             } catch (Exception e) {
-                  lambda = new UniformRandomGenerator(problem.getNumberOfObjectives(),populationSize)
-                          .generateUniformRandomNumbersInMatrix();                              
+                lambda = new UniformRandomGenerator(problem.getNumberOfObjectives(), populationSize)
+                        .generateUniformRandomNumbersInMatrix();
             }
         }
     }
@@ -416,7 +416,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
             return population;
         }
     }
-    
+
     protected double[][] getMatrixOfObjetives(List<Double> parameters) {
         int rows = population.size();
         int columns = problem.getNumberOfObjectives();
@@ -428,5 +428,44 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
             }
         }
         return matrix;
+    }
+
+    protected double[][] getMatrixOfObjetives() {
+        int rows = population.size();
+        int columns = problem.getNumberOfObjectives();
+        double[][] matrix = new double[rows][columns];
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                matrix[i][j] = population.get(i).getObjective(j);
+            }
+        }
+        return matrix;
+    }
+    
+    protected void reduceDimension(List<Double> parameters) {
+        int numberOfClusters = 2;
+        
+        HierarchicalCluster hc = new HierarchicalCluster(getMatrixOfObjetives(parameters),
+                numberOfClusters,
+                CorrelationType.KENDALL);
+        
+        hc.reduce();
+        hc.getTransfomationList().forEach(System.out::println);
+        //hc.setTransformationList(createTransformationList());
+        //hc.getTransfomationList().forEach(System.out::println);
+    }
+    
+    protected void reduceDimension() {
+        int numberOfClusters = 2;
+        
+        HierarchicalCluster hc = new HierarchicalCluster(getMatrixOfObjetives(),
+                numberOfClusters,
+                CorrelationType.KENDALL);
+        
+        hc.reduce();
+        hc.getTransfomationList().forEach(System.out::println);
+        //hc.setTransformationList(createTransformationList());
+        //hc.getTransfomationList().forEach(System.out::println);
     }
 }

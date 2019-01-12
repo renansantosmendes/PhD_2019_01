@@ -38,6 +38,32 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
     protected PrintStream streamForFinalPopulationInCsv;
 
     public MOEAD(Problem<DoubleSolution> problem,
+            int reducedDimension,
+            int populationSize,
+            int resultPopulationSize,
+            int maxEvaluations,
+            MutationOperator<DoubleSolution> mutation,
+            CrossoverOperator<DoubleSolution> crossover,
+            FunctionType functionType,
+            String dataDirectory,
+            double neighborhoodSelectionProbability,
+            int maximumNumberOfReplacedSolutions,
+            int neighborSize, String outPutFilePath) {
+
+        super(problem,reducedDimension, populationSize, resultPopulationSize, maxEvaluations, crossover, mutation, functionType,
+                dataDirectory, neighborhoodSelectionProbability, maximumNumberOfReplacedSolutions,
+                neighborSize);
+
+        differentialEvolutionCrossover = (DifferentialEvolutionCrossover) crossoverOperator;
+        try {
+            streamForPopulationInCsv = new PrintStream(outPutFilePath + "/PARETO_FRONTS.TXT");
+            streamForFinalPopulationInCsv = new PrintStream(outPutFilePath + "/FINAL_PARETO_FRONT.TXT");
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    public MOEAD(Problem<DoubleSolution> problem,
             int populationSize,
             int resultPopulationSize,
             int maxEvaluations,
@@ -95,6 +121,7 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
                 updateIdealPoint(child);
                 updateNeighborhood(child, subProblemId, neighborType);
             }
+            reduceDimension();
             savePopulation();
         } while (evaluations < maxEvaluations);
         saveFinalPopulation();
