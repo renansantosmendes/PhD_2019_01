@@ -208,7 +208,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
             System.arraycopy(idx, 0, neighborhood[i], 0, neighborSize);
         }
     }
-
+    //idealPoint = new double[problem.getNumberOfObjectives()];
     protected void initializeIdealPoint() {
         for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
             idealPoint[i] = 1.0e+30;
@@ -219,7 +219,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
         }
     }
 
-//initialize the nadir point
+    //initialize the nadir point
     protected void initializeNadirPoint() {
         for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
             nadirPoint[i] = -1.0e+30;
@@ -246,6 +246,45 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
         }
     }
 
+    protected void initializeIdealPoint(int dim) {
+        idealPoint = new double[dim];
+        for (int i = 0; i < dim; i++) {
+            idealPoint[i] = 1.0e+30;
+        }
+
+        for (int i = 0; i < populationSize; i++) {
+            updateIdealPoint(population.get(i),dim);
+        }
+    }
+
+    //initialize the nadir point
+    protected void initializeNadirPoint(int dim) {
+        nadirPoint = new double[dim];
+        for (int i = 0; i < dim; i++) {
+            nadirPoint[i] = -1.0e+30;
+        }
+        for (int i = 0; i < populationSize; i++) {
+            updateNadirPoint(population.get(i));
+        }
+    }
+
+    // update the current nadir point
+    protected void updateNadirPoint(S individual, int dim) {
+        for (int i = 0; i < dim; i++) {
+            if (individual.getObjective(i) > nadirPoint[i]) {
+                nadirPoint[i] = individual.getObjective(i);
+            }
+        }
+    }
+
+    protected void updateIdealPoint(S individual, int dim) {
+        for (int n = 0; n < dim; n++) {
+            if (individual.getObjective(n) < idealPoint[n]) {
+                idealPoint[n] = individual.getObjective(n);
+            }
+        }
+    }
+    
     protected NeighborType chooseNeighborType() {
         double rnd = randomGenerator.nextDouble();
         NeighborType neighborType;
@@ -360,7 +399,8 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
             double maxFun = -1.0e+30;
 
             for (int n = 0; n < problem.getNumberOfObjectives(); n++) {
-                double diff = Math.abs(individual.getObjective(n) - idealPoint[n]);
+                double diff = Math.abs(individual.getObjective(n) - idealPoint[n]);//alterar idealPoint e nadirPoint fazer eles
+                //na dimensão original e depois reduzir ou olhar para o atributo problem e ver o que é melhor
 
                 double feval;
                 if (lambda[n] == 0) {
@@ -471,7 +511,6 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
         originalPopulation.clear();
         for(int i = 0; i < population.size(); i++){
             originalPopulation.add((S) population.get(i).copy());
-            System.out.println(originalPopulation.get(i));
         }
     }
 }
