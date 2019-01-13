@@ -103,6 +103,7 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
             int[] permutation = new int[populationSize];
             MOEADUtils.randomPermutation(permutation, populationSize);
             reduceDimension();
+            storeOrinalPopulation();
             //inserir aqui a redução
             for (int i = 0; i < populationSize; i++) {
                 int subProblemId = permutation[i];

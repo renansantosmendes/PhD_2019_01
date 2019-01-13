@@ -10,20 +10,16 @@ package Main;
  * @author renansantos
  */
 import static Main.AbstractMOEAD.FunctionType.TCHE;
-import ReductionTechniques.CorrelationType;
-import ReductionTechniques.HierarchicalCluster;
+import ReductionTechniques.*;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.multiobjective.moead.util.MOEADUtils;
-import org.uma.jmetal.operator.CrossoverOperator;
-import org.uma.jmetal.operator.MutationOperator;
+import org.uma.jmetal.operator.*;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.JMetalException;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Abstract class for implementing versions of the MOEA/D algorithm.
@@ -83,7 +79,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
     protected int evaluations;
     protected int maxEvaluations;
 
-    protected List<S> reducedPopulation;
+    protected List<S> originalPopulation;
     protected int reducedDimension;
     protected int originalDimension;
 
@@ -109,7 +105,10 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
         this.neighborSize = neighborSize;
         this.originalDimension = problem.getNumberOfObjectives();
         this.reducedDimension = reducedDimension;
-
+        this.originalPopulation = new ArrayList<>();
+        System.out.println("original = " + originalDimension);
+        System.out.println("reduced = " + reducedDimension);
+        
         randomGenerator = JMetalRandom.getInstance();
 
         population = new ArrayList<>(populationSize);
@@ -466,5 +465,13 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
         hc.getTransfomationList().forEach(System.out::println);
         //hc.setTransformationList(createTransformationList());
         //hc.getTransfomationList().forEach(System.out::println);
+    }
+    
+    protected void storeOrinalPopulation(){
+        originalPopulation.clear();
+        for(int i = 0; i < population.size(); i++){
+            originalPopulation.add((S) population.get(i).copy());
+            System.out.println(originalPopulation.get(i));
+        }
     }
 }

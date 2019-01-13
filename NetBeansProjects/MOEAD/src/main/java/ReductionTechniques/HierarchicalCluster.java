@@ -214,35 +214,54 @@ public class HierarchicalCluster {
     }
 
     private void calculateSilimarity() {
-        if (this.correlationType == CorrelationType.PEARSON) {
-            PearsonsCorrelation corr = new PearsonsCorrelation(this.data);
-            this.similarity = corr.getCorrelationMatrix().getData();
-        } else if (this.correlationType == CorrelationType.SPEARMAN) {
-            SpearmansCorrelation corr = new SpearmansCorrelation();
-            this.similarity = corr.computeCorrelationMatrix(this.data).getData();
-        } else if (this.correlationType == CorrelationType.KENDALL) {
-            KendallsCorrelation corr = new KendallsCorrelation(this.data);
-            this.similarity = corr.getCorrelationMatrix().getData();
-        } else {
-            PearsonsCorrelation corr = new PearsonsCorrelation(this.data);
-            this.similarity = corr.getCorrelationMatrix().getData();
+        if (null != this.correlationType) switch (this.correlationType) {
+            case PEARSON:{
+                PearsonsCorrelation corr = new PearsonsCorrelation(this.data);
+                this.similarity = corr.getCorrelationMatrix().getData();
+                    break;
+                }
+            case SPEARMAN:{
+                SpearmansCorrelation corr = new SpearmansCorrelation();
+                this.similarity = corr.computeCorrelationMatrix(this.data).getData();
+                    break;
+                }
+            case KENDALL:{
+                KendallsCorrelation corr = new KendallsCorrelation(this.data);
+                this.similarity = corr.getCorrelationMatrix().getData();
+                    break;
+                }
+            default:{
+                PearsonsCorrelation corr = new PearsonsCorrelation(this.data);
+                this.similarity = corr.getCorrelationMatrix().getData();
+                    break;
+                }
         }
     }
 
     private double[][] calculateSilimarity(double[][] data) {
-        if (this.correlationType == CorrelationType.PEARSON) {
-            PearsonsCorrelation corr = new PearsonsCorrelation(data);
-            return corr.getCorrelationMatrix().getData();
-        } else if (this.correlationType == CorrelationType.SPEARMAN) {
-            SpearmansCorrelation corr = new SpearmansCorrelation();
-            return corr.computeCorrelationMatrix(data).getData();
-        } else if (this.correlationType == CorrelationType.KENDALL) {
-            KendallsCorrelation corr = new KendallsCorrelation(data);
-            return corr.getCorrelationMatrix().getData();
-        } else {
-            PearsonsCorrelation corr = new PearsonsCorrelation(data);
-            return corr.getCorrelationMatrix().getData();
+        if (null != this.correlationType) switch (this.correlationType) {
+            case PEARSON:
+            {
+                PearsonsCorrelation corr = new PearsonsCorrelation(data);
+                return corr.getCorrelationMatrix().getData();
+            }
+            case SPEARMAN:
+            {
+                SpearmansCorrelation corr = new SpearmansCorrelation();
+                return corr.computeCorrelationMatrix(data).getData();
+            }
+            case KENDALL:
+            {
+                KendallsCorrelation corr = new KendallsCorrelation(data);
+                return corr.getCorrelationMatrix().getData();
+            }
+            default:
+            {
+                PearsonsCorrelation corr = new PearsonsCorrelation(data);
+                return corr.getCorrelationMatrix().getData();
+            }
         }
+        return null;
     }
 
     public void printSquareMatrix(double[][] matrix) {
