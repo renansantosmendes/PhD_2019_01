@@ -39,6 +39,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
     }
 
     protected Problem<S> problem;
+    protected Problem<S> reducedProblem;
 
     /**
      * Z vector in Zhang & Li paper
@@ -398,7 +399,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
         if (MOEAD.FunctionType.TCHE.equals(functionType)) {
             double maxFun = -1.0e+30;
 
-            for (int n = 0; n < problem.getNumberOfObjectives(); n++) {
+            for (int n = 0; n < reducedDimension/*problem.getNumberOfObjectives()*/; n++) {
                 double diff = Math.abs(individual.getObjective(n) - idealPoint[n]);//alterar idealPoint e nadirPoint fazer eles
                 //na dimensão original e depois reduzir ou olhar para o atributo problem e ver o que é melhor
 
@@ -503,6 +504,8 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
         hc.reduce();
         System.out.println("");
         hc.getTransfomationList().forEach(System.out::println);
+        System.out.println("reduced dimension -> " + this.reducedDimension);
+       
         //hc.setTransformationList(createTransformationList());
         //hc.getTransfomationList().forEach(System.out::println);
     }

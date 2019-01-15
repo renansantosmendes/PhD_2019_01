@@ -22,21 +22,42 @@ import org.uma.jmetal.problem.multiobjective.wfg.*;
 public class MainClass {
 
     public static void main(String[] args) throws FileNotFoundException {
-        Problem problem = new DTLZ2(10, 10); // The problem to solve
-//        Problem problem = new WFG2(2, 4, 5); // The problem to solve
+        
+        //initializing problem and algorithm variables
+        int originalDimension = 3;
+        int reducedDimension = 2;
+        int numberOfVariables = 10;
+        int populationSize = 100;
+        int resultPopulationSize = 100;
+        int maxEvaluations = 10000;
+        double neighborhoodSelectionProbability = 0.01;
+        int maximumNumberOfReplacedSolutions = 10;
+        int neighborSize = 10;
+        
+        //initializing benchmark problem
+        Problem problem = new DTLZ2(numberOfVariables, originalDimension); 
+        
+        //initializing algorithm operators
         CrossoverOperator crossover = new DifferentialEvolutionCrossover();
         MutationOperator mutation = new PolynomialMutation();
         SelectionOperator selection = new BinaryTournamentSelection();
 
-        Algorithm algorithm = new MOEAD(problem, 4, 100, 100, 10000, mutation,
-                crossover, null,
+        //initializing and running MOEA/D
+        Algorithm algorithm = new MOEAD(
+                problem,
+                reducedDimension,
+                populationSize,
+                resultPopulationSize,
+                maxEvaluations,
+                mutation,
+                crossover,
+                null,
                 "home/renansantos/NetBeansProjects/MOEAD/MOEAD_Weights",
-                0.01, 10, 10,
+                neighborhoodSelectionProbability,
+                maximumNumberOfReplacedSolutions,
+                neighborSize,
                 "/home/renansantos/Área de Trabalho/Doutorado/WFG/WFG_1.15");
 
         algorithm.run();
-//        SolutionsOutput s = new SolutionsOutput(algorithm, "/home/renansantos/Área de Trabalho/Doutorado/MOEAD");
-//        s.saveResult();
-
     }
 }

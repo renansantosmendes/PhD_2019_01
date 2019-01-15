@@ -96,7 +96,7 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
         savePopulation();
         initializeUniformWeight();
         initializeNeighborhood();
-        initializeIdealPoint(4);
+        initializeIdealPoint(reducedDimension);
 
         evaluations = populationSize;
         do {
@@ -120,7 +120,7 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
 
                 evaluations++;
 
-                updateIdealPoint(child, 4);
+                updateIdealPoint(child, reducedDimension);
                 updateNeighborhood(child, subProblemId, neighborType);
             }
             // inserir aqui a volta ao espaço de objetivos original
