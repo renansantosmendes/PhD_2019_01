@@ -24,18 +24,19 @@ public class MainClass {
     public static void main(String[] args) throws FileNotFoundException {
         
         //initializing problem and algorithm variables
-        int originalDimension = 3;
-        int reducedDimension = 2;
+        int originalDimension = 7;
+        int reducedDimension = 3;
         int numberOfVariables = 10;
         int populationSize = 100;
         int resultPopulationSize = 100;
-        int maxEvaluations = 10000;
+        int maxEvaluations = 40000;
         double neighborhoodSelectionProbability = 0.01;
         int maximumNumberOfReplacedSolutions = 10;
         int neighborSize = 10;
         
         //initializing benchmark problem
-        Problem problem = new DTLZ2(numberOfVariables, originalDimension); 
+        Problem originalProblem = new DTLZ2(numberOfVariables, originalDimension); 
+        Problem reducedProblem = new DTLZ2(numberOfVariables, reducedDimension); 
         
         //initializing algorithm operators
         CrossoverOperator crossover = new DifferentialEvolutionCrossover();
@@ -44,7 +45,8 @@ public class MainClass {
 
         //initializing and running MOEA/D
         Algorithm algorithm = new MOEAD(
-                problem,
+                originalProblem,
+                reducedProblem,
                 reducedDimension,
                 populationSize,
                 resultPopulationSize,

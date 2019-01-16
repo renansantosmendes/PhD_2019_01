@@ -37,7 +37,8 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
     protected PrintStream streamForPopulationInCsv;
     protected PrintStream streamForFinalPopulationInCsv;
 
-    public MOEAD(Problem<DoubleSolution> problem,
+    public MOEAD(Problem<DoubleSolution> originalProblem,
+            Problem<DoubleSolution> reducedProblem,
             int reducedDimension,
             int populationSize,
             int resultPopulationSize,
@@ -50,9 +51,9 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
             int maximumNumberOfReplacedSolutions,
             int neighborSize, String outPutFilePath) {
 
-        super(problem,reducedDimension, populationSize, resultPopulationSize, maxEvaluations, crossover, mutation, functionType,
-                dataDirectory, neighborhoodSelectionProbability, maximumNumberOfReplacedSolutions,
-                neighborSize);
+        super(originalProblem, reducedProblem, reducedDimension, populationSize, resultPopulationSize, 
+                maxEvaluations, crossover, mutation, functionType, dataDirectory, neighborhoodSelectionProbability,
+                maximumNumberOfReplacedSolutions, neighborSize);
 
         differentialEvolutionCrossover = (DifferentialEvolutionCrossover) crossoverOperator;
         try {
@@ -104,7 +105,7 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
             MOEADUtils.randomPermutation(permutation, populationSize);
             reduceDimension();
             storeOrinalPopulation();
-
+            
             for (int i = 0; i < populationSize; i++) {
                 int subProblemId = permutation[i];
 
@@ -123,7 +124,8 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
                 updateIdealPoint(child, reducedDimension);
                 updateNeighborhood(child, subProblemId, neighborType);
             }
-            // inserir aqui a volta ao espaço de objetivos original
+            
+            restorePopulation();
             savePopulation();
         } while (evaluations < maxEvaluations);
         saveFinalPopulation();

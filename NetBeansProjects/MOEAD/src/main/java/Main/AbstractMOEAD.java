@@ -89,11 +89,13 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
     protected CrossoverOperator<S> crossoverOperator;
     protected MutationOperator<S> mutationOperator;
 
-    public AbstractMOEAD(Problem<S> problem, int reducedDimension, int populationSize, int resultPopulationSize,
-            int maxEvaluations, CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutation,
+    public AbstractMOEAD(Problem<S> originalProblem, Problem<S> reducedProblem, int reducedDimension, int populationSize,
+            int resultPopulationSize, int maxEvaluations, CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutation,
             FunctionType functionType, String dataDirectory, double neighborhoodSelectionProbability,
             int maximumNumberOfReplacedSolutions, int neighborSize) {
-        this.problem = problem;
+
+        this.problem = originalProblem;
+        this.reducedProblem = reducedProblem;
         this.populationSize = populationSize;
         this.resultPopulationSize = resultPopulationSize;
         this.maxEvaluations = maxEvaluations;
@@ -104,20 +106,20 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
         this.neighborhoodSelectionProbability = neighborhoodSelectionProbability;
         this.maximumNumberOfReplacedSolutions = maximumNumberOfReplacedSolutions;
         this.neighborSize = neighborSize;
-        this.originalDimension = problem.getNumberOfObjectives();
+        this.originalDimension = originalProblem.getNumberOfObjectives();
         this.reducedDimension = reducedDimension;
         this.originalPopulation = new ArrayList<>();
         System.out.println("original = " + originalDimension);
         System.out.println("reduced = " + reducedDimension);
-        
+
         randomGenerator = JMetalRandom.getInstance();
 
         population = new ArrayList<>(populationSize);
-        indArray = new Solution[problem.getNumberOfObjectives()];
+        indArray = new Solution[originalProblem.getNumberOfObjectives()];
         neighborhood = new int[populationSize][neighborSize];
-        idealPoint = new double[problem.getNumberOfObjectives()];
-        nadirPoint = new double[problem.getNumberOfObjectives()];
-        lambda = new double[populationSize][problem.getNumberOfObjectives()];
+        idealPoint = new double[originalProblem.getNumberOfObjectives()];
+        nadirPoint = new double[originalProblem.getNumberOfObjectives()];
+        lambda = new double[populationSize][originalProblem.getNumberOfObjectives()];
 
         if (functionType == null) {
             this.functionType = TCHE;
@@ -209,6 +211,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
             System.arraycopy(idx, 0, neighborhood[i], 0, neighborSize);
         }
     }
+
     //idealPoint = new double[problem.getNumberOfObjectives()];
     protected void initializeIdealPoint() {
         for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
@@ -254,7 +257,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
         }
 
         for (int i = 0; i < populationSize; i++) {
-            updateIdealPoint(population.get(i),dim);
+            updateIdealPoint(population.get(i), dim);
         }
     }
 
@@ -285,7 +288,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
             }
         }
     }
-    
+
     protected NeighborType chooseNeighborType() {
         double rnd = randomGenerator.nextDouble();
         NeighborType neighborType;
@@ -482,38 +485,55 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
         }
         return matrix;
     }
-    
+
     protected void reduceDimension(List<Double> parameters) {
         int numberOfClusters = reducedDimension;
         HierarchicalCluster hc = new HierarchicalCluster(getMatrixOfObjetives(parameters),
                 numberOfClusters,
                 CorrelationType.KENDALL);
-        
+
         hc.reduce();
         hc.getTransfomationList().forEach(System.out::println);
         //hc.setTransformationList(createTransformationList());
         //hc.getTransfomationList().forEach(System.out::println);
     }
-    
+
     protected void reduceDimension() {
         int numberOfClusters = reducedDimension;
         HierarchicalCluster hc = new HierarchicalCluster(getMatrixOfObjetives(),
                 numberOfClusters,
                 CorrelationType.KENDALL);
-        
+
         hc.reduce();
         System.out.println("");
         hc.getTransfomationList().forEach(System.out::println);
         System.out.println("reduced dimension -> " + this.reducedDimension);
-       
+        hc.printDissimilarity();
+
+//        Problem<S> reducedProblem = new 
+        System.out.println(problem.getNumberOfObjectives());
+        System.out.println(reducedProblem.getNumberOfObjectives());
+
+        for (int i = 0; i < population.size(); i++) {
+            for (int j=0; j< reducedProblem.getNumberOfObjectives(); j++) {
+                population.get(i).setObjective(j, 0);
+            }
+        }
         //hc.setTransformationList(createTransformationList());
         //hc.getTransfomationList().forEach(System.out::println);
     }
-    
-    protected void storeOrinalPopulation(){
+
+    protected void storeOrinalPopulation() {
         originalPopulation.clear();
-        for(int i = 0; i < population.size(); i++){
+        for (int i = 0; i < population.size(); i++) {
             originalPopulation.add((S) population.get(i).copy());
+        }
+    }
+
+    protected void restorePopulation() {
+        population.clear();
+        for (int i = 0; i < originalPopulation.size(); i++) {
+            population.add((S) originalPopulation.get(i).copy());
         }
     }
 }
