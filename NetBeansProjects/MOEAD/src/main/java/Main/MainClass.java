@@ -24,7 +24,7 @@ public class MainClass {
     public static void main(String[] args) throws FileNotFoundException {
         
         //initializing problem and algorithm variables
-        int originalDimension = 7;
+        int originalDimension = 4;
         int reducedDimension = 3;
         int numberOfVariables = 10;
         int populationSize = 100;

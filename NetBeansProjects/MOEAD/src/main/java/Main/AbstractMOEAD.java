@@ -81,6 +81,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
     protected int maxEvaluations;
 
     protected List<S> originalPopulation;
+    protected List<S> reducedPopulation;
     protected int reducedDimension;
     protected int originalDimension;
 
@@ -513,12 +514,23 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
 //        Problem<S> reducedProblem = new 
         System.out.println(problem.getNumberOfObjectives());
         System.out.println(reducedProblem.getNumberOfObjectives());
+//        population.forEach(u -> );
+//        population.get(0).
+        population.forEach(u -> reducedProblem.evaluate(u));
+        reducedPopulation.forEach(u -> reducedProblem.evaluate(u));
 
-        for (int i = 0; i < population.size(); i++) {
-            for (int j=0; j< reducedProblem.getNumberOfObjectives(); j++) {
-                population.get(i).setObjective(j, 0);
+        for (int i = 0; i < reducedPopulation.size(); i++) {
+            for (int j = 0; j < reducedProblem.getNumberOfObjectives(); j++) {
+                double totalSum = 0;
+                for (int k = 0; k < problem.getNumberOfObjectives(); k++) {
+                    totalSum += hc.getTransfomationList().get(j).get(k)*population.get(i).getObjective(k);
+                    //population.get(i).setObjective(j, 0);
+                }
+                reducedPopulation.get(i).setObjective(j, totalSum);
             }
         }
+        int i = 0;
+        storeOrinalPopulation();
         //hc.setTransformationList(createTransformationList());
         //hc.getTransfomationList().forEach(System.out::println);
     }

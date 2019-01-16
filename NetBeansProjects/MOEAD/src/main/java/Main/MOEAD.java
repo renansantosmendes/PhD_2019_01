@@ -92,19 +92,19 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
     @Override
     public void run() {
         initializePopulation();
+        initializeReducedPopulation();
         saveFirstPopulation();
         insertFirstHashTagInFile();
         savePopulation();
         initializeUniformWeight();
         initializeNeighborhood();
-        initializeIdealPoint(reducedDimension);
+        initializeIdealPoint();
 
         evaluations = populationSize;
         do {
             int[] permutation = new int[populationSize];
             MOEADUtils.randomPermutation(permutation, populationSize);
             reduceDimension();
-            storeOrinalPopulation();
             
             for (int i = 0; i < populationSize; i++) {
                 int subProblemId = permutation[i];
@@ -199,6 +199,16 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
 
             problem.evaluate(newSolution);
             population.add(newSolution);
+        }
+    }
+    
+    protected void initializeReducedPopulation() {
+        reducedPopulation = new ArrayList<>(populationSize);
+        for (int i = 0; i < populationSize; i++) {
+            DoubleSolution newSolution = (DoubleSolution) reducedProblem.createSolution();
+
+            reducedProblem.evaluate(newSolution);
+            reducedPopulation.add(newSolution);
         }
     }
 
