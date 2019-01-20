@@ -51,7 +51,7 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
             int maximumNumberOfReplacedSolutions,
             int neighborSize, String outPutFilePath) {
 
-        super(originalProblem, reducedProblem, reducedDimension, populationSize, resultPopulationSize, 
+        super(originalProblem, reducedProblem, reducedDimension, populationSize, resultPopulationSize,
                 maxEvaluations, crossover, mutation, functionType, dataDirectory, neighborhoodSelectionProbability,
                 maximumNumberOfReplacedSolutions, neighborSize);
 
@@ -63,7 +63,7 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
             ex.printStackTrace();
         }
     }
-    
+
     public MOEAD(Problem<DoubleSolution> problem,
             int populationSize,
             int resultPopulationSize,
@@ -92,20 +92,28 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
     @Override
     public void run() {
         initializePopulation();
-        initializeReducedPopulation();
+        if (reducedProblem != null) {
+            initializeReducedPopulation();
+        }
         saveFirstPopulation();
         insertFirstHashTagInFile();
         savePopulation();
         initializeUniformWeight();
         initializeNeighborhood();
-        initializeIdealPoint();
-
+        if (reducedProblem != null) {
+            initializeIdealPoint(reducedDimension);
+        }else{
+            initializeIdealPoint();
+        }
+        
         evaluations = populationSize;
         do {
             int[] permutation = new int[populationSize];
             MOEADUtils.randomPermutation(permutation, populationSize);
-            reduceDimension();
-            
+            if (reducedProblem != null) {
+                reduceDimension();
+            }
+
             for (int i = 0; i < populationSize; i++) {
                 int subProblemId = permutation[i];
 
@@ -120,23 +128,28 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
                 problem.evaluate(child);
 
                 evaluations++;
+
+                if (reducedProblem != null){
+                    updateIdealPoint(child, reducedDimension);
+                }else{
+                    updateIdealPoint(child);
+                }
                 
-                updateIdealPoint(child, reducedDimension);
                 updateNeighborhood(child, subProblemId, neighborType);
             }
-            
+
 //            restorePopulation();
             savePopulation();
         } while (evaluations < maxEvaluations);
         saveFinalPopulation();
     }
-    
-    public void runExperiment(){
+
+    public void runExperiment() {
         // implementar o experimento que executa o algoritmo 30 vezes
     }
 
     protected void saveFirstPopulation() {
-        String name = this.problem.getName() + "_" + this.problem.getNumberOfVariables() 
+        String name = this.problem.getName() + "_" + this.problem.getNumberOfVariables()
                 + "_" + this.problem.getNumberOfObjectives();
         try {
             PrintStream streamForDataInCsv = new PrintStream("/home/renansantos/Área de Trabalho/Doutorado/GMM/"
@@ -146,10 +159,10 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
             for (int i = 0; i < list.size(); i++) {
                 for (int j = 0; j < list.get(0).getNumberOfObjectives(); j++) {
                     streamForDataInCsv.print(list.get(i).getObjective(j));
-                    if (j < list.get(0).getNumberOfObjectives() - 1){
+                    if (j < list.get(0).getNumberOfObjectives() - 1) {
                         streamForDataInCsv.print("|");
                     }
-                    
+
                 }
                 streamForDataInCsv.print("\n");
             }
@@ -158,9 +171,10 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
         }
     }
 
-    protected void insertFirstHashTagInFile(){
+    protected void insertFirstHashTagInFile() {
         this.streamForPopulationInCsv.print("#");
     }
+
     protected void savePopulation() {
         List<DoubleSolution> list = this.getResult();
         this.streamForPopulationInCsv.print("\n");
@@ -175,23 +189,18 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
     }
 
     protected void saveFinalPopulation() {
-//        try {
-//            this.streamForFinalPopulationInCsv = 
-//                    new PrintStream("/home/renansantos/Área de Trabalho/Doutorado/WFG/WFG_1.15" +
-//                            "/FINAL_PARETO_FRONT.TXT");
-//        } catch (FileNotFoundException ex) {
-//            ex.printStackTrace();
-//        }
-        
         List<DoubleSolution> list = this.getResult();
         for (int i = 0; i < list.size(); i++) {
             for (int j = 0; j < list.get(0).getNumberOfObjectives(); j++) {
-                this.streamForFinalPopulationInCsv.print(list.get(i).getObjective(j) + " ");
+                this.streamForFinalPopulationInCsv.print(list.get(i).getObjective(j) );
+                if(j < list.get(0).getNumberOfObjectives() - 1){
+                    this.streamForFinalPopulationInCsv.print(";");
+                }
             }
             this.streamForFinalPopulationInCsv.print("\n");
         }
     }
-    
+
     protected void initializePopulation() {
         population = new ArrayList<>(populationSize);
         for (int i = 0; i < populationSize; i++) {
@@ -201,7 +210,7 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
             population.add(newSolution);
         }
     }
-    
+
     protected void initializeReducedPopulation() {
         reducedPopulation = new ArrayList<>(populationSize);
         for (int i = 0; i < populationSize; i++) {

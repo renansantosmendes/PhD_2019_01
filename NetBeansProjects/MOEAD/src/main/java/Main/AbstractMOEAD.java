@@ -150,7 +150,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
         population = new ArrayList<>(populationSize);
         indArray = new Solution[problem.getNumberOfObjectives()];
         neighborhood = new int[populationSize][neighborSize];
-        idealPoint = new double[reducedProblem.getNumberOfObjectives()];
+        idealPoint = new double[problem.getNumberOfObjectives()];
         nadirPoint = new double[problem.getNumberOfObjectives()];
         lambda = new double[populationSize][problem.getNumberOfObjectives()];
 
@@ -217,7 +217,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
 
     //idealPoint = new double[problem.getNumberOfObjectives()];
     protected void initializeIdealPoint() {
-        for (int i = 0; i < reducedProblem.getNumberOfObjectives(); i++) {
+        for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
             idealPoint[i] = 1.0e+30;
         }
 
@@ -246,7 +246,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
     }
 
     protected void updateIdealPoint(S individual) {
-        for (int n = 0; n < reducedProblem.getNumberOfObjectives(); n++) {
+        for (int n = 0; n < problem.getNumberOfObjectives(); n++) {
             if (individual.getObjective(n) < idealPoint[n]) {
                 idealPoint[n] = individual.getObjective(n);
             }
@@ -385,8 +385,13 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
             }
             double f1, f2;
 
-            f1 = fitnessFunction(population.get(k), lambda[k]);
-            f2 = fitnessFunction(individual, lambda[k]);
+            if (this.reducedProblem != null) {
+                f1 = fitnessFunction(population.get(k), lambda[k], reducedDimension);
+                f2 = fitnessFunction(individual, lambda[k],reducedDimension);
+            } else {
+                f1 = fitnessFunction(population.get(k), lambda[k]);
+                f2 = fitnessFunction(individual, lambda[k]);
+            }
 
             if (f2 < f1) {
                 population.set(k, (S) individual.copy());
@@ -399,13 +404,68 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
         }
     }
 
+    double fitnessFunction(S individual, double[] lambda, int dim) throws JMetalException {
+        double fitness;
+
+        if (MOEAD.FunctionType.TCHE.equals(functionType)) {
+            double maxFun = -1.0e+30;
+
+            for (int n = 0; n < dim/*problem.getNumberOfObjectives()*/; n++) {
+                double diff = Math.abs(individual.getObjective(n) - idealPoint[n]);//alterar idealPoint e nadirPoint fazer eles
+                //na dimensão original e depois reduzir ou olhar para o atributo problem e ver o que é melhor
+
+                double feval;
+                if (lambda[n] == 0) {
+                    feval = 0.0001 * diff;
+                } else {
+                    feval = diff * lambda[n];
+                }
+                if (feval > maxFun) {
+                    maxFun = feval;
+                }
+            }
+
+            fitness = maxFun;
+        } else if (MOEAD.FunctionType.AGG.equals(functionType)) {
+            double sum = 0.0;
+            for (int n = 0; n < problem.getNumberOfObjectives(); n++) {
+                sum += (lambda[n]) * individual.getObjective(n);
+            }
+
+            fitness = sum;
+
+        } else if (MOEAD.FunctionType.PBI.equals(functionType)) {
+            double d1, d2, nl;
+            double theta = 5.0;
+
+            d1 = d2 = nl = 0.0;
+
+            for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
+                d1 += (individual.getObjective(i) - idealPoint[i]) * lambda[i];
+                nl += Math.pow(lambda[i], 2.0);
+            }
+            nl = Math.sqrt(nl);
+            d1 = Math.abs(d1) / nl;
+
+            for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
+                d2 += Math.pow((individual.getObjective(i) - idealPoint[i]) - d1 * (lambda[i] / nl), 2.0);
+            }
+            d2 = Math.sqrt(d2);
+
+            fitness = (d1 + theta * d2);
+        } else {
+            throw new JMetalException(" MOEAD.fitnessFunction: unknown type " + functionType);
+        }
+        return fitness;
+    }
+
     double fitnessFunction(S individual, double[] lambda) throws JMetalException {
         double fitness;
 
         if (MOEAD.FunctionType.TCHE.equals(functionType)) {
             double maxFun = -1.0e+30;
 
-            for (int n = 0; n < reducedDimension/*problem.getNumberOfObjectives()*/; n++) {
+            for (int n = 0; n < problem.getNumberOfObjectives(); n++) {
                 double diff = Math.abs(individual.getObjective(n) - idealPoint[n]);//alterar idealPoint e nadirPoint fazer eles
                 //na dimensão original e depois reduzir ou olhar para o atributo problem e ver o que é melhor
 
@@ -480,7 +540,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
         int rows = population.size();
         int columns = problem.getNumberOfObjectives();
         double[][] matrix = new double[rows][columns];
-        
+
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
                 matrix[i][j] = population.get(i).getObjective(j);
@@ -518,12 +578,11 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
 
         //population.forEach(u -> reducedProblem.evaluate(u));
         //reducedPopulation.forEach(u -> reducedProblem.evaluate(u));
-
         for (int i = 0; i < reducedPopulation.size(); i++) {
             for (int j = 0; j < reducedProblem.getNumberOfObjectives(); j++) {
                 double totalSum = 0;
                 for (int k = 0; k < problem.getNumberOfObjectives(); k++) {
-                    totalSum += hc.getTransfomationList().get(j).get(k)*population.get(i).getObjective(k);
+                    totalSum += hc.getTransfomationList().get(j).get(k) * population.get(i).getObjective(k);
                     //population.get(i).setObjective(j, 0);
                 }
                 reducedPopulation.get(i).setObjective(j, totalSum);
