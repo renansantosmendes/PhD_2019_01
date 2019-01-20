@@ -40,6 +40,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
 
     protected Problem<S> problem;
     protected Problem<S> reducedProblem;
+    protected Problem<S> originalProblem;
 
     /**
      * Z vector in Zhang & Li paper
@@ -96,6 +97,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
             int maximumNumberOfReplacedSolutions, int neighborSize) {
 
         this.problem = originalProblem;
+        this.originalProblem = originalProblem;
         this.reducedProblem = reducedProblem;
         this.populationSize = populationSize;
         this.resultPopulationSize = resultPopulationSize;
@@ -118,8 +120,8 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
         population = new ArrayList<>(populationSize);
         indArray = new Solution[originalProblem.getNumberOfObjectives()];
         neighborhood = new int[populationSize][neighborSize];
-        idealPoint = new double[originalProblem.getNumberOfObjectives()];
-        nadirPoint = new double[originalProblem.getNumberOfObjectives()];
+        idealPoint = new double[reducedProblem.getNumberOfObjectives()];
+        nadirPoint = new double[reducedProblem.getNumberOfObjectives()];
         lambda = new double[populationSize][originalProblem.getNumberOfObjectives()];
 
         if (functionType == null) {
@@ -148,7 +150,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
         population = new ArrayList<>(populationSize);
         indArray = new Solution[problem.getNumberOfObjectives()];
         neighborhood = new int[populationSize][neighborSize];
-        idealPoint = new double[problem.getNumberOfObjectives()];
+        idealPoint = new double[reducedProblem.getNumberOfObjectives()];
         nadirPoint = new double[problem.getNumberOfObjectives()];
         lambda = new double[populationSize][problem.getNumberOfObjectives()];
 
@@ -215,7 +217,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
 
     //idealPoint = new double[problem.getNumberOfObjectives()];
     protected void initializeIdealPoint() {
-        for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
+        for (int i = 0; i < reducedProblem.getNumberOfObjectives(); i++) {
             idealPoint[i] = 1.0e+30;
         }
 
@@ -244,7 +246,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
     }
 
     protected void updateIdealPoint(S individual) {
-        for (int n = 0; n < problem.getNumberOfObjectives(); n++) {
+        for (int n = 0; n < reducedProblem.getNumberOfObjectives(); n++) {
             if (individual.getObjective(n) < idealPoint[n]) {
                 idealPoint[n] = individual.getObjective(n);
             }
@@ -478,7 +480,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
         int rows = population.size();
         int columns = problem.getNumberOfObjectives();
         double[][] matrix = new double[rows][columns];
-
+        
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
                 matrix[i][j] = population.get(i).getObjective(j);
@@ -511,13 +513,11 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
         System.out.println("reduced dimension -> " + this.reducedDimension);
         hc.printDissimilarity();
 
-//        Problem<S> reducedProblem = new 
         System.out.println(problem.getNumberOfObjectives());
         System.out.println(reducedProblem.getNumberOfObjectives());
-//        population.forEach(u -> );
-//        population.get(0).
-        population.forEach(u -> reducedProblem.evaluate(u));
-        reducedPopulation.forEach(u -> reducedProblem.evaluate(u));
+
+        //population.forEach(u -> reducedProblem.evaluate(u));
+        //reducedPopulation.forEach(u -> reducedProblem.evaluate(u));
 
         for (int i = 0; i < reducedPopulation.size(); i++) {
             for (int j = 0; j < reducedProblem.getNumberOfObjectives(); j++) {
@@ -529,7 +529,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
                 reducedPopulation.get(i).setObjective(j, totalSum);
             }
         }
-        int i = 0;
+
         storeOrinalPopulation();
         //hc.setTransformationList(createTransformationList());
         //hc.getTransfomationList().forEach(System.out::println);
