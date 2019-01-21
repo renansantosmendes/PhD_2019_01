@@ -548,7 +548,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
         }
         return matrix;
     }
-
+    
     protected void reduceDimension(List<Double> parameters) {
         int numberOfClusters = reducedDimension;
         HierarchicalCluster hc = new HierarchicalCluster(getMatrixOfObjetives(parameters),
@@ -583,21 +583,26 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
                 double totalSum = 0;
                 for (int k = 0; k < problem.getNumberOfObjectives(); k++) {
                     totalSum += hc.getTransfomationList().get(j).get(k) * population.get(i).getObjective(k);
-                    //population.get(i).setObjective(j, 0);
                 }
                 reducedPopulation.get(i).setObjective(j, totalSum);
             }
         }
 
         storeOrinalPopulation();
-        //hc.setTransformationList(createTransformationList());
-        //hc.getTransfomationList().forEach(System.out::println);
+        reducePopulationDimention();
     }
 
     protected void storeOrinalPopulation() {
         originalPopulation.clear();
         for (int i = 0; i < population.size(); i++) {
             originalPopulation.add((S) population.get(i).copy());
+        }
+    }
+    
+    protected void reducePopulationDimention(){
+        population.clear();
+        for (int i = 0; i < reducedPopulation.size(); i++) {
+            population.add((S) reducedPopulation.get(i).copy());
         }
     }
 

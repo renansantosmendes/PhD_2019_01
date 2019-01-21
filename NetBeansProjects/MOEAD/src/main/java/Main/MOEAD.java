@@ -92,27 +92,19 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
     @Override
     public void run() {
         initializePopulation();
-        if (reducedProblem != null) {
-            initializeReducedPopulation();
-        }
+        initializeReducedPopulationForMOEAD();
         saveFirstPopulation();
         insertFirstHashTagInFile();
         savePopulation();
         initializeUniformWeight();
         initializeNeighborhood();
-        if (reducedProblem != null) {
-            initializeIdealPoint(reducedDimension);
-        }else{
-            initializeIdealPoint();
-        }
-        
+        initializeIdealPointForMOEAD();
+
         evaluations = populationSize;
         do {
             int[] permutation = new int[populationSize];
             MOEADUtils.randomPermutation(permutation, populationSize);
-            if (reducedProblem != null) {
-                reduceDimension();
-            }
+            reducePopulationDimension();
 
             for (int i = 0; i < populationSize; i++) {
                 int subProblemId = permutation[i];
@@ -125,23 +117,60 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
 
                 DoubleSolution child = children.get(0);
                 mutationOperator.execute(child);
-                problem.evaluate(child);
+                evaluateChild(child);
 
                 evaluations++;
 
-                if (reducedProblem != null){
-                    updateIdealPoint(child, reducedDimension);
-                }else{
-                    updateIdealPoint(child);
-                }
-                
+                updateIdealPointForMOEAD(child);
                 updateNeighborhood(child, subProblemId, neighborType);
             }
 
-//            restorePopulation();
+            restorePopulationForMOEAD();
             savePopulation();
         } while (evaluations < maxEvaluations);
         saveFinalPopulation();
+    }
+
+    private void restorePopulationForMOEAD() {
+        if (reducedProblem != null) {
+            restorePopulation();
+        }
+    }
+
+    private void initializeReducedPopulationForMOEAD() {
+        if (reducedProblem != null) {
+            initializeReducedPopulation();
+        }
+    }
+
+    private void initializeIdealPointForMOEAD() {
+        if (reducedProblem != null) {
+            initializeIdealPoint(reducedDimension);
+        } else {
+            initializeIdealPoint();
+        }
+    }
+
+    private void reducePopulationDimension() {
+        if (reducedProblem != null) {
+            reduceDimension();
+        }
+    }
+
+    private void updateIdealPointForMOEAD(DoubleSolution child) {
+        if (reducedProblem != null) {
+            updateIdealPoint(child, reducedDimension);
+        } else {
+            updateIdealPoint(child);
+        }
+    }
+
+    private void evaluateChild(DoubleSolution child) {
+        if (reducedProblem != null) {
+            reducedProblem.evaluate(child);
+        } else {
+            problem.evaluate(child);
+        }
     }
 
     public void runExperiment() {
@@ -192,8 +221,8 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
         List<DoubleSolution> list = this.getResult();
         for (int i = 0; i < list.size(); i++) {
             for (int j = 0; j < list.get(0).getNumberOfObjectives(); j++) {
-                this.streamForFinalPopulationInCsv.print(list.get(i).getObjective(j) );
-                if(j < list.get(0).getNumberOfObjectives() - 1){
+                this.streamForFinalPopulationInCsv.print(list.get(i).getObjective(j));
+                if (j < list.get(0).getNumberOfObjectives() - 1) {
                     this.streamForFinalPopulationInCsv.print(";");
                 }
             }
