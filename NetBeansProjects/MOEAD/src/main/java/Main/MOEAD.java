@@ -125,7 +125,7 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
                 updateNeighborhood(child, subProblemId, neighborType);
             }
 
-            restorePopulationForMOEAD();
+            //restorePopulationForMOEAD();
             savePopulation();
         } while (evaluations < maxEvaluations);
         saveFinalPopulation();
@@ -168,6 +168,7 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
     private void evaluateChild(DoubleSolution child) {
         if (reducedProblem != null) {
             reducedProblem.evaluate(child);
+            childReduceDimension(child);
         } else {
             problem.evaluate(child);
         }

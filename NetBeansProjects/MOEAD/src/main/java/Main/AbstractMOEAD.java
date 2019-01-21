@@ -20,6 +20,7 @@ import org.uma.jmetal.util.JMetalException;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 import java.io.File;
 import java.util.*;
+import org.uma.jmetal.solution.DoubleSolution;
 
 /**
  * Abstract class for implementing versions of the MOEA/D algorithm.
@@ -85,6 +86,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
     protected List<S> reducedPopulation;
     protected int reducedDimension;
     protected int originalDimension;
+    HierarchicalCluster hc;
 
     protected JMetalRandom randomGenerator;
 
@@ -387,7 +389,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
 
             if (this.reducedProblem != null) {
                 f1 = fitnessFunction(population.get(k), lambda[k], reducedDimension);
-                f2 = fitnessFunction(individual, lambda[k],reducedDimension);
+                f2 = fitnessFunction(individual, lambda[k], reducedDimension);
             } else {
                 f1 = fitnessFunction(population.get(k), lambda[k]);
                 f2 = fitnessFunction(individual, lambda[k]);
@@ -548,7 +550,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
         }
         return matrix;
     }
-    
+
     protected void reduceDimension(List<Double> parameters) {
         int numberOfClusters = reducedDimension;
         HierarchicalCluster hc = new HierarchicalCluster(getMatrixOfObjetives(parameters),
@@ -563,7 +565,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
 
     protected void reduceDimension() {
         int numberOfClusters = reducedDimension;
-        HierarchicalCluster hc = new HierarchicalCluster(getMatrixOfObjetives(),
+        hc = new HierarchicalCluster(getMatrixOfObjetives(),
                 numberOfClusters,
                 CorrelationType.KENDALL);
 
@@ -590,6 +592,18 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
 
         storeOrinalPopulation();
         reducePopulationDimention();
+        int i = 0;
+    }
+
+    protected void childReduceDimension(DoubleSolution child) {
+        for (int j = 0; j < reducedProblem.getNumberOfObjectives(); j++) {
+            double totalSum = 0;
+            for (int k = 0; k < problem.getNumberOfObjectives(); k++) {
+                totalSum += hc.getTransfomationList().get(j).get(k) * child.getObjective(k);//erro nessa linha
+                //child já está em R2 por isso esta dando exception -> conferir amanhã
+            }
+            child.setObjective(j, totalSum);
+        }
     }
 
     protected void storeOrinalPopulation() {
@@ -598,8 +612,8 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
             originalPopulation.add((S) population.get(i).copy());
         }
     }
-    
-    protected void reducePopulationDimention(){
+
+    protected void reducePopulationDimention() {
         population.clear();
         for (int i = 0; i < reducedPopulation.size(); i++) {
             population.add((S) reducedPopulation.get(i).copy());
