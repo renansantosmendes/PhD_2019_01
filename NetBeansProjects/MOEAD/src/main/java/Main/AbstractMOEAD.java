@@ -591,7 +591,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
         }
 
         storeOrinalPopulation();
-        reducePopulationDimention();
+        //reducePopulationDimention();
         int i = 0;
     }
 
@@ -614,9 +614,11 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
     }
 
     protected void reducePopulationDimention() {
-        population.clear();
-        for (int i = 0; i < reducedPopulation.size(); i++) {
-            population.add((S) reducedPopulation.get(i).copy());
+        if (reducedProblem != null) {
+            population.clear();
+            for (int i = 0; i < reducedPopulation.size(); i++) {
+                population.add((S) reducedPopulation.get(i).copy());
+            }
         }
     }
 
