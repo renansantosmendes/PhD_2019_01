@@ -9,6 +9,7 @@ package Main;
  *
  * @author renansantos
  */
+import com.sun.javafx.scene.control.skin.VirtualFlow;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import org.uma.jmetal.algorithm.multiobjective.moead.util.MOEADUtils;
@@ -117,14 +118,14 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
 
                 DoubleSolution child = children.get(0);
                 mutationOperator.execute(child);
-                evaluateChild(child);
+                child = evaluateChild(child);
 
                 evaluations++;
 
                 updateIdealPointForMOEAD(child);
                 updateNeighborhood(child, subProblemId, neighborType);
             }
-
+            //inserir aqui uma forma de voltar a população para dimensão original
             //restorePopulationForMOEAD();
             savePopulation();
         } while (evaluations < maxEvaluations);
@@ -165,13 +166,43 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
         }
     }
 
-    private void evaluateChild(DoubleSolution child) {
+    private DoubleSolution evaluateChild(DoubleSolution child) {
         if (reducedProblem != null) {
-            reducedProblem.evaluate(child);
+            DoubleSolution originalChild = (DoubleSolution) child.copy();
+            List<Double> variables = getSolutionVariables(child);
+
+            DoubleSolution newSolution = (DoubleSolution) reducedProblem.createSolution();
+            setSolutionVariables(newSolution, variables);
+            reducedProblem.evaluate(newSolution);
             childReduceDimension(child);
+            setSolutionObjectiveFunctions(newSolution, child);
+            child = (DoubleSolution) newSolution.copy();
+            return child;
+            //reducedProblem.evaluate(child);
         } else {
             problem.evaluate(child);
+            return child;
         }
+    }
+
+    private void setSolutionVariables(DoubleSolution solution, List<Double> variables) {
+        for (int i = 0; i < solution.getNumberOfVariables(); i++) {
+            solution.setVariableValue(i, variables.get(i));
+        }
+    }
+
+    private void setSolutionObjectiveFunctions(DoubleSolution reducedSolution, DoubleSolution solution) {
+        for (int i = 0; i < reducedSolution.getNumberOfObjectives(); i++) {
+            reducedSolution.setObjective(i, solution.getObjective(i));
+        }
+    }
+
+    private List<Double> getSolutionVariables(DoubleSolution solution) {
+        List<Double> variables = new ArrayList<>();
+        for (int i = 0; i < solution.getNumberOfVariables(); i++) {
+            variables.add(solution.getVariableValue(i));
+        }
+        return variables;
     }
 
     public void runExperiment() {
