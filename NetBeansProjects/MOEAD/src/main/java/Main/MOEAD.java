@@ -15,7 +15,7 @@ import java.io.PrintStream;
 import org.uma.jmetal.algorithm.multiobjective.moead.util.MOEADUtils;
 import org.uma.jmetal.operator.CrossoverOperator;
 import org.uma.jmetal.operator.MutationOperator;
-import org.uma.jmetal.operator.impl.crossover.DifferentialEvolutionCrossover;
+import Main.DifferentialEvolutionCrossover;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.DoubleSolution;
 
@@ -106,6 +106,7 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
             int[] permutation = new int[populationSize];
             MOEADUtils.randomPermutation(permutation, populationSize);
             reducePopulationDimension();
+            //reduzir todos os individuos -> nem todos vão para a reducedDimention
 
             for (int i = 0; i < populationSize; i++) {
                 int subProblemId = permutation[i];
@@ -118,6 +119,7 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
 
                 DoubleSolution child = children.get(0);
                 mutationOperator.execute(child);
+//                System.out.println("child number: " + i);
                 child = evaluateChild(child);
 
                 evaluations++;
@@ -125,6 +127,7 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
                 updateIdealPointForMOEAD(child);
                 updateNeighborhood(child, subProblemId, neighborType);
             }
+            int j = 0;
             //inserir aqui uma forma de voltar a população para dimensão original
             //restorePopulationForMOEAD();
             savePopulation();
@@ -168,6 +171,9 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
 
     private DoubleSolution evaluateChild(DoubleSolution child) {
         if (reducedProblem != null) {
+            if(child.getNumberOfObjectives() == 2){
+                int i = 0;
+            }
             DoubleSolution originalChild = (DoubleSolution) child.copy();
             List<Double> variables = getSolutionVariables(child);
 

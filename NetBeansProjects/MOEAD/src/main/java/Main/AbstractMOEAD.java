@@ -596,13 +596,15 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
     }
 
     protected void childReduceDimension(DoubleSolution child) {
-        for (int j = 0; j < reducedProblem.getNumberOfObjectives(); j++) {
-            double totalSum = 0;
-            for (int k = 0; k < problem.getNumberOfObjectives(); k++) {
-                totalSum += hc.getTransfomationList().get(j).get(k) * child.getObjective(k);//erro nessa linha
-                //child já está em R2 por isso esta dando exception -> conferir amanhã
+        if (!(child.getNumberOfObjectives() < problem.getNumberOfObjectives())) {
+            for (int j = 0; j < reducedProblem.getNumberOfObjectives(); j++) {
+                double totalSum = 0;
+                for (int k = 0; k < problem.getNumberOfObjectives(); k++) {
+                    totalSum += hc.getTransfomationList().get(j).get(k) * child.getObjective(k);//erro nessa linha
+                    //child já está em R2 por isso esta dando exception -> conferir amanhã
+                }
+                child.setObjective(j, totalSum);
             }
-            child.setObjective(j, totalSum);
         }
     }
 
