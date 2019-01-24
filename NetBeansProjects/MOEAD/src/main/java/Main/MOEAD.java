@@ -15,10 +15,9 @@ import java.io.PrintStream;
 import org.uma.jmetal.algorithm.multiobjective.moead.util.MOEADUtils;
 import org.uma.jmetal.operator.CrossoverOperator;
 import org.uma.jmetal.operator.MutationOperator;
-import Main.DifferentialEvolutionCrossover;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.DoubleSolution;
-
+import org.uma.jmetal.operator.impl.crossover.DifferentialEvolutionCrossover;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -127,9 +126,9 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
                 updateIdealPointForMOEAD(child);
                 updateNeighborhood(child, subProblemId, neighborType);
             }
-            int j = 0;
+            
             //inserir aqui uma forma de voltar a população para dimensão original
-            //restorePopulationForMOEAD();
+            restorePopulationForMOEAD();
             savePopulation();
         } while (evaluations < maxEvaluations);
         saveFinalPopulation();
@@ -189,26 +188,6 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
             problem.evaluate(child);
             return child;
         }
-    }
-
-    private void setSolutionVariables(DoubleSolution solution, List<Double> variables) {
-        for (int i = 0; i < solution.getNumberOfVariables(); i++) {
-            solution.setVariableValue(i, variables.get(i));
-        }
-    }
-
-    private void setSolutionObjectiveFunctions(DoubleSolution reducedSolution, DoubleSolution solution) {
-        for (int i = 0; i < reducedSolution.getNumberOfObjectives(); i++) {
-            reducedSolution.setObjective(i, solution.getObjective(i));
-        }
-    }
-
-    private List<Double> getSolutionVariables(DoubleSolution solution) {
-        List<Double> variables = new ArrayList<>();
-        for (int i = 0; i < solution.getNumberOfVariables(); i++) {
-            variables.add(solution.getVariableValue(i));
-        }
-        return variables;
     }
 
     public void runExperiment() {

@@ -578,6 +578,8 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
         System.out.println(problem.getNumberOfObjectives());
         System.out.println(reducedProblem.getNumberOfObjectives());
 
+        population.forEach(u -> problem.evaluate(u));
+        setVariablesInReducedPopulation();
         //population.forEach(u -> reducedProblem.evaluate(u));
         //reducedPopulation.forEach(u -> reducedProblem.evaluate(u));
         for (int i = 0; i < reducedPopulation.size(); i++) {
@@ -591,10 +593,44 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
         }
 
         storeOrinalPopulation();
-        //reducePopulationDimention();
+        reducePopulationDimention();
         int i = 0;
     }
+    
+    protected void setVariablesInReducedPopulation() {
+        reducedPopulation.clear();
+        for (int i = 0; i < population.size(); i++) {
+            DoubleSolution originalChild = (DoubleSolution) population.get(i).copy();
+            List<Double> variables = getSolutionVariables((DoubleSolution) population.get(i));
 
+            DoubleSolution newSolution = (DoubleSolution) reducedProblem.createSolution();
+            setSolutionVariables(newSolution, variables);
+            reducedPopulation.add((S) newSolution);
+        }
+    }
+
+    
+    protected void setSolutionVariables(DoubleSolution solution, List<Double> variables) {
+        for (int i = 0; i < solution.getNumberOfVariables(); i++) {
+            solution.setVariableValue(i, variables.get(i));
+        }
+    }
+
+    protected void setSolutionObjectiveFunctions(DoubleSolution reducedSolution, DoubleSolution solution) {
+        for (int i = 0; i < reducedSolution.getNumberOfObjectives(); i++) {
+            reducedSolution.setObjective(i, solution.getObjective(i));
+        }
+    }
+
+    protected List<Double> getSolutionVariables(DoubleSolution solution) {
+        List<Double> variables = new ArrayList<>();
+        for (int i = 0; i < solution.getNumberOfVariables(); i++) {
+            variables.add(solution.getVariableValue(i));
+        }
+        return variables;
+    }
+    
+    
     protected void childReduceDimension(DoubleSolution child) {
         if (!(child.getNumberOfObjectives() < problem.getNumberOfObjectives())) {
             for (int j = 0; j < reducedProblem.getNumberOfObjectives(); j++) {
@@ -625,9 +661,25 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
     }
 
     protected void restorePopulation() {
-        population.clear();
-        for (int i = 0; i < originalPopulation.size(); i++) {
-            population.add((S) originalPopulation.get(i).copy());
+        List<DoubleSolution> intermediatePopulation = new ArrayList<>();
+        for (int i = 0; i < population.size(); i++) {
+            intermediatePopulation.add((DoubleSolution) population.get(i).copy());
         }
+        
+        population.clear();
+        for (int i = 0; i < intermediatePopulation.size(); i++) {
+            DoubleSolution originalChild = (DoubleSolution)intermediatePopulation.get(i).copy();
+            List<Double> variables = getSolutionVariables((DoubleSolution) intermediatePopulation.get(i));
+
+            DoubleSolution newSolution = (DoubleSolution) problem.createSolution();
+            setSolutionVariables(newSolution, variables);
+            problem.evaluate((S) newSolution);
+            population.add((S) newSolution);
+        }
+        
+        
+//        for (int i = 0; i < originalPopulation.size(); i++) {
+//            population.add((S) originalPopulation.get(i).copy());
+//        }
     }
 }

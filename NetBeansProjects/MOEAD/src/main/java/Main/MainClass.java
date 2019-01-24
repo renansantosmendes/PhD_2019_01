@@ -29,7 +29,7 @@ public class MainClass {
         int numberOfVariables = 10;
         int populationSize = 100;
         int resultPopulationSize = 100;
-        int maxEvaluations = 100000;
+        int maxEvaluations = 80000;
         double neighborhoodSelectionProbability = 0.01;
         int maximumNumberOfReplacedSolutions = 10;
         int neighborSize = 10;
@@ -40,7 +40,7 @@ public class MainClass {
         
         //initializing algorithm operators
         CrossoverOperator crossover = new DifferentialEvolutionCrossover();
-        MutationOperator mutation = new PolynomialMutation();
+        MutationOperator mutation = new PolynomialMutation(0.2, 20);
         SelectionOperator selection = new BinaryTournamentSelection();
 
         //initializing and running MOEA/D
@@ -78,5 +78,6 @@ public class MainClass {
                 "/home/renansantos/Área de Trabalho/Doutorado/MOEAD-Original");
 
         algorithm2.run();
+        System.out.println("MOEAD Finished!");
     }
 }
