@@ -9,7 +9,6 @@ package Main;
  *
  * @author renansantos
  */
-import com.sun.javafx.scene.control.skin.VirtualFlow;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import org.uma.jmetal.algorithm.multiobjective.moead.util.MOEADUtils;

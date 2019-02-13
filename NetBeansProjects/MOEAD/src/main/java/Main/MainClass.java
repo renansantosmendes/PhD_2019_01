@@ -6,6 +6,7 @@
 package Main;
 
 import java.io.FileNotFoundException;
+import jmetal.problems.ZDT.ZDT2;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.operator.*;
 import org.uma.jmetal.operator.impl.crossover.DifferentialEvolutionCrossover;
@@ -35,12 +36,12 @@ public class MainClass {
         int neighborSize = 10;
         
         //initializing benchmark problem
-        Problem originalProblem = new DTLZ2(numberOfVariables, originalDimension); 
-        Problem reducedProblem = new DTLZ2(numberOfVariables, reducedDimension); 
+        Problem originalProblem = new DTLZ3(numberOfVariables, originalDimension); 
+        Problem reducedProblem = new DTLZ3(numberOfVariables, reducedDimension); 
         
         //initializing algorithm operators
         CrossoverOperator crossover = new DifferentialEvolutionCrossover();
-        MutationOperator mutation = new PolynomialMutation(0.2, 20);
+        MutationOperator mutation = new PolynomialMutation(0.02, 20);
         SelectionOperator selection = new BinaryTournamentSelection();
 
         //initializing and running MOEA/D
@@ -58,7 +59,7 @@ public class MainClass {
                 neighborhoodSelectionProbability,
                 maximumNumberOfReplacedSolutions,
                 neighborSize,
-                "/home/renansantos/Área de Trabalho/Doutorado/OnCL-MOEAD");
+                "/home/renansantos/Área de Trabalho/Doutorado/Experimentos/OnCL-MOEAD");
 
         algorithm.run();
         System.out.println("OnCL-MOEAD Finished!");
@@ -75,7 +76,7 @@ public class MainClass {
                 neighborhoodSelectionProbability,
                 maximumNumberOfReplacedSolutions,
                 neighborSize,
-                "/home/renansantos/Área de Trabalho/Doutorado/MOEAD-Original");
+                "/home/renansantos/Área de Trabalho/Doutorado/Experimentos/MOEAD");
 
         algorithm2.run();
         System.out.println("MOEAD Finished!");
