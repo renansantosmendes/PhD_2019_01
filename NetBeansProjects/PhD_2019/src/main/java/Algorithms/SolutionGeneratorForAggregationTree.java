@@ -42,7 +42,7 @@ public class SolutionGeneratorForAggregationTree {
     private int numberOfSolutionsPerInstance;
     private int idealNumberOfSolutions = 10000;
 
-    public void generateSolutionsForAggregationTree(List<Double> parameters) throws FileNotFoundException {
+    public void generateSolutionsForAggregationTree(int reducedDimension, List<Double> parameters) throws FileNotFoundException {
         this.numberOfInstances = this.vehicleCapacities.length * this.nodesDistance.length
                 * this.numberOfRequests.length * this.timeWindows.length;
         this.numberOfSolutionsPerInstance = idealNumberOfSolutions / this.numberOfInstances + 1;
@@ -68,7 +68,7 @@ public class SolutionGeneratorForAggregationTree {
 
                         System.out.println("Instance configuration = " + requestsInstance + "-" + vehicleCapacityForInstance
                                 + "-" + nodesInstance + "-" + adjacenciesInstance);
-                        generateSolution(parameters, requestsInstance, vehicleCapacityForInstance, nodesInstance, adjacenciesInstance,
+                        generateSolution(reducedDimension, parameters, requestsInstance, vehicleCapacityForInstance, nodesInstance, adjacenciesInstance,
                                 printStreamForObjectives, printStreamForSolutions);
 
                     }
@@ -77,7 +77,7 @@ public class SolutionGeneratorForAggregationTree {
         }
     }
 
-    private void generateSolution(List<Double> parameters, String requestsInstance, int vehicleCapacityForInstance, String nodesInstance,
+    private void generateSolution(int reducedDimension, List<Double> parameters, String requestsInstance, int vehicleCapacityForInstance, String nodesInstance,
             String adjacenciesInstance, PrintStream printStreamForObjectives, PrintStream printStreamForSolutions)
             throws FileNotFoundException {
         final Long timeWindows = (long) 3;
@@ -126,7 +126,7 @@ public class SolutionGeneratorForAggregationTree {
         ProblemSolution solution1 = new ProblemSolution();
 
         for (int i = 0; i < numberOfSolutionsPerInstance; i++) {//numberOfSolutionsPerInstance
-            solution1.setSolution(perturbation(parameters, solution,requestList , requestsWichBoardsInNode, requestsWichLeavesInNode,
+            solution1.setSolution(perturbation(reducedDimension, parameters, solution,requestList , requestsWichBoardsInNode, requestsWichLeavesInNode,
                     numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, listOfRequests, loadIndexList, timeBetweenNodes,
                     distanceBetweenNodes, timeWindows));
             //System.out.println(solution1);

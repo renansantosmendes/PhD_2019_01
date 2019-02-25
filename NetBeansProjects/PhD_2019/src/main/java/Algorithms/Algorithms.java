@@ -1026,7 +1026,7 @@ public class Algorithms {
         evaluateSolution(solution, c, Qmax, listRequests);
         evaluateAggregatedObjectiveFunctions(parameters, solution);
         solution.setLogger(log);
-        
+        solution.setAggregatedObjectives(new double[reducedDimension]);
         
         
         return solution;
@@ -1110,12 +1110,12 @@ public class Algorithms {
                     //Cruzamento
                     //Cruzamento(Pop, Pc, pais, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows);
 
-                    twoPointsCrossover(parameters, Pop, Pop, TamPop, Pc, pais, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows);
+                    twoPointsCrossover(reducedDimension, parameters, Pop, Pop, TamPop, Pc, pais, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows);
                     //Mutação
                     //Mutacao(Pop, Pm, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode);
                     //Mutacao2Opt(Pop, Pm, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode);
                     //MutacaoShuffle(Pop, Pm, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode);                   
-                    mutation2Shuffle(parameters, Pop, Pm, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode);
+                    mutation2Shuffle(reducedDimension, parameters, Pop, Pm, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode);
                     //MutacaoILS(Pop, Pm, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode);
 
                     //Elitismo
@@ -1201,7 +1201,7 @@ public class Algorithms {
 
     }
 
-    public static ProblemSolution VariableNeighborhoodDescend(List<Double> parameters, ProblemSolution s_0, List<Request> listRequests, List<Request> P, Set<Integer> K,
+    public static ProblemSolution VariableNeighborhoodDescend(int reducedDimension,List<Double> parameters, ProblemSolution s_0, List<Request> listRequests, List<Request> P, Set<Integer> K,
             List<Request> U, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout, List<List<Long>> d,
             List<List<Long>> c, Integer n, Integer Qmax, Long TimeWindows) {
 
@@ -1218,7 +1218,7 @@ public class Algorithms {
                 k++;
             }
             System.out.println("k = " + k);
-            s.setSolution(firstImprovementAlgorithm(parameters, s_0, k, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
+            s.setSolution(firstImprovementAlgorithm(reducedDimension, parameters, s_0, k, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
             //s.setSolution(bestImprovementAlgorithm(s_0, k, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
             if (s.getObjectiveFunction() < melhor.getObjectiveFunction()) {
                 melhor.setSolution(s);
@@ -1231,7 +1231,7 @@ public class Algorithms {
         return melhor;
     }
 
-    public static ProblemSolution RVND(List<Double> parameters, ProblemSolution s_0, List<Request> listRequests, List<Request> P, Set<Integer> K, List<Request> U,
+    public static ProblemSolution RVND(int reducedDimension,List<Double> parameters, ProblemSolution s_0, List<Request> listRequests, List<Request> P, Set<Integer> K, List<Request> U,
             Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout, List<List<Long>> d, List<List<Long>> c,
             Integer n, Integer Qmax, Long TimeWindows) {
 
@@ -1256,7 +1256,7 @@ public class Algorithms {
             System.out.println("k = " + k + "\tN = " + vizinhanca.get(k - 1));
             //System.out.println("iteração VariableNeighborhoodDescend = " + cont1);
             //s.setSolution(firstImprovementAlgorithm(s_0,k,listRequests,P,K,U,Pin,Pout, d, c, n, Qmax,TimeWindows));
-            s.setSolution(bestImprovementAlgorithm(parameters, s_0, vizinhanca.get(k - 1), listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
+            s.setSolution(bestImprovementAlgorithm(reducedDimension, parameters, s_0, vizinhanca.get(k - 1), listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
             if (s.getObjectiveFunction() < melhor.getObjectiveFunction()) {
                 melhor.setSolution(s);
                 k = 1;
@@ -1267,7 +1267,7 @@ public class Algorithms {
         return melhor;
     }
 
-    public static ProblemSolution VNS(List<Double> parameters, ProblemSolution s_0, List<Request> listRequests, List<Request> P, Set<Integer> K,
+    public static ProblemSolution VNS(int reducedDimension,List<Double> parameters, ProblemSolution s_0, List<Request> listRequests, List<Request> P, Set<Integer> K,
             List<Request> U, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout, List<List<Long>> d,
             List<List<Long>> c, Integer n, Integer Qmax, Long TimeWindows) {
 
@@ -1286,7 +1286,7 @@ public class Algorithms {
             while ((k <= r)) {
 
                 //s_linha.setSolution(vizinhoAleatorio(s_0, k, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
-                s_2linha.setSolution(VariableNeighborhoodDescend(parameters, s_linha, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
+                s_2linha.setSolution(VariableNeighborhoodDescend(reducedDimension, parameters, s_linha, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
 
                 if (s_2linha.getObjectiveFunction() < melhor.getObjectiveFunction()) {
                     melhor.setSolution(s_2linha);
@@ -1420,14 +1420,14 @@ public class Algorithms {
         List<ProblemSolution> historico = new ArrayList<>();
         int MAXITER = 4;
 
-        s.setSolution(VariableNeighborhoodDescend(parameters, s_0, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
+        s.setSolution(VariableNeighborhoodDescend(reducedDimension, parameters, s_0, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
         System.out.println("After the first local search s = " + s);
         int cont = 0;
         while (cont < MAXITER) {
             System.out.println("Iteration ILS = " + cont);
             s_linha.setSolution(perturbation(reducedDimension, parameters, s, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows));
             System.out.println("After pertubation s'= " + s_linha);
-            s_2linha.setSolution(VariableNeighborhoodDescend(parameters, s_linha, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
+            s_2linha.setSolution(VariableNeighborhoodDescend(reducedDimension, parameters, s_linha, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
 
             if (s_2linha.getObjectiveFunction() < s_0.getObjectiveFunction()) {
                 s.setSolution(s_2linha);
@@ -1492,7 +1492,7 @@ public class Algorithms {
     }
 
     // Algoritmo GRASP_reativo 
-    public static ProblemSolution GRASP_reativo(List<Double> parameters, Integer MAX_ITERATIONS, Double alphaD, Double alphaP, Double alphaV, Double alphaT, int tipoBusca,
+    public static ProblemSolution GRASP_reativo(int reducedDimension, List<Double> parameters, Integer MAX_ITERATIONS, Double alphaD, Double alphaP, Double alphaV, Double alphaT, int tipoBusca,
             int tipoEstrategia, int tipoMovimento, List<Request> listRequests, PrintStream saida, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout,
             Integer n, Integer Qmax, Set<Integer> K, List<Request> U, List<Request> P, List<Integer> m,
             List<List<Long>> d, List<List<Long>> c, Long TimeWindows) {
@@ -2078,11 +2078,11 @@ public class Algorithms {
             ProblemSolution busca;
             switch (tipoBusca) {
                 case 1:
-                    busca = new ProblemSolution(buscaLocal(parameters, solution, tipoEstrategia, tipoMovimento, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
+                    busca = new ProblemSolution(buscaLocal(reducedDimension, parameters, solution, tipoEstrategia, tipoMovimento, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
                     break;
                 case 2:
                     //busca = new ProblemSolution( buscaTabu(S, tipoEstrategia, tipoMovimento, listRequests) );
-                    busca = new ProblemSolution(buscaTabu(parameters, solution, tipoEstrategia, tipoMovimento, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
+                    busca = new ProblemSolution(buscaTabu(reducedDimension, parameters, solution, tipoEstrategia, tipoMovimento, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
                     break;
                 default:
                     busca = new ProblemSolution();
@@ -2165,7 +2165,7 @@ public class Algorithms {
      * Busca Local
      *
      */
-    public static ProblemSolution buscaLocal(List<Double> parameters, ProblemSolution inicial, int tipoEstrategia, int tipoMovimento, List<Request> listRequests, List<Request> P,
+    public static ProblemSolution buscaLocal(int reducedDimension, List<Double> parameters, ProblemSolution inicial, int tipoEstrategia, int tipoMovimento, List<Request> listRequests, List<Request> P,
             Set<Integer> K, List<Request> U, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout,
             List<List<Long>> d, List<List<Long>> c, Integer n, Integer Qmax, Long TimeWindows) {
         ProblemSolution melhor = new ProblemSolution();
@@ -2183,7 +2183,7 @@ public class Algorithms {
 
                 melhor.setSolution(s);
                 //s.setSolution(bestImprovementAlgorithm(melhor,tipoMovimento, listRequests));
-                s.setSolution(bestImprovementAlgorithm(parameters, melhor, tipoMovimento, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
+                s.setSolution(bestImprovementAlgorithm(reducedDimension, parameters, melhor, tipoMovimento, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
 
             } while (!s.equals(melhor));
 
@@ -2193,7 +2193,7 @@ public class Algorithms {
 
                 melhor.setSolution(s);
                 //s.setSolution(firstImprovementAlgorithm(melhor,tipoMovimento, listRequests));
-                s.setSolution(firstImprovementAlgorithm(parameters, melhor, tipoMovimento, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
+                s.setSolution(firstImprovementAlgorithm(reducedDimension, parameters, melhor, tipoMovimento, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
 
             } while (!s.equals(melhor));
 
