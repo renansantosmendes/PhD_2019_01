@@ -83,6 +83,8 @@ public class VRPDRT_Main {
         Algorithms.printProblemInformations(requests, numberOfVehicles, vehicleCapacity, instanceName, adjacenciesData, nodesData);
         Methods.initializeFleetOfVehicles(setOfVehicles, numberOfVehicles);
 
+        int reducedDimension = 3;
+        
         parameters.add(0.10);//1
         parameters.add((double) requestTimeWindows);//delta_t
         parameters.add((double) numberOfNodes);//n
@@ -99,7 +101,9 @@ public class VRPDRT_Main {
         System.out.println("Instance Name = " + instanceName);
 
            
-        NSGAII(instanceName, parameters, nadirPoint, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
+        
+        
+        TestAlgorithm(instanceName, reducedDimension, parameters, nadirPoint, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
                 requests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
                 listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes,
                 timeWindows, currentTime, lastNode);

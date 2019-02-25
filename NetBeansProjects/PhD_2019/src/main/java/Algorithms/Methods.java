@@ -516,14 +516,14 @@ public class Methods {
         }
     }
 
-    public static void inicializePopulation(List<ProblemSolution> Pop, Integer TamPop, List<Request> listRequests,
+    public static void inicializePopulation(int reducedDimension, List<ProblemSolution> Pop, Integer TamPop, List<Request> listRequests,
             Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout, Integer n, Integer Qmax, Set<Integer> K,
             List<Request> U, List<Request> P, List<Integer> m, List<List<Long>> d, List<List<Long>> c,
             Long TimeWindows, Long currentTime, Integer lastNode) {
 
         for (int i = 0; i < TamPop; i++) {
             ProblemSolution S = new ProblemSolution();
-            S.setSolution(GeraSolucaoAleatoria(Pop, TamPop, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode));
+            S.setSolution(GeraSolucaoAleatoria(reducedDimension, Pop, TamPop, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode));
             //S.setSolution(PerturbacaoSemente(parameters, S, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows));
             Pop.add(S);
         }
@@ -535,16 +535,16 @@ public class Methods {
         Inicializa(Pop, TamPop, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode);
     }
 
-    public static void inicializeRandomPopulation(List<Double> parameters, List<ProblemSolution> Pop, Integer TamPop, List<Request> listRequests,
+    public static void inicializeRandomPopulation(List<Double> parameters, int reducedDimension, List<ProblemSolution> Pop, Integer TamPop, List<Request> listRequests,
             Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout, Integer n, Integer Qmax, Set<Integer> K,
             List<Request> U, List<Request> P, List<Integer> m, List<List<Long>> d, List<List<Long>> c,
             Long TimeWindows, Long currentTime, Integer lastNode) {
 
         ProblemSolution S = new ProblemSolution();
-        S.setSolution(GeraSolucaoAleatoria(Pop, TamPop, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode));
+        S.setSolution(GeraSolucaoAleatoria(reducedDimension,Pop, TamPop, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode));
         for (int i = 0; i < TamPop; i++) {
             ProblemSolution S2 = new ProblemSolution();
-            S2.setSolution(PerturbacaoSemente(i, parameters, S, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows));
+            S2.setSolution(PerturbacaoSemente(i, reducedDimension, parameters, S, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows));
             Pop.add(S2);
         }
 //        for (int i = 0; i < TamPop; i++) {
@@ -593,7 +593,7 @@ public class Methods {
 //        //Coloquei a linha de baixo, que estava no codigo principal dos algoritmos multi
 //        //initializePopulation(Pop, TamPop, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode);
 //    }
-    public static void InicializaPopulacaoPerturbacao(List<Double> parameters, List<ProblemSolution> Pop, Integer TamPop, List<Request> listRequests, Map<Integer, List<Request>> Pin,
+    public static void InicializaPopulacaoPerturbacao(int reducedDimension, List<Double> parameters, List<ProblemSolution> Pop, Integer TamPop, List<Request> listRequests, Map<Integer, List<Request>> Pin,
             Map<Integer, List<Request>> Pout, Integer n, Integer Qmax, Set<Integer> K, List<Request> U,
             List<Request> P, List<Integer> m, List<List<Long>> d, List<List<Long>> c,
             Long TimeWindows, Long currentTime, Integer lastNode) {
@@ -601,9 +601,9 @@ public class Methods {
         for (int i = 0; i < TamPop; i++) {
             ProblemSolution S = new ProblemSolution();
             ProblemSolution S_linha = new ProblemSolution();
-            S.setSolution(GeraSolucaoAleatoria(Pop, TamPop, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode));
+            S.setSolution(GeraSolucaoAleatoria(reducedDimension, Pop, TamPop, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode));
             //S_linha.setSolution(perturbation(S, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows));
-            S_linha.setSolution(PerturbacaoSemente(i, parameters, S, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows));
+            S_linha.setSolution(PerturbacaoSemente(i, reducedDimension, parameters, S, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows));
             Pop.add(S_linha);
         }
     }
@@ -634,7 +634,7 @@ public class Methods {
         //}
     }
 
-    public static ProblemSolution GeraSolucaoAleatoria(List<ProblemSolution> Pop, Integer TamPop, List<Request> listRequests, Map<Integer, List<Request>> Pin,
+    public static ProblemSolution GeraSolucaoAleatoria(int reducedDimension, List<ProblemSolution> Pop, Integer TamPop, List<Request> listRequests, Map<Integer, List<Request>> Pin,
             Map<Integer, List<Request>> Pout, Integer n, Integer Qmax, Set<Integer> K, List<Request> U,
             List<Request> P, List<Integer> m, List<List<Long>> d, List<List<Long>> c,
             Long TimeWindows, Long currentTime, Integer lastNode) {
@@ -766,7 +766,7 @@ public class Methods {
         solution.linkTheRoutes();
         //S.setfObjetivo1((int) FuncaoObjetivo(S, c));
         solution.setObjectiveFunction(FuncaoDeAvaliacao(solution, listRequests, c));
-
+        solution.setAggregatedObjectives(new double[reducedDimension]);
         return solution;
     }
 

@@ -27,7 +27,7 @@ public class AlgorithmsCalibration {
         nadirPoint.add(1000000.0);
     }
 
-    public static void NSGAII_Calibration(String instanceName, Integer populationSize, Integer maximumNumberOfGenerations,
+    public static void NSGAII_Calibration(String instanceName, int reducedDimension, Integer populationSize, Integer maximumNumberOfGenerations,
             Integer maximumNumberOfExecutions, double probabilityOfMutation, double probabilityOfCrossover,
             List<Request> listOfRequests, Map<Integer, List<Request>> requestsWhichBoardsInNode,
             Map<Integer, List<Request>> requestsWhichLeavesInNode, Integer numberOfNodes, Integer vehicleCapacity,
@@ -44,7 +44,7 @@ public class AlgorithmsCalibration {
             parameters.addAll(new ArrayList<>(generateLambdas()));
 
             //executing the NSGA-II algorithm
-            hypervolume = NSGAII(instanceName, parameters, nadirPoint, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
+            hypervolume = NSGAII(instanceName, reducedDimension, parameters, nadirPoint, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
                     listOfRequests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
                     listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes,
                     timeWindows, currentTime, lastNode);
@@ -78,7 +78,7 @@ public class AlgorithmsCalibration {
         return parameters;
     }
 
-    public static double vnd(String instanceName, List<Double> parameters, Integer populationSize, Integer maximumNumberOfGenerations,
+    public static double vnd(String instanceName, int reducedDimension, List<Double> parameters, Integer populationSize, Integer maximumNumberOfGenerations,
             Integer maximumNumberOfExecutions, double probabilityOfMutation, double probabilityOfCrossover,
             List<Request> listOfRequests, Map<Integer, List<Request>> requestsWhichBoardsInNode,
             Map<Integer, List<Request>> requestsWhichLeavesInNode, Integer numberOfNodes, Integer vehicleCapacity,
@@ -86,7 +86,7 @@ public class AlgorithmsCalibration {
             List<Integer> loadIndexList, List<List<Long>> timeBetweenNodes, List<List<Long>> distanceBetweenNodes,
             Long timeWindows, Long currentTime, Integer lastNode) throws IOException {
 
-        double oldHypervolume = NSGAII(instanceName, parameters, nadirPoint, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
+        double oldHypervolume = NSGAII(instanceName,reducedDimension, parameters, nadirPoint, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
                 listOfRequests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
                 listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes,
                 timeWindows, currentTime, lastNode);
@@ -106,7 +106,7 @@ public class AlgorithmsCalibration {
             //entao -> k++
             List<Double> newParameters = new ArrayList<>(parameters);
             System.out.println("Neighborhood = " + neighborhoodList.get(k));
-            newHypervolume = firstImprovement(instanceName, neighborhoodList.get(k), newParameters, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
+            newHypervolume = firstImprovement(instanceName, reducedDimension, neighborhoodList.get(k), newParameters, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
                     listOfRequests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
                     listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes,
                     timeWindows, currentTime, lastNode);
@@ -126,7 +126,7 @@ public class AlgorithmsCalibration {
         return oldHypervolume;
     }
 
-    public static double firstImprovement(String instanceName, int neighborhoodNumber, List<Double> parameters, Integer populationSize, Integer maximumNumberOfGenerations,
+    public static double firstImprovement(String instanceName,  int reducedDimension, int neighborhoodNumber, List<Double> parameters, Integer populationSize, Integer maximumNumberOfGenerations,
             Integer maximumNumberOfExecutions, double probabilityOfMutation, double probabilityOfCrossover,
             List<Request> listOfRequests, Map<Integer, List<Request>> requestsWhichBoardsInNode,
             Map<Integer, List<Request>> requestsWhichLeavesInNode, Integer numberOfNodes, Integer vehicleCapacity,
@@ -138,56 +138,56 @@ public class AlgorithmsCalibration {
         switch (neighborhoodNumber) {
             case 1:
                 delta = 0.01;
-                hypervolume = addVariation(instanceName, delta, parameters, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
+                hypervolume = addVariation(instanceName, reducedDimension, delta, parameters, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
                         listOfRequests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
                         listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes,
                         timeWindows, currentTime, lastNode);
                 break;
             case 2:
                 delta = 0.02;
-                hypervolume = addVariation(instanceName, delta, parameters, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
+                hypervolume = addVariation(instanceName, reducedDimension, delta, parameters, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
                         listOfRequests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
                         listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes,
                         timeWindows, currentTime, lastNode);
                 break;
             case 3:
                 delta = 0.03;
-                hypervolume = addVariation(instanceName, delta, parameters, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
+                hypervolume = addVariation(instanceName, reducedDimension, delta, parameters, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
                         listOfRequests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
                         listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes,
                         timeWindows, currentTime, lastNode);
                 break;
             case 4:
                 delta = 0.1;
-                hypervolume = addVariation(instanceName, delta, parameters, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
+                hypervolume = addVariation(instanceName,  reducedDimension,delta, parameters, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
                         listOfRequests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
                         listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes,
                         timeWindows, currentTime, lastNode);
                 break;
             case 5:
                 delta = -0.01;
-                hypervolume = addVariation(instanceName, delta, parameters, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
+                hypervolume = addVariation(instanceName, reducedDimension, delta, parameters, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
                         listOfRequests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
                         listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes,
                         timeWindows, currentTime, lastNode);
                 break;
             case 6:
                 delta = -0.02;
-                hypervolume = addVariation(instanceName, delta, parameters, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
+                hypervolume = addVariation(instanceName, reducedDimension, delta, parameters, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
                         listOfRequests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
                         listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes,
                         timeWindows, currentTime, lastNode);
                 break;
             case 7:
                 delta = -0.03;
-                hypervolume = addVariation(instanceName, delta, parameters, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
+                hypervolume = addVariation(instanceName, reducedDimension, delta, parameters, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
                         listOfRequests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
                         listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes,
                         timeWindows, currentTime, lastNode);
                 break;
             case 8:
                 delta = -0.1;
-                hypervolume = addVariation(instanceName, delta, parameters, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
+                hypervolume = addVariation(instanceName, reducedDimension, delta, parameters, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
                         listOfRequests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
                         listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes,
                         timeWindows, currentTime, lastNode);
@@ -198,7 +198,7 @@ public class AlgorithmsCalibration {
         return hypervolume;
     }
 
-    private static double addVariation(String instanceName, double delta, List<Double> parameters, Integer populationSize, Integer maximumNumberOfGenerations,
+    private static double addVariation(String instanceName, int reducedDimension, double delta, List<Double> parameters, Integer populationSize, Integer maximumNumberOfGenerations,
             Integer maximumNumberOfExecutions, double probabilityOfMutation, double probabilityOfCrossover,
             List<Request> listOfRequests, Map<Integer, List<Request>> requestsWhichBoardsInNode,
             Map<Integer, List<Request>> requestsWhichLeavesInNode, Integer numberOfNodes, Integer vehicleCapacity,
@@ -226,12 +226,12 @@ public class AlgorithmsCalibration {
                     newParameters.set(j, y);
                 }
 
-                oldHypervolume = NSGAII(instanceName, parameters, nadirPoint, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
+                oldHypervolume = NSGAII(instanceName,reducedDimension, parameters, nadirPoint, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
                         listOfRequests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
                         listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes,
                         timeWindows, currentTime, lastNode);
 
-                newHypervolume = NSGAII(instanceName, newParameters, nadirPoint, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
+                newHypervolume = NSGAII(instanceName,reducedDimension, newParameters, nadirPoint, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
                         listOfRequests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
                         listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes,
                         timeWindows, currentTime, lastNode);
@@ -247,7 +247,7 @@ public class AlgorithmsCalibration {
         return oldHypervolume;
     }
 
-    public static double perturbation(String instanceName, List<Double> parameters, Integer populationSize, Integer maximumNumberOfGenerations,
+    public static double perturbation(String instanceName, int reducedDimension, List<Double> parameters, Integer populationSize, Integer maximumNumberOfGenerations,
             Integer maximumNumberOfExecutions, double probabilityOfMutation, double probabilityOfCrossover,
             List<Request> listOfRequests, Map<Integer, List<Request>> requestsWhichBoardsInNode,
             Map<Integer, List<Request>> requestsWhichLeavesInNode, Integer numberOfNodes, Integer vehicleCapacity,
@@ -276,7 +276,7 @@ public class AlgorithmsCalibration {
             parameters.set(i, x);
             parameters.set(j, y);
         }
-        double hypervolume = NSGAII(instanceName, parameters, nadirPoint, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
+        double hypervolume = NSGAII(instanceName, reducedDimension, parameters, nadirPoint, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
                 listOfRequests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
                 listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes,
                 timeWindows, currentTime, lastNode);
@@ -284,7 +284,7 @@ public class AlgorithmsCalibration {
         return hypervolume;
     }
 
-    public static void ils(String instanceName, List<Request> listOfRequests, Map<Integer, List<Request>> requestsWhichBoardsInNode,
+    public static void ils(String instanceName, int reducedDimension, List<Request> listOfRequests, Map<Integer, List<Request>> requestsWhichBoardsInNode,
             Map<Integer, List<Request>> requestsWhichLeavesInNode, Integer numberOfNodes, Set<Integer> setOfVehicles,
             List<Request> listOfNonAttendedRequests, List<Request> requestList, List<Integer> loadIndexList,
             List<List<Long>> timeBetweenNodes, List<List<Long>> distanceBetweenNodes, Long timeWindows, Long currentTime,
@@ -311,19 +311,19 @@ public class AlgorithmsCalibration {
         System.out.println("*                     Lambdas Calibration                     *");
         System.out.println("***************************************************************");
 
-        oldHypervolume = vnd(instanceName, parameters, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
+        oldHypervolume = vnd(instanceName, reducedDimension, parameters, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
                 listOfRequests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
                 listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes,
                 timeWindows, currentTime, lastNode);
 
         while (currentIteration < maxNumberOfIterations) {
             List<Double> newParameters = new ArrayList<>(parameters);
-            newHypervolume = perturbation(instanceName, newParameters, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
+            newHypervolume = perturbation(instanceName, reducedDimension, newParameters, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
                     listOfRequests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
                     listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes,
                     timeWindows, currentTime, lastNode);
 
-            newHypervolume = vnd(instanceName, newParameters, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
+            newHypervolume = vnd(instanceName,reducedDimension, newParameters, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
                     listOfRequests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
                     listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes,
                     timeWindows, currentTime, lastNode);

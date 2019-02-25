@@ -105,8 +105,46 @@ public class EvolutionaryAlgorithms {
         }
 
     }
+    
+    public static void TestAlgorithm(String instanceName, int reducedDimension, List<Double> parameters, List<Double> nadirPoint, Integer populationSize, Integer maximumNumberOfGenerations,
+            Integer maximumNumberOfExecutions, double probabilityOfMutation, double probabilityOfCrossover,
+            List<Request> requests, Map<Integer, List<Request>> requestsWhichBoardsInNode,
+            Map<Integer, List<Request>> requestsWhichLeavesInNode, Integer numberOfNodes, Integer vehicleCapacity,
+            Set<Integer> setOfVehicles, List<Request> listOfNonAttendedRequests, List<Request> requestList,
+            List<Integer> loadIndexList, List<List<Long>> timeBetweenNodes, List<List<Long>> distanceBetweenNodes,
+            Long timeWindows, Long currentTime, Integer lastNode) throws IOException {
+        List<ProblemSolution> population = new ArrayList<>();
+        
+        inicializeRandomPopulation(parameters, reducedDimension, population, populationSize, requests,
+                        requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
+                        requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
+        
+        for (int i = 0; i< population.size(); i++){
+            System.out.println(population.get(i));
+        }
+        
+    }
+    
+     public static void MOEAD(String instanceName, int reducedDimension, List<Double> parameters, List<Double> nadirPoint, Integer populationSize, Integer maximumNumberOfGenerations,
+            Integer maximumNumberOfExecutions, double probabilityOfMutation, double probabilityOfCrossover,
+            List<Request> requests, Map<Integer, List<Request>> requestsWhichBoardsInNode,
+            Map<Integer, List<Request>> requestsWhichLeavesInNode, Integer numberOfNodes, Integer vehicleCapacity,
+            Set<Integer> setOfVehicles, List<Request> listOfNonAttendedRequests, List<Request> requestList,
+            List<Integer> loadIndexList, List<List<Long>> timeBetweenNodes, List<List<Long>> distanceBetweenNodes,
+            Long timeWindows, Long currentTime, Integer lastNode) throws IOException {
+        List<ProblemSolution> population = new ArrayList<>();
+        
+        inicializeRandomPopulation(parameters,reducedDimension, population, populationSize, requests,
+                        requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
+                        requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
+        
+        for (int i = 0; i< population.size(); i++){
+            System.out.println(population.get(i));
+        }
+        
+    }
 
-    public static double NSGAII(String instanceName, List<Double> parameters, List<Double> nadirPoint, Integer populationSize, Integer maximumNumberOfGenerations,
+    public static double NSGAII(String instanceName, int reducedDimension, List<Double> parameters, List<Double> nadirPoint, Integer populationSize, Integer maximumNumberOfGenerations,
             Integer maximumNumberOfExecutions, double probabilityOfMutation, double probabilityOfCrossover,
             List<Request> requests, Map<Integer, List<Request>> requestsWhichBoardsInNode,
             Map<Integer, List<Request>> requestsWhichLeavesInNode, Integer numberOfNodes, Integer vehicleCapacity,
@@ -153,7 +191,7 @@ public class EvolutionaryAlgorithms {
 //                inicializePopulation(population, populationSize, requests,
 //                        requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
 //                        requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
-                inicializeRandomPopulation(parameters, population, populationSize, requests,
+                inicializeRandomPopulation(parameters, reducedDimension, population, populationSize, requests,
                         requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                         requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
 
@@ -293,7 +331,7 @@ public class EvolutionaryAlgorithms {
         return hypervolume;
     }
 
-    public static double CL_NSGAII(String instanceName, List<Double> parameters, List<Double> nadirPoint, Integer populationSize, Integer maximumNumberOfGenerations,
+    public static double CL_NSGAII(String instanceName, int reducedDimension, List<Double> parameters, List<Double> nadirPoint, Integer populationSize, Integer maximumNumberOfGenerations,
             Integer maximumNumberOfExecutions, double probabilityOfMutation, double probabilityOfCrossover,
             List<Request> requests, Map<Integer, List<Request>> requestsWhichBoardsInNode,
             Map<Integer, List<Request>> requestsWhichLeavesInNode, Integer numberOfNodes, Integer vehicleCapacity,
@@ -341,7 +379,7 @@ public class EvolutionaryAlgorithms {
 //                inicializePopulation(population, populationSize, requests,
 //                        requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
 //                        requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
-                inicializeRandomPopulation(parameters, population, populationSize, requests,
+                inicializeRandomPopulation(parameters, reducedDimension, population, populationSize, requests,
                         requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                         requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
 
@@ -637,7 +675,7 @@ public class EvolutionaryAlgorithms {
         });
     }
 
-    public static void SPEA2(String instanceName, List<Double> parameters, List<Double> nadirPoint, Integer populationSize,
+    public static void SPEA2(String instanceName, int reducedDimension, List<Double> parameters, List<Double> nadirPoint, Integer populationSize,
             Integer fileSize, Integer maximumNumberOfGenerations,
             Integer maximumNumberOfExecutions, double probabilityOfMutation, double probabilityOfCrossover,
             List<Request> requests, Map<Integer, List<Request>> requestsWhichBoardsInNode,
@@ -678,7 +716,7 @@ public class EvolutionaryAlgorithms {
 //                inicializePopulation(population, populationSize, requests,
 //                        requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
 //                        requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
-                inicializeRandomPopulation(parameters, population, populationSize, requests,
+                inicializeRandomPopulation(parameters, reducedDimension, population, populationSize, requests,
                         requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                         requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
 
