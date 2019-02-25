@@ -1230,6 +1230,55 @@ public class EvolutionaryAlgorithms {
         }
         removeEqualSolutions(nonDominated);
     }
+    
+    public static void genericDominanceAlgorithm(List<ProblemSolution> population, List<ProblemSolution> nonDominated) {
+        //--------------------------------------------------------------------------------------------------------------
+        //List<Solucao> naoDominados = new ArrayList<>();
+        nonDominated.clear();
+        for (int i = 0; i < population.size(); i++) {
+            population.get(i).setNumberOfSolutionsWichDomineThisSolution(0);
+            population.get(i).setNumberOfDominatedSolutionsByThisSolution(0);
+            population.get(i).setListOfSolutionsDominatedByThisSolution(new ArrayList<>());
+        }
+        //Ficar atento nesse reset aqui em cima, pode ser que de problema depois
+        //--------------------------------------------------------------------------------------------------------------
+
+        for (int i = 0; i < population.size(); i++) {
+            for (int j = 0; j < population.size(); j++) {
+                if (i != j) {
+                    //if((Pop.get(i).getF1()<Pop.get(j).getF1())&&(Pop.get(i).getF2()<Pop.get(j).getF2())){
+                    if (((population.get(i).getAggregatedObjective1() < population.get(j).getAggregatedObjective1()) && (population.get(i).getAggregatedObjective2() < population.get(j).getAggregatedObjective2())
+                            || (population.get(i).getAggregatedObjective1() < population.get(j).getAggregatedObjective1()) && (population.get(i).getAggregatedObjective2() == population.get(j).getAggregatedObjective2())
+                            || (population.get(i).getAggregatedObjective1() == population.get(j).getAggregatedObjective1()) && (population.get(i).getAggregatedObjective2() < population.get(j).getAggregatedObjective2()))) {
+                        population.get(i).addnDom();
+                        population.get(j).addeDom();
+                        population.get(i).addL(j);//adiciona a posição da solucao que é dominada - usado no NSGA-II
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < population.size(); i++) {//Determina S, número de soluções que são dominadas pela solução i
+            population.get(i).setS(population.get(i).getNumberOfDominatedSolutionsByThisSolution());
+        }
+
+        for (int i = 0; i < population.size(); i++) {
+            for (int j = 0; j < population.size(); j++) {
+                if (((population.get(j).getAggregatedObjective1() < population.get(i).getAggregatedObjective1()) && (population.get(j).getAggregatedObjective2() < population.get(i).getAggregatedObjective2())
+                        || (population.get(j).getAggregatedObjective1() < population.get(i).getAggregatedObjective1()) && (population.get(j).getAggregatedObjective2() == population.get(i).getAggregatedObjective2())
+                        || (population.get(j).getAggregatedObjective1() == population.get(i).getAggregatedObjective1()) && (population.get(j).getAggregatedObjective2() < population.get(i).getAggregatedObjective2()))) {
+                    population.get(i).setR(population.get(i).getR() + population.get(j).getNumberOfDominatedSolutionsByThisSolution());
+                }
+            }
+        }
+
+        for (int i = 0; i < population.size(); i++) {
+            if (population.get(i).getNumberOfSolutionsWichDomineThisSolution() == 0) {
+                nonDominated.add(population.get(i));
+            }
+        }
+        removeEqualSolutions(nonDominated);
+    }
 
     public static void normalizeObjectiveFunctionsValues2(List<ProblemSolution> Pop) {
         double max = -999999999;
