@@ -28,7 +28,7 @@ import org.jfree.chart.JFreeChart;
  * @author Renan
  */
 public class EvolutionaryAlgorithms {
-    
+
     public static void TestAlgorithm(String instanceName, int reducedDimension, List<Double> parameters, List<Double> nadirPoint, Integer populationSize, Integer maximumNumberOfGenerations,
             Integer maximumNumberOfExecutions, double probabilityOfMutation, double probabilityOfCrossover,
             List<Request> requests, Map<Integer, List<Request>> requestsWhichBoardsInNode,
@@ -37,18 +37,23 @@ public class EvolutionaryAlgorithms {
             List<Integer> loadIndexList, List<List<Long>> timeBetweenNodes, List<List<Long>> distanceBetweenNodes,
             Long timeWindows, Long currentTime, Integer lastNode) throws IOException {
         List<ProblemSolution> population = new ArrayList<>();
-        
+
         inicializeRandomPopulation(parameters, reducedDimension, population, populationSize, requests,
-                        requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
-                        requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
-        
-        for (int i = 0; i< population.size(); i++){
+                requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
+                requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
+        List<ProblemSolution> nonDominatedSolutions = new ArrayList();
+        genericDominanceAlgorithm(population, nonDominatedSolutions);//possivel local do erro
+
+        for (int i = 0; i < population.size(); i++) {
             System.out.println(population.get(i));
         }
-        
+        System.out.println("Non-dominated solutions");
+        for (int i = 0; i < nonDominatedSolutions.size(); i++) {
+            System.out.println(nonDominatedSolutions.get(i));
+        }
     }
-    
-     public static void MOEAD(String instanceName, int reducedDimension, List<Double> parameters, List<Double> nadirPoint, Integer populationSize, Integer maximumNumberOfGenerations,
+
+    public static void MOEAD(String instanceName, int reducedDimension, List<Double> parameters, List<Double> nadirPoint, Integer populationSize, Integer maximumNumberOfGenerations,
             Integer maximumNumberOfExecutions, double probabilityOfMutation, double probabilityOfCrossover,
             List<Request> requests, Map<Integer, List<Request>> requestsWhichBoardsInNode,
             Map<Integer, List<Request>> requestsWhichLeavesInNode, Integer numberOfNodes, Integer vehicleCapacity,
@@ -56,15 +61,15 @@ public class EvolutionaryAlgorithms {
             List<Integer> loadIndexList, List<List<Long>> timeBetweenNodes, List<List<Long>> distanceBetweenNodes,
             Long timeWindows, Long currentTime, Integer lastNode) throws IOException {
         List<ProblemSolution> population = new ArrayList<>();
-        
-        inicializeRandomPopulation(parameters,reducedDimension, population, populationSize, requests,
-                        requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
-                        requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
-        
-        for (int i = 0; i< population.size(); i++){
+
+        inicializeRandomPopulation(parameters, reducedDimension, population, populationSize, requests,
+                requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
+                requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
+
+        for (int i = 0; i < population.size(); i++) {
             System.out.println(population.get(i));
         }
-        
+
     }
 
     public static double NSGAII(String instanceName, int reducedDimension, List<Double> parameters, List<Double> nadirPoint, Integer populationSize, Integer maximumNumberOfGenerations,
@@ -361,9 +366,9 @@ public class EvolutionaryAlgorithms {
                     fileWithSolutions.addAll(nonDominatedSolutions);
 
 //                    if (actualGeneration % 10 == 0) {
-                        hc = new HierarchicalCluster(getMatrixOfObjetives(population, parameters), numberOfClusters, CorrelationType.KENDALL);
-                        hc.reduce();
-                        hc.getTransfomationList().forEach(System.out::println);
+                    hc = new HierarchicalCluster(getMatrixOfObjetives(population, parameters), numberOfClusters, CorrelationType.KENDALL);
+                    hc.reduce();
+                    hc.getTransfomationList().forEach(System.out::println);
 //                    }
 
                     nonDominatedFrontiersSortingAlgorithm(offspring, nonDominatedFronts);
@@ -1230,7 +1235,8 @@ public class EvolutionaryAlgorithms {
         }
         removeEqualSolutions(nonDominated);
     }
-    
+
+    //alterar essa função aqui para uma dominancia genérica
     public static void genericDominanceAlgorithm(List<ProblemSolution> population, List<ProblemSolution> nonDominated) {
         //--------------------------------------------------------------------------------------------------------------
         //List<Solucao> naoDominados = new ArrayList<>();
@@ -1243,16 +1249,29 @@ public class EvolutionaryAlgorithms {
         //Ficar atento nesse reset aqui em cima, pode ser que de problema depois
         //--------------------------------------------------------------------------------------------------------------
 
-        for (int i = 0; i < population.size(); i++) {
-            for (int j = 0; j < population.size(); j++) {
-                if (i != j) {
-                    //if((Pop.get(i).getF1()<Pop.get(j).getF1())&&(Pop.get(i).getF2()<Pop.get(j).getF2())){
-                    if (((population.get(i).getAggregatedObjective1() < population.get(j).getAggregatedObjective1()) && (population.get(i).getAggregatedObjective2() < population.get(j).getAggregatedObjective2())
-                            || (population.get(i).getAggregatedObjective1() < population.get(j).getAggregatedObjective1()) && (population.get(i).getAggregatedObjective2() == population.get(j).getAggregatedObjective2())
-                            || (population.get(i).getAggregatedObjective1() == population.get(j).getAggregatedObjective1()) && (population.get(i).getAggregatedObjective2() < population.get(j).getAggregatedObjective2()))) {
-                        population.get(i).addnDom();
-                        population.get(j).addeDom();
-                        population.get(i).addL(j);//adiciona a posição da solucao que é dominada - usado no NSGA-II
+        for (int p = 0; p < population.size(); p++) {
+            for (int q = 0; q < population.size(); q++) {
+                if (p != q) {
+                    double[] p_vector = population.get(p).getAggregatedObjectives().clone();
+                    double[] q_vector = population.get(q).getAggregatedObjectives().clone();
+                    
+                    int sum_greater_equal = 0;
+                    int sum_equal = 0;
+                    for (int r = 0; r < p_vector.length; r++) {
+                        if(p_vector[r] >= q_vector[r]){
+                            sum_greater_equal++;
+                        }
+                        if(p_vector[r] == q_vector[r]){
+                            sum_equal++;
+                        }
+                    }
+                    
+                    if(sum_greater_equal == p_vector.length){
+                        if(sum_equal != p_vector.length){
+                            System.out.println("Found a domination");
+                            System.out.println(population.get(p));
+                            System.out.println(population.get(q));
+                        }
                     }
                 }
             }

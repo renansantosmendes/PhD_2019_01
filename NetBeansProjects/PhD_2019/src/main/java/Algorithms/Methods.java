@@ -540,10 +540,10 @@ public class Methods {
             List<Request> U, List<Request> P, List<Integer> m, List<List<Long>> d, List<List<Long>> c,
             Long TimeWindows, Long currentTime, Integer lastNode) {
 
-        ProblemSolution S = new ProblemSolution();
+        ProblemSolution S = new ProblemSolution(reducedDimension);
         S.setSolution(GeraSolucaoAleatoria(reducedDimension, Pop, TamPop, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode));
         for (int i = 0; i < TamPop; i++) {
-            ProblemSolution S2 = new ProblemSolution();
+            ProblemSolution S2 = new ProblemSolution(reducedDimension);
             S2.setSolution(PerturbacaoSemente(i, reducedDimension, parameters, S, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows));
             Pop.add(S2);
         }

@@ -354,7 +354,13 @@ public class Algorithms {
         S.setAggregatedObjective2(parameters.get(0) * S.getTotalDistance() + parameters.get(8) * S.getTotalOccupationRate()
                 + parameters.get(7) * S.getDeliveryTimeWindowAntecipation() + parameters.get(2) * S.getTotalRouteTimeChargeBanlance()
                 + parameters.get(4) * S.getNumberOfVehicles());
-
+        
+        double[] objectives = new double[S.getAggregatedObjectives().length];
+        objectives[0] = S.getTotalDistance();
+        objectives[1] = S.getTotalDeliveryDelay();
+        objectives[2] = S.getTotalTravelTime();
+        
+        S.setAggregatedObjectives(objectives);
         //---------------------------------------------------------------------------------------------------------------
         // Aggregation using RP
         //---------------------------------------------------------------------------------------------------------------
@@ -757,7 +763,7 @@ public class Algorithms {
         P.addAll(listRequests);
 
         //Step 1
-        ProblemSolution solution = new ProblemSolution();
+        ProblemSolution solution = new ProblemSolution(reducedDimension);
         solution.setLinkedRouteList(vizinho);
         String log = "";
 
@@ -1022,11 +1028,12 @@ public class Algorithms {
                 }
             }
         }
+        solution.setAggregatedObjectives(new double[reducedDimension]);
         solution.setNonAttendedRequestsList(U);
         evaluateSolution(solution, c, Qmax, listRequests);
         evaluateAggregatedObjectiveFunctions(parameters, solution);
         solution.setLogger(log);
-        solution.setAggregatedObjectives(new double[reducedDimension]);
+        
         
         
         return solution;
@@ -1403,7 +1410,7 @@ public class Algorithms {
         //Collections.shuffle(original);
         original.add(posicao1, original.remove(posicao2));
         //}
-        ProblemSolution S = new ProblemSolution();
+        ProblemSolution S = new ProblemSolution(reducedDimension);
         S.setSolution(rebuildSolution(reducedDimension, parameters, original, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
         s.setSolution(S);
 

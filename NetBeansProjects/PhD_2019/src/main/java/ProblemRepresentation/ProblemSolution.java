@@ -95,6 +95,51 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
         logger = "";
     }
 
+    
+    public ProblemSolution(int reducedDimension) {
+        setOfRoutes = new HashSet<Route>();
+        listOfSolutionsDominatedByThisSolution = new ArrayList<>();
+        objectiveFunction = -1;
+        totalDistance = -1;
+        totalDeliveryDelay = -1;
+        numberOfNonAttendedRequests = -1;
+        numberOfVehicles = -1;
+        totalTravelTime = -1;
+        totalWaintingTime = -1;
+        deliveryTimeWindowAntecipation = -1;
+        totalRouteTimeChargeBanlance = -1;
+        totalOccupationRate = -1;
+        objectives = new ArrayList<>();
+
+        totalDistanceNormalized = -1;
+        totalDeliveryDelayNormalized = -1;
+        numberOfNonAttendedRequestsNormalized = -1;
+        numberOfVehiclesNormalized = -1;
+        totalTravelTimeNormalized = -1;
+        totalWaintingTimeNormalized = -1;
+        deliveryTimeWindowAntecipationNormalized = -1;
+        totalRouteTimeChargeBanlanceNormalized = -1;
+        totalOccupationRateNormalized = -1;
+
+        aggregatedObjective1 = -1;
+        aggregatedObjective2 = -1;
+        aggregatedObjectives = new double [reducedDimension];
+        aggregatedObjective1Normalized = 0;
+        aggregatedObjective2Normalized = 0;
+
+        R = 0;
+        S = 0;
+        fitness = -0.9;
+        dif = -1;
+        crowdDistance = 0.0;
+        numberOfDominatedSolutionsByThisSolution = 0;
+        numberOfSolutionsWichDomineThisSolution = 0;
+        nonAttendedRequestsList = new ArrayList<Request>();
+        linkedRouteList = new ArrayList<Integer>();
+        logger = "";
+    }
+    
+    
     public ProblemSolution(int numberOfAggregatedObjectives, List<Double> objectives, Set<Route> setOfRoutes, double objectiveFunction, long totalDistance,
             long totalDeliveryDelay, int numberOfNonAttendedRequests, int numberOfVehicles, long totalTravelTime,
             long totalWaintingTime, long deliveryTimeWindowAntecipation, long totalRouteTimeChargeBanlance,
@@ -184,6 +229,8 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
         totalOccupationRateNormalized = solution.getTotalOccupationRateNormalized();
 
         aggregatedObjectives = solution.getAggregatedObjectives();
+        numberOfAggregatedObjectives = solution.getNumberOfAggregatedObjectives();
+        
         aggregatedObjective1 = solution.getAggregatedObjective1();
         aggregatedObjective2 = solution.getAggregatedObjective2();
         aggregatedObjective1Normalized = solution.getAggregatedObjective1Normalized();
@@ -228,6 +275,8 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
         setTotalOccupationRateNormalized(solution.getTotalOccupationRateNormalized());
 
         setAggregatedObjectives(solution.getAggregatedObjectives().clone());
+        setNumberOfAggregatedObjectives(solution.getNumberOfAggregatedObjectives());
+        
         setAggregatedObjective1(solution.getAggregatedObjective1());
         setAggregatedObjective2(solution.getAggregatedObjective2());
         setAggregatedObjective1Normalized(solution.getAggregatedObjective1Normalized());
@@ -305,11 +354,19 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
 //                + lambdas.get(5) * totalTravelTime + lambdas.get(6) * totalWaintingTime);
 //        this.objectives.add((double) lambdas.get(0) * totalDistance + lambdas.get(2) * totalRouteTimeChargeBanlance
 //                + lambdas.get(4) * numberOfVehicles + lambdas.get(7) * deliveryTimeWindowAntecipation
-//                + lambdas.get(8) * totalOccupationRate);
+//                + lambdas.get(8) * totalOccupatioNumberOfNumberOfAggregatedObjectives()AggregatedObjectives()nRate);
     }
 
     public double[] getAggregatedObjectives(){
         return this.aggregatedObjectives.clone();
+    }
+    
+    public int getNumberOfAggregatedObjectives(){
+        return this.numberOfAggregatedObjectives;
+    }
+    
+    public void setNumberOfAggregatedObjectives(int reducedDimension){
+        this.numberOfAggregatedObjectives = reducedDimension;
     }
     
     public List<Double> getListOfAggregatedObjectives(){
