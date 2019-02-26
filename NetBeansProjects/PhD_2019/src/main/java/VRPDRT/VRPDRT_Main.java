@@ -59,8 +59,8 @@ public class VRPDRT_Main {
                 requestTimeWindows, instanceSize);
         final Integer numberOfVehicles = 250;
 
-        Integer populationSize = 20;
-        Integer maximumNumberOfGenerations = 1000;
+        Integer populationSize = 100;
+        Integer maximumNumberOfGenerations = 20;
         Integer maximumNumberOfExecutions = 4;
         double probabilityOfMutation = 0.02;
         double probabilityOfCrossover = 0.7;
@@ -103,7 +103,7 @@ public class VRPDRT_Main {
            
         
         
-        TestAlgorithm(instanceName, reducedDimension, parameters, nadirPoint, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
+        NSGAII(instanceName, reducedDimension, parameters, nadirPoint, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
                 requests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
                 listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes,
                 timeWindows, currentTime, lastNode);

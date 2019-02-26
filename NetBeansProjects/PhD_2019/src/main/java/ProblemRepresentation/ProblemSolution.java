@@ -830,40 +830,28 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
     public String toString() {
         DecimalFormat df = new DecimalFormat("0.0000");
 
-//        String s = df.format(aggregatedObjective1) + "\t" + df.format(aggregatedObjective2) + "\t" +/*aggregatedObjective1Normalized + "\t"+ 
-//                aggregatedObjective2Normalized + "\t"+*/ totalDistance + "\t" + totalDeliveryDelay
-//                + "\t" + totalRouteTimeChargeBanlance + "\t" + numberOfNonAttendedRequests + "\t" + numberOfVehicles
-//                + "\t" + totalTravelTime + "\t" + totalWaintingTime + "\t" + deliveryTimeWindowAntecipation + "\t"
-//                + "\t" + df.format(totalOccupationRate) + "\t";
-//        String s = this.objectiveFunction + "\n" +df.format(aggregatedObjective1).replace(",", ".") + "\t" + df.format(aggregatedObjective2).replace(",", ".") + "\t" + totalDistance + "\t"
-//                + totalDeliveryDelay + "\t" + totalRouteTimeChargeBanlance + "\t" + numberOfNonAttendedRequests + "\t"
-//                + numberOfVehicles + "\t" + totalWaintingTime + "\t" + totalTravelTime + "\t" + deliveryTimeWindowAntecipation
-//                + "\t" + totalOccupationRate + "\t";
         String s = this.objectives + "\t" + getListOfAggregatedObjectives() + "\t"+ totalDistance + "\t"
                 + totalDeliveryDelay + "\t" + totalRouteTimeChargeBanlance + "\t" + numberOfNonAttendedRequests + "\t"
                 + numberOfVehicles + "\t" + totalWaintingTime + "\t" + totalTravelTime + "\t" + deliveryTimeWindowAntecipation
                 + "\t" + totalOccupationRate + "\t";
+        s = "" + getListOfAggregatedObjectives();
+//        int indice = 1;
+//        String listaAtendimento = " ";
+//        for (Route r : setOfRoutes) {
+//            s += "R" + indice + ": " + r + " ";
+//            listaAtendimento += "R" + indice++ + ": ";
+//            for (Request req : r.getRequestAttendanceList()) {
+//                listaAtendimento += req + " ";
+//            }
+//        }
 
-//        String s = aggregatedObjective1Normalized + "\t" + aggregatedObjective2Normalized + "\t" + crowdDistance + "\t" +/*aggregatedObjective1Normalized + "\t"+ 
-//                aggregatedObjective2Normalized + "\t"+*/ totalDistanceNormalized + "\t" + totalDeliveryDelayNormalized
-//                + "\t" + totalRouteTimeChargeBanlanceNormalized + "\t" + numberOfNonAttendedRequestsNormalized + "\t" + numberOfVehiclesNormalized
-//                + "\t" + totalTravelTimeNormalized + "\t" + totalWaintingTimeNormalized + "\t" + deliveryTimeWindowAntecipationNormalized + "\t"
-//                + "\t" + totalOccupationRateNormalized + "\t";
-        int indice = 1;
-        String listaAtendimento = " ";
-        for (Route r : setOfRoutes) {
-            s += "R" + indice + ": " + r + " ";
-            listaAtendimento += "R" + indice++ + ": ";
-            for (Request req : r.getRequestAttendanceList()) {
-                listaAtendimento += req + " ";
-            }
-        }
+//        s += "\t";
 
-        s += "\t";
         //for(Request req : r.listaAtendimento)
 //        s += listaAtendimento;// + " ";
 
-        s += "\t";
+//        s += "\t";
+
 //		for(Request req : listaNaoAtendimento)
 //			s += req + " ";
 //

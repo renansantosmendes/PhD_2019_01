@@ -130,7 +130,7 @@ public class EvolutionaryAlgorithms {
                 evaluateAggregatedObjectiveFunctions(parameters, population);
 
                 //printPopulation(population);
-                dominanceAlgorithm(population, nonDominatedSolutions);//possivel local do erro
+                genericDominanceAlgorithm(population, nonDominatedSolutions);//possivel local do erro
                 maximumSize = population.size();
                 offspring.addAll(population);
                 nonDominatedFrontiersSortingAlgorithm(offspring, nonDominatedFronts);
@@ -169,7 +169,7 @@ public class EvolutionaryAlgorithms {
                 int actualGeneration = 0;
                 while (actualGeneration < maximumNumberOfGenerations) {
                     //saveCurrentPopulation(population, actualGeneration, folderName, fileName);
-                    dominanceAlgorithm(offspring, nonDominatedSolutions);
+                    genericDominanceAlgorithm(offspring, nonDominatedSolutions);
                     fileWithSolutions.addAll(nonDominatedSolutions);
                     nonDominatedFrontiersSortingAlgorithm(offspring, nonDominatedFronts);
                     fitnessEvaluationForMultiObjectiveOptimization(offspring);
@@ -180,7 +180,7 @@ public class EvolutionaryAlgorithms {
 
                     nonDominatedFrontiersSortingAlgorithm(parentsAndOffspring, nonDominatedFronts);
                     fitnessEvaluationForMultiObjectiveOptimization(parentsAndOffspring);
-                    dominanceAlgorithm(parentsAndOffspring, nonDominatedSolutions);
+                    genericDominanceAlgorithm(parentsAndOffspring, nonDominatedSolutions);
 
                     updateNSGASolutionsFileTest(parentsAndOffspring, fileWithSolutions, maximumSize);
                     //normalizeObjectiveFunctionsValues(fileWithSolutions);
@@ -229,7 +229,7 @@ public class EvolutionaryAlgorithms {
                 hypervolumes.add(listOfHypervolumes);
             }
 
-            dominanceAlgorithm(combinedPareto, finalPareto);
+            genericDominanceAlgorithm(combinedPareto, finalPareto);
             printPopulation(finalPareto);
             for (ProblemSolution individual : finalPareto) {
                 printStreamForCombinedPareto.print(individual + "\n");
@@ -238,8 +238,8 @@ public class EvolutionaryAlgorithms {
                 printStreamForAllObjectives2.print(individual.getAggregatedObjective1() + "\t" + individual.getAggregatedObjective2() + "\n");
             }
 
-            new ResultsGraphicsForParetoCombinedSet(finalPareto, "ResultGraphics", "CombinedParetoSet");
-            hypervolume = smetric(finalPareto, nadirPoint);
+//            new ResultsGraphicsForParetoCombinedSet(finalPareto, "ResultGraphics", "CombinedParetoSet");
+//            hypervolume = smetric(finalPareto, nadirPoint);
             //hypervolume = smetric(finalPareto);
             System.out.println("S-Metric = " + hypervolume);
 //            System.out.println("Final Pareto");
@@ -250,7 +250,7 @@ public class EvolutionaryAlgorithms {
 //            );
 
             //System.out.println("List of Lists = " + hypervolumes);
-            saveHypervolumesDatas(hypervolumes, maximumNumberOfGenerations, maximumNumberOfExecutions, folderName, fileName);
+//            saveHypervolumesDatas(hypervolumes, maximumNumberOfGenerations, maximumNumberOfExecutions, folderName, fileName);
 //            finalPareto.get(0).getStaticMapForEveryRoute(new NodeDAO("bh_nodes_little").getListOfNodes(),
 //                    "adjacencies_bh_nodes_little_test", "bh_nodes_little");
         } catch (FileNotFoundException e) {
@@ -1246,31 +1246,34 @@ public class EvolutionaryAlgorithms {
             population.get(i).setNumberOfDominatedSolutionsByThisSolution(0);
             population.get(i).setListOfSolutionsDominatedByThisSolution(new ArrayList<>());
         }
-        //Ficar atento nesse reset aqui em cima, pode ser que de problema depois
-        //--------------------------------------------------------------------------------------------------------------
 
         for (int p = 0; p < population.size(); p++) {
             for (int q = 0; q < population.size(); q++) {
                 if (p != q) {
                     double[] p_vector = population.get(p).getAggregatedObjectives().clone();
                     double[] q_vector = population.get(q).getAggregatedObjectives().clone();
-                    
+
                     int sum_greater_equal = 0;
                     int sum_equal = 0;
                     for (int r = 0; r < p_vector.length; r++) {
-                        if(p_vector[r] >= q_vector[r]){
+                        if (p_vector[r] >= q_vector[r]) {
                             sum_greater_equal++;
                         }
-                        if(p_vector[r] == q_vector[r]){
+                        if (p_vector[r] == q_vector[r]) {
                             sum_equal++;
                         }
                     }
-                    
-                    if(sum_greater_equal == p_vector.length){
-                        if(sum_equal != p_vector.length){
-                            System.out.println("Found a domination");
-                            System.out.println(population.get(p));
-                            System.out.println(population.get(q));
+
+                    if (sum_greater_equal == p_vector.length) {
+                        if (sum_equal != p_vector.length) {//se entrar, q domina p
+//                            System.out.println("Found a domination");
+//                            System.out.println(population.get(p));
+//                            System.out.println(population.get(q));
+
+                            population.get(q).addnDom();
+                            population.get(p).addeDom();
+                            population.get(q).addL(p);//adiciona a p
+                            population.get(q).setR(population.get(q).getR() + population.get(p).getNumberOfDominatedSolutionsByThisSolution());
                         }
                     }
                 }
@@ -1281,16 +1284,32 @@ public class EvolutionaryAlgorithms {
             population.get(i).setS(population.get(i).getNumberOfDominatedSolutionsByThisSolution());
         }
 
-        for (int i = 0; i < population.size(); i++) {
-            for (int j = 0; j < population.size(); j++) {
-                if (((population.get(j).getAggregatedObjective1() < population.get(i).getAggregatedObjective1()) && (population.get(j).getAggregatedObjective2() < population.get(i).getAggregatedObjective2())
-                        || (population.get(j).getAggregatedObjective1() < population.get(i).getAggregatedObjective1()) && (population.get(j).getAggregatedObjective2() == population.get(i).getAggregatedObjective2())
-                        || (population.get(j).getAggregatedObjective1() == population.get(i).getAggregatedObjective1()) && (population.get(j).getAggregatedObjective2() < population.get(i).getAggregatedObjective2()))) {
-                    population.get(i).setR(population.get(i).getR() + population.get(j).getNumberOfDominatedSolutionsByThisSolution());
+        for (int p = 0; p < population.size(); p++) {
+            for (int q = 0; q < population.size(); q++) {
+                if (p != q) {
+                    double[] p_vector = population.get(p).getAggregatedObjectives().clone();
+                    double[] q_vector = population.get(q).getAggregatedObjectives().clone();
+
+                    int sum_greater_equal = 0;
+                    int sum_equal = 0;
+                    for (int r = 0; r < p_vector.length; r++) {
+                        if (p_vector[r] >= q_vector[r]) {
+                            sum_greater_equal++;
+                        }
+                        if (p_vector[r] == q_vector[r]) {
+                            sum_equal++;
+                        }
+                    }
+
+                    if (sum_greater_equal >= p_vector.length/2) {
+                        if (sum_equal != p_vector.length) {//se entrar, q domina p
+                            population.get(q).setR(population.get(q).getR() + population.get(p).getNumberOfDominatedSolutionsByThisSolution());
+                        }
+                    }
                 }
             }
         }
-
+        
         for (int i = 0; i < population.size(); i++) {
             if (population.get(i).getNumberOfSolutionsWichDomineThisSolution() == 0) {
                 nonDominated.add(population.get(i));

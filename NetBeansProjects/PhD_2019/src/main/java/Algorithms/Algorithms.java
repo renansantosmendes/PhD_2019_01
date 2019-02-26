@@ -27,10 +27,10 @@ public class Algorithms {
         this.data.readProblemData();
     }
 
-    public static int getEvaluationNumber(){
+    public static int getEvaluationNumber() {
         return evaluationNumber;
     }
-    
+
     public static InstanceData getData() {
         return data;
     }
@@ -354,12 +354,21 @@ public class Algorithms {
         S.setAggregatedObjective2(parameters.get(0) * S.getTotalDistance() + parameters.get(8) * S.getTotalOccupationRate()
                 + parameters.get(7) * S.getDeliveryTimeWindowAntecipation() + parameters.get(2) * S.getTotalRouteTimeChargeBanlance()
                 + parameters.get(4) * S.getNumberOfVehicles());
-        
+
         double[] objectives = new double[S.getAggregatedObjectives().length];
         objectives[0] = S.getTotalDistance();
         objectives[1] = S.getTotalDeliveryDelay();
         objectives[2] = S.getTotalTravelTime();
+
+        objectives[0] = parameters.get(1) * S.getTotalDeliveryDelay() + parameters.get(5) * S.getTotalTravelTime()
+                + parameters.get(3) * S.getNumberOfNonAttendedRequests();
         
+        objectives[1] = parameters.get(0) * S.getTotalDistance() + parameters.get(8) * S.getTotalOccupationRate()
+                + parameters.get(7) * S.getDeliveryTimeWindowAntecipation();
+        
+        objectives[2] = + parameters.get(2) * S.getTotalRouteTimeChargeBanlance()
+                + parameters.get(4) * S.getNumberOfVehicles() + parameters.get(6) * S.getTotalWaintingTime();
+
         S.setAggregatedObjectives(objectives);
         //---------------------------------------------------------------------------------------------------------------
         // Aggregation using RP
@@ -1033,9 +1042,7 @@ public class Algorithms {
         evaluateSolution(solution, c, Qmax, listRequests);
         evaluateAggregatedObjectiveFunctions(parameters, solution);
         solution.setLogger(log);
-        
-        
-        
+
         return solution;
     }
 
@@ -1208,7 +1215,7 @@ public class Algorithms {
 
     }
 
-    public static ProblemSolution VariableNeighborhoodDescend(int reducedDimension,List<Double> parameters, ProblemSolution s_0, List<Request> listRequests, List<Request> P, Set<Integer> K,
+    public static ProblemSolution VariableNeighborhoodDescend(int reducedDimension, List<Double> parameters, ProblemSolution s_0, List<Request> listRequests, List<Request> P, Set<Integer> K,
             List<Request> U, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout, List<List<Long>> d,
             List<List<Long>> c, Integer n, Integer Qmax, Long TimeWindows) {
 
@@ -1238,7 +1245,7 @@ public class Algorithms {
         return melhor;
     }
 
-    public static ProblemSolution RVND(int reducedDimension,List<Double> parameters, ProblemSolution s_0, List<Request> listRequests, List<Request> P, Set<Integer> K, List<Request> U,
+    public static ProblemSolution RVND(int reducedDimension, List<Double> parameters, ProblemSolution s_0, List<Request> listRequests, List<Request> P, Set<Integer> K, List<Request> U,
             Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout, List<List<Long>> d, List<List<Long>> c,
             Integer n, Integer Qmax, Long TimeWindows) {
 
@@ -1274,7 +1281,7 @@ public class Algorithms {
         return melhor;
     }
 
-    public static ProblemSolution VNS(int reducedDimension,List<Double> parameters, ProblemSolution s_0, List<Request> listRequests, List<Request> P, Set<Integer> K,
+    public static ProblemSolution VNS(int reducedDimension, List<Double> parameters, ProblemSolution s_0, List<Request> listRequests, List<Request> P, Set<Integer> K,
             List<Request> U, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout, List<List<Long>> d,
             List<List<Long>> c, Integer n, Integer Qmax, Long TimeWindows) {
 
