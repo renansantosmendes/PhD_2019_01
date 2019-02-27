@@ -122,6 +122,11 @@ public class EvolutionaryAlgorithms {
                 inicializeRandomPopulation(parameters, reducedDimension, population, populationSize, requests,
                         requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                         requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
+                if (executionCounter == 0) {
+                    for (int i = 0; i < population.size(); i++) {
+                        System.out.println(population.get(i));
+                    }
+                }
 
                 int numberOfClusters = 2;
                 //normalizeObjectiveFunctionsValues(population);
@@ -655,7 +660,7 @@ public class EvolutionaryAlgorithms {
                 evaluateAggregatedObjectiveFunctions(parameters, population);
 
                 tamMax = population.size();
-                dominanceAlgorithm(population, file);
+                genericDominanceAlgorithm(population, file);
                 evaluateDistanceBetweenSolutions(population, dist);
 
                 int actualGeneration = 0;
@@ -666,10 +671,10 @@ public class EvolutionaryAlgorithms {
                     fitnessEvaluationForSPEA2(population, dist, populationSize, fileSize);
                     parentsAndOffspring.addAll(population);
                     parentsAndOffspring.addAll(file);
-                    dominanceAlgorithm(parentsAndOffspring, nonDominated);
+                    genericDominanceAlgorithm(parentsAndOffspring, nonDominated);
                     updateSPEA2SolutionsFile(parentsAndOffspring, file, fileSize);
 
-                    dominanceAlgorithm(file, nonDominated);
+                    genericDominanceAlgorithm(file, nonDominated);
                     rouletteWheelSelectionAlgorithm(parents, file, tamMax);
 
                     onePointCrossover(reducedDimension, parameters, population, file, fileSize, probabilityOfCrossover, parents, requests,
@@ -689,7 +694,7 @@ public class EvolutionaryAlgorithms {
                     normalizeObjectiveFunctionsValues(file);
                     normalizeObjectiveFunctionsForSolutions(file);
                     normalizeAggregatedObjectiveFunctions(file, nadirPoint);
-                    dominanceAlgorithm(file, nonDominated);
+                    genericDominanceAlgorithm(file, nonDominated);
                     actualGeneration++;
                     parentsAndOffspring.clear();
                     listOfHypervolumes.add(smetric(nonDominated, nadirPoint));
@@ -704,7 +709,7 @@ public class EvolutionaryAlgorithms {
                 hypervolumes.add(listOfHypervolumes);
             }
             List<ProblemSolution> finalPareto = new ArrayList<>();
-            dominanceAlgorithm(combinedPareto, finalPareto);
+            genericDominanceAlgorithm(combinedPareto, finalPareto);
             PrintStream saida4 = new PrintStream(folderName + "/spea_pareto.txt");
             PrintStream saida5 = new PrintStream(folderName + "/spea_pareto_reduced.txt");
             PrintStream saida6 = new PrintStream(folderName + "/spea_pareto_9fo.txt");
@@ -717,8 +722,8 @@ public class EvolutionaryAlgorithms {
             printPopulation(finalPareto);
 
             //new ResultsGraphicsForParetoCombinedSet(finalPareto, "ResultGraphics", "CombinedParetoSet");
-            hypervolume = smetric(finalPareto, nadirPoint);
-            saveHypervolumesDatas(hypervolumes, maximumNumberOfGenerations, maximumNumberOfExecutions, folderName, fileName);
+//            hypervolume = smetric(finalPareto, nadirPoint);
+//            saveHypervolumesDatas(hypervolumes, maximumNumberOfGenerations, maximumNumberOfExecutions, folderName, fileName);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -1301,7 +1306,7 @@ public class EvolutionaryAlgorithms {
                         }
                     }
 
-                    if (sum_greater_equal >= p_vector.length/2) {
+                    if (sum_greater_equal >= p_vector.length / 2) {
                         if (sum_equal != p_vector.length) {//se entrar, q domina p
                             population.get(q).setR(population.get(q).getR() + population.get(p).getNumberOfDominatedSolutionsByThisSolution());
                         }
@@ -1309,7 +1314,7 @@ public class EvolutionaryAlgorithms {
                 }
             }
         }
-        
+
         for (int i = 0; i < population.size(); i++) {
             if (population.get(i).getNumberOfSolutionsWichDomineThisSolution() == 0) {
                 nonDominated.add(population.get(i));
