@@ -360,14 +360,22 @@ public class Algorithms {
         objectives[1] = S.getTotalDeliveryDelay();
         objectives[2] = S.getTotalTravelTime();
 
-        objectives[0] = parameters.get(1) * S.getTotalDeliveryDelay() + parameters.get(5) * S.getTotalTravelTime()
-                + parameters.get(3) * S.getNumberOfNonAttendedRequests();
+//        objectives[0] = parameters.get(1) * S.getTotalDeliveryDelay() + parameters.get(5) * S.getTotalTravelTime()
+//                + parameters.get(3) * S.getNumberOfNonAttendedRequests();
+//        
+//        objectives[1] = parameters.get(0) * S.getTotalDistance() + parameters.get(8) * S.getTotalOccupationRate()
+//                + parameters.get(7) * S.getDeliveryTimeWindowAntecipation();
+//        
+//        objectives[2] = + parameters.get(2) * S.getTotalRouteTimeChargeBanlance()
+//                + parameters.get(4) * S.getNumberOfVehicles() + parameters.get(6) * S.getTotalWaintingTime();
+
+
+        objectives[0] = parameters.get(1) * S.getTotalDeliveryDelay() +  parameters.get(2) * S.getTotalRouteTimeChargeBanlance();
         
-        objectives[1] = parameters.get(0) * S.getTotalDistance() + parameters.get(8) * S.getTotalOccupationRate()
-                + parameters.get(7) * S.getDeliveryTimeWindowAntecipation();
+        objectives[1] = parameters.get(0) * S.getTotalDistance() + parameters.get(4) * S.getNumberOfVehicles();
         
-        objectives[2] = + parameters.get(2) * S.getTotalRouteTimeChargeBanlance()
-                + parameters.get(4) * S.getNumberOfVehicles() + parameters.get(6) * S.getTotalWaintingTime();
+        objectives[2] = parameters.get(3) * S.getNumberOfNonAttendedRequests();
+
 
         S.setAggregatedObjectives(objectives);
         //---------------------------------------------------------------------------------------------------------------

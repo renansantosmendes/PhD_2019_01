@@ -1273,7 +1273,7 @@ public class EvolutionaryAlgorithms {
                             population.get(q).addnDom();
                             population.get(p).addeDom();
                             population.get(q).addL(p);//adiciona a p
-                            population.get(q).setR(population.get(q).getR() + population.get(p).getNumberOfDominatedSolutionsByThisSolution());
+//                            population.get(q).setR(population.get(q).getR() + population.get(p).getNumberOfDominatedSolutionsByThisSolution());
                         }
                     }
                 }
@@ -1315,7 +1315,7 @@ public class EvolutionaryAlgorithms {
                 nonDominated.add(population.get(i));
             }
         }
-        removeEqualSolutions(nonDominated);
+//        removeEqualSolutions(nonDominated);
     }
 
     public static void normalizeObjectiveFunctionsValues2(List<ProblemSolution> Pop) {
