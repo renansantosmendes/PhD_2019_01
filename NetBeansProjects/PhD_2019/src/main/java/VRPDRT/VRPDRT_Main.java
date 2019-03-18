@@ -45,7 +45,7 @@ public class VRPDRT_Main {
     public static void main(String[] args) throws ApiException, InterruptedException, IOException, BiffException {
         String directionsApiKey = "AIzaSyD9W0em7H723uVOMD6QFe_1Mns71XAi5JU";
         String filePath = "/home/renansantos/Área de Trabalho/Excel Instances/";
-        //filePath = "/home/rmendes/VRPDRT/";
+        filePath = "/home/rmendes/VRPDRT/";
 
         int numberOfRequests = 50;
         int requestTimeWindows = 10;
@@ -60,8 +60,8 @@ public class VRPDRT_Main {
         final Integer numberOfVehicles = 250;
 
         Integer populationSize = 100;
-        Integer maximumNumberOfGenerations = 40;
-        Integer maximumNumberOfExecutions = 10;
+        Integer maximumNumberOfGenerations = 1000;
+        Integer maximumNumberOfExecutions = 30;
         double probabilityOfMutation = 0.2;
         double probabilityOfCrossover = 0.7;
         int fileSize = populationSize;
@@ -103,17 +103,17 @@ public class VRPDRT_Main {
            
         
         
-//        NSGAII(instanceName, reducedDimension, parameters, nadirPoint, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
-//                requests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
-//                listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes,
-//                timeWindows, currentTime, lastNode);
+        NSGAII(instanceName, reducedDimension, parameters, nadirPoint, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
+                requests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
+                listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes,
+                timeWindows, currentTime, lastNode);
 
-        SPEA2(instanceName, reducedDimension, parameters, nadirPoint, populationSize, fileSize, maximumNumberOfGenerations, maximumNumberOfExecutions,
-                probabilityOfMutation, probabilityOfCrossover, requests, requestsWhichBoardsInNode, requestsWhichLeavesInNode,
-                numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, requestList, loadIndexList,
-                timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
+//        SPEA2(instanceName, reducedDimension, parameters, nadirPoint, populationSize, fileSize, maximumNumberOfGenerations, maximumNumberOfExecutions,
+//                probabilityOfMutation, probabilityOfCrossover, requests, requestsWhichBoardsInNode, requestsWhichLeavesInNode,
+//                numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, requestList, loadIndexList,
+//                timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
         //new GoogleStaticMap(new NodeDAO(nodesData).getListOfNodes(), adjacenciesData, nodesData).getStaticMapForInstance();
-        //new SolutionGeneratorForAggregationTree().generateSolutionsForAggregationTree(parameters);
+        //new SolutionGeneratorForAggregationTree().generateSolutionsForAggregationTree(reducedDimension,parameters);
     }
 
 }

@@ -33,10 +33,10 @@ import jxl.read.biff.BiffException;
  */
 public class SolutionGeneratorForAggregationTree {
 
-    private String vehicleCapacities[] = {"4","11"};//"11""16""13" -> removed
+    private String vehicleCapacities[] = {"11"};//"11""16""13" -> removed
     private String nodesDistance[] = {"s"};//m l
-    private String numberOfRequests[] = {"050","100","150","200"};//100,150,200,250
-    private String timeWindows[] = {"05","10"};//05 "03"-> removed
+    private String numberOfRequests[] = {"050"};//100,150,200,250
+    private String timeWindows[] = {"10"};//05 "03"-> removed
     private String numberOfNodes = "12";
     private int numberOfInstances;
     private int numberOfSolutionsPerInstance;
@@ -47,7 +47,7 @@ public class SolutionGeneratorForAggregationTree {
                 * this.numberOfRequests.length * this.timeWindows.length;
         this.numberOfSolutionsPerInstance = idealNumberOfSolutions / this.numberOfInstances + 1;
 
-        String folder = "Qualification_RandomSolutionsForAggregationTree";
+        String folder = "AutoEncoderRandomSolutions";
         boolean success = (new File(folder)).mkdirs();
         String destinationFileForObjectives = folder + "/Random_Solutions_AT_Objectives_"+idealNumberOfSolutions+".txt";
         String destinationFileForSolutions = folder + "/Random_Solutions_AT_Solutions_"+idealNumberOfSolutions+".txt";
