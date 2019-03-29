@@ -45,7 +45,7 @@ public class VRPDRT_Main {
     public static void main(String[] args) throws ApiException, InterruptedException, IOException, BiffException {
         String directionsApiKey = "AIzaSyD9W0em7H723uVOMD6QFe_1Mns71XAi5JU";
         String filePath = "/home/renansantos/Área de Trabalho/Excel Instances/";
-        filePath = "/home/rmendes/VRPDRT/";
+//        filePath = "/home/rmendes/VRPDRT/";
 
         int numberOfRequests = 50;
         int requestTimeWindows = 10;
@@ -83,7 +83,7 @@ public class VRPDRT_Main {
         Algorithms.printProblemInformations(requests, numberOfVehicles, vehicleCapacity, instanceName, adjacenciesData, nodesData);
         Methods.initializeFleetOfVehicles(setOfVehicles, numberOfVehicles);
 
-        int reducedDimension = 3;
+        
         
         parameters.add(0.10);//1
         parameters.add((double) requestTimeWindows);//delta_t
@@ -100,8 +100,11 @@ public class VRPDRT_Main {
         System.out.println("Nadir Point = " + nadirPoint);
         System.out.println("Instance Name = " + instanceName);
 
-           
-        
+        int reducedDimension = 9;
+        MOEAD(instanceName,100, 200000, reducedDimension, parameters, nadirPoint, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
+                requests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
+                listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes,
+                timeWindows, currentTime, lastNode);
         
 //        NSGAII(instanceName, reducedDimension, parameters, nadirPoint, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
 //                requests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,

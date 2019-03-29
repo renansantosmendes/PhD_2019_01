@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import static Algorithms.Algorithms.*;
 import AlgorithmsResults.ResultsGraphicsForConvergence;
+import RandomNumberGenerator.UniformRandomGenerator;
 import ReductionTechniques.CorrelationType;
 import ReductionTechniques.HierarchicalCluster;
 import java.text.DecimalFormat;
@@ -53,7 +54,31 @@ public class EvolutionaryAlgorithms {
         }
     }
 
-    public static void MOEAD(String instanceName, int maxEvaluations, int reducedDimension, List<Double> parameters, List<Double> nadirPoint, Integer populationSize, Integer maximumNumberOfGenerations,
+    protected void initializeNeighborhood(int populationSize, int neighborSize, double[][] lambda, int[][] neighborhood) {
+        double[] x = new double[populationSize];
+        int[] idx = new int[populationSize];
+
+        for (int i = 0; i < populationSize; i++) {
+            // calculate the distances based on weight vectors
+            for (int j = 0; j < populationSize; j++) {
+                x[j] = MOEADUtils.distVector(lambda[i], lambda[j]);
+                idx[j] = j;
+            }
+
+            // find 'niche' nearest neighboring subproblems
+            MOEADUtils.minFastSort(x, idx, populationSize, neighborSize);
+
+            System.arraycopy(idx, 0, neighborhood[i], 0, neighborSize);
+        }
+    }
+    
+    
+    public static double[][] initializeUniformWeight(int numberOfObjectives, int populationSize) {
+        return new UniformRandomGenerator(numberOfObjectives, populationSize)
+                .generateUniformRandomNumbersInMatrix();
+    }
+
+    public static void MOEAD(String instanceName, int neighborSize, int maxEvaluations, int reducedDimension, List<Double> parameters, List<Double> nadirPoint, Integer populationSize, Integer maximumNumberOfGenerations,
             Integer maximumNumberOfExecutions, double probabilityOfMutation, double probabilityOfCrossover,
             List<Request> requests, Map<Integer, List<Request>> requestsWhichBoardsInNode,
             Map<Integer, List<Request>> requestsWhichLeavesInNode, Integer numberOfNodes, Integer vehicleCapacity,
@@ -65,11 +90,14 @@ public class EvolutionaryAlgorithms {
         inicializeRandomPopulation(parameters, reducedDimension, population, populationSize, requests,
                 requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                 requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
+        int[][] neighborhood = new int[populationSize][neighborSize];;
+        double[][] lambda = initializeUniformWeight(reducedDimension, populationSize);
 
         int evaluations = population.size();
         do {
             for (int i = 0; i < population.size(); i++) {
                 System.out.println(population.get(i));
+
                 evaluations++;
             }
 
