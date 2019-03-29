@@ -53,7 +53,7 @@ public class EvolutionaryAlgorithms {
         }
     }
 
-    public static void MOEAD(String instanceName, int reducedDimension, List<Double> parameters, List<Double> nadirPoint, Integer populationSize, Integer maximumNumberOfGenerations,
+    public static void MOEAD(String instanceName, int maxEvaluations, int reducedDimension, List<Double> parameters, List<Double> nadirPoint, Integer populationSize, Integer maximumNumberOfGenerations,
             Integer maximumNumberOfExecutions, double probabilityOfMutation, double probabilityOfCrossover,
             List<Request> requests, Map<Integer, List<Request>> requestsWhichBoardsInNode,
             Map<Integer, List<Request>> requestsWhichLeavesInNode, Integer numberOfNodes, Integer vehicleCapacity,
@@ -66,9 +66,14 @@ public class EvolutionaryAlgorithms {
                 requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                 requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
 
-        for (int i = 0; i < population.size(); i++) {
-            System.out.println(population.get(i));
-        }
+        int evaluations = population.size();
+        do {
+            for (int i = 0; i < population.size(); i++) {
+                System.out.println(population.get(i));
+                evaluations++;
+            }
+
+        } while (evaluations < maxEvaluations);
 
     }
 

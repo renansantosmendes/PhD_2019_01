@@ -368,48 +368,57 @@ public class Algorithms {
 //        
 //        objectives[2] = + parameters.get(2) * S.getTotalRouteTimeChargeBanlance()
 //                + parameters.get(4) * S.getNumberOfVehicles() + parameters.get(6) * S.getTotalWaintingTime();
-
-
 //        objectives[0] = parameters.get(1) * S.getTotalDeliveryDelay() +  parameters.get(2) * S.getTotalRouteTimeChargeBanlance();
 //        
 //        objectives[1] = parameters.get(0) * S.getTotalDistance() + parameters.get(4) * S.getNumberOfVehicles();
-        
 //        objectives[2] = parameters.get(3) * S.getNumberOfNonAttendedRequests();
+//        objectives[0] =  
+//                 0.3125084* S.getTotalDistance() + 
+//                0.76783597* S.getTotalDeliveryDelay() +
+//                0.78313982* S.getTotalRouteTimeChargeBanlance() +
+//                1.3054775* S.getNumberOfNonAttendedRequests()+
+//                -1.11135304* S.getNumberOfVehicles() +
+//                0.83199799* S.getTotalTravelTime() +                 
+//                -1.12596834* S.getTotalWaintingTime() +
+//                -0.39072263* S.getDeliveryTimeWindowAntecipation() + 
+//                0.41617087* S.getTotalOccupationRate();
+//        
+//        objectives[1] =  
+//                0.46642122* S.getTotalDistance() + 
+//                0.991157* S.getTotalDeliveryDelay() +
+//                -0.58231032* S.getTotalRouteTimeChargeBanlance() +
+//                0.54344583* S.getNumberOfNonAttendedRequests()+
+//                -1.31260765* S.getNumberOfVehicles() +
+//                -1.05282295* S.getTotalTravelTime() +                 
+//                1.41664696* S.getTotalWaintingTime() +
+//                0.43042383* S.getDeliveryTimeWindowAntecipation() + 
+//                -1.29118836* S.getTotalOccupationRate();
+//        
+//        objectives[2] =  
+//                -1.45117283* S.getTotalDistance() + 
+//                -0.93339264* S.getTotalDeliveryDelay() +
+//                1.61568022* S.getTotalRouteTimeChargeBanlance() +
+//                -0.74948335* S.getNumberOfNonAttendedRequests()+
+//                1.09232652* S.getNumberOfVehicles() +
+//                -1.38777435* S.getTotalTravelTime() +                 
+//                0.97395939* S.getTotalWaintingTime() +
+//               -2.58190179* S.getDeliveryTimeWindowAntecipation() + 
+//                -0.50053972* S.getTotalOccupationRate();
+        objectives[0]
+                = parameters.get(0) * S.getTotalDistance()
+                + parameters.get(1) * S.getTotalDeliveryDelay()
+                + parameters.get(3) * S.getNumberOfNonAttendedRequests()
+                + parameters.get(4) * S.getNumberOfVehicles()
+                + parameters.get(5) * S.getTotalTravelTime()
+                + parameters.get(6) * S.getTotalWaintingTime()
+                + parameters.get(7) * S.getDeliveryTimeWindowAntecipation();
 
+        objectives[1]
+                = parameters.get(2) * S.getTotalRouteTimeChargeBanlance();
 
-        objectives[0] =  
-                 0.3125084* S.getTotalDistance() + 
-                0.76783597* S.getTotalDeliveryDelay() +
-                0.78313982* S.getTotalRouteTimeChargeBanlance() +
-                1.3054775* S.getNumberOfNonAttendedRequests()+
-                -1.11135304* S.getNumberOfVehicles() +
-                0.83199799* S.getTotalTravelTime() +                 
-                -1.12596834* S.getTotalWaintingTime() +
-                -0.39072263* S.getDeliveryTimeWindowAntecipation() + 
-                0.41617087* S.getTotalOccupationRate();
-        
-        objectives[1] =  
-                0.46642122* S.getTotalDistance() + 
-                0.991157* S.getTotalDeliveryDelay() +
-                -0.58231032* S.getTotalRouteTimeChargeBanlance() +
-                0.54344583* S.getNumberOfNonAttendedRequests()+
-                -1.31260765* S.getNumberOfVehicles() +
-                -1.05282295* S.getTotalTravelTime() +                 
-                1.41664696* S.getTotalWaintingTime() +
-                0.43042383* S.getDeliveryTimeWindowAntecipation() + 
-                -1.29118836* S.getTotalOccupationRate();
-        
-        objectives[2] =  
-                -1.45117283* S.getTotalDistance() + 
-                -0.93339264* S.getTotalDeliveryDelay() +
-                1.61568022* S.getTotalRouteTimeChargeBanlance() +
-                -0.74948335* S.getNumberOfNonAttendedRequests()+
-                1.09232652* S.getNumberOfVehicles() +
-                -1.38777435* S.getTotalTravelTime() +                 
-                0.97395939* S.getTotalWaintingTime() +
-               -2.58190179* S.getDeliveryTimeWindowAntecipation() + 
-                -0.50053972* S.getTotalOccupationRate();
-                
+        objectives[2]
+                = parameters.get(8) * S.getTotalOccupationRate();
+
         S.setAggregatedObjectives(objectives);
         //---------------------------------------------------------------------------------------------------------------
         // Aggregation using RP
