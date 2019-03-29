@@ -54,7 +54,7 @@ public class EvolutionaryAlgorithms {
         }
     }
 
-    protected void initializeNeighborhood(int populationSize, int neighborSize, double[][] lambda, int[][] neighborhood) {
+    private static void initializeNeighborhood(int populationSize, int neighborSize, double[][] lambda, int[][] neighborhood) {
         double[] x = new double[populationSize];
         int[] idx = new int[populationSize];
 
@@ -90,9 +90,10 @@ public class EvolutionaryAlgorithms {
         inicializeRandomPopulation(parameters, reducedDimension, population, populationSize, requests,
                 requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                 requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
-        int[][] neighborhood = new int[populationSize][neighborSize];;
+        int[][] neighborhood = new int[populationSize][neighborSize];
         double[][] lambda = initializeUniformWeight(reducedDimension, populationSize);
-
+        initializeNeighborhood(populationSize, neighborSize, lambda, neighborhood);
+        
         int evaluations = population.size();
         do {
             for (int i = 0; i < population.size(); i++) {
