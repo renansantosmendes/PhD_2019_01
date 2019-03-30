@@ -30,30 +30,6 @@ import org.jfree.chart.JFreeChart;
  */
 public class EvolutionaryAlgorithms {
 
-    public static void TestAlgorithm(String instanceName, int reducedDimension, List<Double> parameters, List<Double> nadirPoint, Integer populationSize, Integer maximumNumberOfGenerations,
-            Integer maximumNumberOfExecutions, double probabilityOfMutation, double probabilityOfCrossover,
-            List<Request> requests, Map<Integer, List<Request>> requestsWhichBoardsInNode,
-            Map<Integer, List<Request>> requestsWhichLeavesInNode, Integer numberOfNodes, Integer vehicleCapacity,
-            Set<Integer> setOfVehicles, List<Request> listOfNonAttendedRequests, List<Request> requestList,
-            List<Integer> loadIndexList, List<List<Long>> timeBetweenNodes, List<List<Long>> distanceBetweenNodes,
-            Long timeWindows, Long currentTime, Integer lastNode) throws IOException {
-        List<ProblemSolution> population = new ArrayList<>();
-
-        inicializeRandomPopulation(parameters, reducedDimension, population, populationSize, requests,
-                requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
-                requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
-        List<ProblemSolution> nonDominatedSolutions = new ArrayList();
-        genericDominanceAlgorithm(population, nonDominatedSolutions);//possivel local do erro
-
-        for (int i = 0; i < population.size(); i++) {
-            System.out.println(population.get(i));
-        }
-        System.out.println("Non-dominated solutions");
-        for (int i = 0; i < nonDominatedSolutions.size(); i++) {
-            System.out.println(nonDominatedSolutions.get(i));
-        }
-    }
-
     private static void initializeNeighborhood(int populationSize, int neighborSize, double[][] lambda, int[][] neighborhood) {
         double[] x = new double[populationSize];
         int[] idx = new int[populationSize];
@@ -71,11 +47,29 @@ public class EvolutionaryAlgorithms {
             System.arraycopy(idx, 0, neighborhood[i], 0, neighborSize);
         }
     }
-    
-    
-    public static double[][] initializeUniformWeight(int numberOfObjectives, int populationSize) {
+
+    private static double[][] initializeUniformWeight(int numberOfObjectives, int populationSize) {
         return new UniformRandomGenerator(numberOfObjectives, populationSize)
                 .generateUniformRandomNumbersInMatrix();
+    }
+
+    private static void initializeIdealPoint(double[] idealPoint, int numberOfObjectives, int populationSize,
+            List<ProblemSolution> population) {
+        for (int i = 0; i < numberOfObjectives; i++) {
+            idealPoint[i] = 1.0e+30;
+        }
+
+        for (int i = 0; i < populationSize; i++) {
+            updateIdealPoint(idealPoint, population.get(i), numberOfObjectives);
+        }
+    }
+
+    private static void updateIdealPoint(double[] idealPoint, ProblemSolution individual, int numberOfObjectives) {
+        for (int n = 0; n < numberOfObjectives; n++) {
+            if (individual.getObjective(n) < idealPoint[n]) {
+                idealPoint[n] = individual.getObjective(n);
+            }
+        }
     }
 
     public static void MOEAD(String instanceName, int neighborSize, int maxEvaluations, int reducedDimension, List<Double> parameters, List<Double> nadirPoint, Integer populationSize, Integer maximumNumberOfGenerations,
@@ -93,7 +87,7 @@ public class EvolutionaryAlgorithms {
         int[][] neighborhood = new int[populationSize][neighborSize];
         double[][] lambda = initializeUniformWeight(reducedDimension, populationSize);
         initializeNeighborhood(populationSize, neighborSize, lambda, neighborhood);
-        
+
         int evaluations = population.size();
         do {
             for (int i = 0; i < population.size(); i++) {

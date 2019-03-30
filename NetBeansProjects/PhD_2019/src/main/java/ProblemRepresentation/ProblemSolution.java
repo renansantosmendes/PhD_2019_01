@@ -357,6 +357,10 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
 //                + lambdas.get(8) * totalOccupatioNumberOfNumberOfAggregatedObjectives()AggregatedObjectives()nRate);
     }
 
+    public double getObjective(int n){
+        return this.aggregatedObjectives[n];
+    }
+    
     public double[] getAggregatedObjectives(){
         return this.aggregatedObjectives.clone();
     }
