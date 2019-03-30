@@ -5,6 +5,8 @@
  */
 package Algorithms;
 
+import java.util.Random;
+
 /**
  *
  * @author renansantos
@@ -59,4 +61,34 @@ public class MOEADUtils {
             }
         }
     }
+    
+    public static void randomPermutation(int[] perm, int size) {
+    Random randomGenerator = new Random();
+    int[] index = new int[size];
+    boolean[] flag = new boolean[size];
+
+    for (int n = 0; n < size; n++) {
+      index[n] = n;
+      flag[n] = true;
+    }
+
+    int num = 0;
+    while (num < size) {
+      int start = randomGenerator.nextInt(size - 1);
+      while (true) {
+        if (flag[start]) {
+          perm[num] = index[start];
+          flag[start] = false;
+          num++;
+          break;
+        }
+        if (start == (size - 1)) {
+          start = 0;
+        } else {
+          start++;
+        }
+      }
+    }
+  }
+    
 }

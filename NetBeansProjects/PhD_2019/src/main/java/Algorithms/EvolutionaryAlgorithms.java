@@ -29,7 +29,23 @@ import org.jfree.chart.JFreeChart;
  * @author Renan
  */
 public class EvolutionaryAlgorithms {
+    protected enum NeighborType {
+        NEIGHBOR, POPULATION
+    }
 
+    protected static NeighborType chooseNeighborType(double neighborhoodSelectionProbability) {
+        Random rd = new Random();
+        double rnd = rd.nextDouble();
+        NeighborType neighborType;
+
+        if (rnd < neighborhoodSelectionProbability) {
+            neighborType = NeighborType.NEIGHBOR;
+        } else {
+            neighborType = NeighborType.POPULATION;
+        }
+        return neighborType;
+    }
+    
     private static void initializeNeighborhood(int populationSize, int neighborSize, double[][] lambda, int[][] neighborhood) {
         double[] x = new double[populationSize];
         int[] idx = new int[populationSize];
@@ -73,31 +89,87 @@ public class EvolutionaryAlgorithms {
     }
 
     public static void MOEAD(String instanceName, int neighborSize, int maxEvaluations, int reducedDimension, List<Double> parameters, List<Double> nadirPoint, Integer populationSize, Integer maximumNumberOfGenerations,
-            Integer maximumNumberOfExecutions, double probabilityOfMutation, double probabilityOfCrossover,
-            List<Request> requests, Map<Integer, List<Request>> requestsWhichBoardsInNode,
+            Integer maximumNumberOfExecutions, double neighborhoodSelectionProbability, double probabilityOfMutation,
+            double probabilityOfCrossover, List<Request> requests, Map<Integer, List<Request>> requestsWhichBoardsInNode,
             Map<Integer, List<Request>> requestsWhichLeavesInNode, Integer numberOfNodes, Integer vehicleCapacity,
             Set<Integer> setOfVehicles, List<Request> listOfNonAttendedRequests, List<Request> requestList,
             List<Integer> loadIndexList, List<List<Long>> timeBetweenNodes, List<List<Long>> distanceBetweenNodes,
             Long timeWindows, Long currentTime, Integer lastNode) throws IOException {
+        
         List<ProblemSolution> population = new ArrayList<>();
 
         inicializeRandomPopulation(parameters, reducedDimension, population, populationSize, requests,
                 requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                 requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
+        
+        int numberOfObjectives = reducedDimension;
         int[][] neighborhood = new int[populationSize][neighborSize];
-        double[][] lambda = initializeUniformWeight(reducedDimension, populationSize);
+        double[][] lambda = initializeUniformWeight(numberOfObjectives, populationSize);
         initializeNeighborhood(populationSize, neighborSize, lambda, neighborhood);
-
+        double[] idealPoint = new double[numberOfObjectives];
+        initializeIdealPoint(idealPoint, numberOfObjectives, populationSize, population);
         int evaluations = population.size();
+        
         do {
+            int[] permutation = new int[populationSize];
+            MOEADUtils.randomPermutation(permutation, populationSize);
+            
             for (int i = 0; i < population.size(); i++) {
-                System.out.println(population.get(i));
-
+                int subProblemId = permutation[i];
+                NeighborType neighborType = chooseNeighborType(0.7);
+                List<ProblemSolution> parents = parentSelection(population, neighborhood, subProblemId, neighborType);
+                
+                
                 evaluations++;
             }
 
         } while (evaluations < maxEvaluations);
 
+    }
+    
+    private static List<ProblemSolution> parentSelection(List<ProblemSolution> population, int[][] neighborhood,
+            int subProblemId, NeighborType neighborType) {
+
+        List<Integer> matingPool = matingSelection(subProblemId, population.size(), 2,neighborhood, neighborType);
+        List<ProblemSolution> parents = new ArrayList<>(3);
+
+        parents.add(population.get(matingPool.get(0)));
+        parents.add(population.get(matingPool.get(1)));
+        parents.add(population.get(subProblemId));
+
+        return parents;
+    }
+    
+    private static List<Integer> matingSelection(int subproblemId, int populationSize ,int numberOfSolutionsToSelect,
+            int[][] neighborhood, NeighborType neighbourType) {
+        int neighbourSize;
+        int selectedSolution;
+        Random randomGenerator = new Random();
+        List<Integer> listOfSolutions = new ArrayList<>(numberOfSolutionsToSelect);
+
+        neighbourSize = neighborhood[subproblemId].length;
+        while (listOfSolutions.size() < numberOfSolutionsToSelect) {
+            int random;
+            if (neighbourType == NeighborType.NEIGHBOR) {
+                random = randomGenerator.nextInt( neighbourSize - 1);
+                selectedSolution = neighborhood[subproblemId][random];
+            } else {
+                selectedSolution = randomGenerator.nextInt(populationSize - 1);
+            }
+            boolean flag = true;
+            for (Integer individualId : listOfSolutions) {
+                if (individualId == selectedSolution) {
+                    flag = false;
+                    break;
+                }
+            }
+
+            if (flag) {
+                listOfSolutions.add(selectedSolution);
+            }
+        }
+
+        return listOfSolutions;
     }
 
     public static double NSGAII(String instanceName, int reducedDimension, List<Double> parameters, List<Double> nadirPoint, Integer populationSize, Integer maximumNumberOfGenerations,
