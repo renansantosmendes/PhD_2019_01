@@ -10,19 +10,13 @@ import static Algorithms.Methods.*;
 import java.io.*;
 import java.util.*;
 import ProblemRepresentation.*;
-import static Algorithms.Algorithms.*;
-import static Algorithms.Methods.*;
-import AlgorithmsResults.ResultsGraphicsForParetoCombinedSet;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Comparator;
-import static Algorithms.Algorithms.*;
 import AlgorithmsResults.ResultsGraphicsForConvergence;
 import RandomNumberGenerator.UniformRandomGenerator;
 import ReductionTechniques.CorrelationType;
 import ReductionTechniques.HierarchicalCluster;
-import java.text.DecimalFormat;
-import org.jfree.chart.JFreeChart;
 
 /**
  *
@@ -134,8 +128,8 @@ public class EvolutionaryAlgorithms {
                         requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                         requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
 
-                System.out.println(parents);
-                System.out.println(child);
+//                System.out.println(parents);
+//                System.out.println(child);
                 evaluations++;
 
                 updateIdealPoint(idealPoint, child, numberOfObjectives);
@@ -153,7 +147,6 @@ public class EvolutionaryAlgorithms {
         List<ProblemSolution> parents = new ArrayList<>(3);
 
         parents.add(population.get(matingPool.get(0)));
-//        parents.add(population.get(matingPool.get(1)));
         parents.add(population.get(subProblemId));
 
         return parents;
