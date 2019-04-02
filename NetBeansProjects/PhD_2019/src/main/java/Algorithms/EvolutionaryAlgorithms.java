@@ -29,6 +29,7 @@ import org.jfree.chart.JFreeChart;
  * @author Renan
  */
 public class EvolutionaryAlgorithms {
+
     protected enum NeighborType {
         NEIGHBOR, POPULATION
     }
@@ -45,7 +46,7 @@ public class EvolutionaryAlgorithms {
         }
         return neighborType;
     }
-    
+
     private static void initializeNeighborhood(int populationSize, int neighborSize, double[][] lambda, int[][] neighborhood) {
         double[] x = new double[populationSize];
         int[] idx = new int[populationSize];
@@ -95,13 +96,13 @@ public class EvolutionaryAlgorithms {
             Set<Integer> setOfVehicles, List<Request> listOfNonAttendedRequests, List<Request> requestList,
             List<Integer> loadIndexList, List<List<Long>> timeBetweenNodes, List<List<Long>> distanceBetweenNodes,
             Long timeWindows, Long currentTime, Integer lastNode) throws IOException {
-        
+
         List<ProblemSolution> population = new ArrayList<>();
 
         inicializeRandomPopulation(parameters, reducedDimension, population, populationSize, requests,
                 requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                 requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
-        
+
         int numberOfObjectives = reducedDimension;
         int[][] neighborhood = new int[populationSize][neighborSize];
         double[][] lambda = initializeUniformWeight(numberOfObjectives, populationSize);
@@ -109,38 +110,56 @@ public class EvolutionaryAlgorithms {
         double[] idealPoint = new double[numberOfObjectives];
         initializeIdealPoint(idealPoint, numberOfObjectives, populationSize, population);
         int evaluations = population.size();
-        
+
         do {
             int[] permutation = new int[populationSize];
             MOEADUtils.randomPermutation(permutation, populationSize);
-            
+
             for (int i = 0; i < population.size(); i++) {
                 int subProblemId = permutation[i];
                 NeighborType neighborType = chooseNeighborType(0.7);
                 List<ProblemSolution> parents = parentSelection(population, neighborhood, subProblemId, neighborType);
-                
-                
+                List<ProblemSolution> children = new ArrayList<>();
+
+                int maximumSize = parents.size();
+
+                twoPointsCrossoverForMOEAD(reducedDimension, parameters, children, population, maximumSize, probabilityOfCrossover, parents, requests,
+                        requestList, setOfVehicles, listOfNonAttendedRequests, requestsWhichBoardsInNode,
+                        requestsWhichLeavesInNode, timeBetweenNodes, distanceBetweenNodes, numberOfNodes,
+                        vehicleCapacity, timeWindows);
+
+                ProblemSolution child = children.get(0);
+
+                mutation2ShuffleForMOEAD(reducedDimension, parameters, child, probabilityOfMutation, requests, requestsWhichBoardsInNode,
+                        requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
+                        requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
+
+                System.out.println(parents);
+                System.out.println(child);
                 evaluations++;
+
+                updateIdealPoint(idealPoint, child, numberOfObjectives);
+//                updateNeighborhood(child, subProblemId, neighborType);
             }
 
         } while (evaluations < maxEvaluations);
 
     }
-    
+
     private static List<ProblemSolution> parentSelection(List<ProblemSolution> population, int[][] neighborhood,
             int subProblemId, NeighborType neighborType) {
 
-        List<Integer> matingPool = matingSelection(subProblemId, population.size(), 2,neighborhood, neighborType);
+        List<Integer> matingPool = matingSelection(subProblemId, population.size(), 2, neighborhood, neighborType);
         List<ProblemSolution> parents = new ArrayList<>(3);
 
         parents.add(population.get(matingPool.get(0)));
-        parents.add(population.get(matingPool.get(1)));
+//        parents.add(population.get(matingPool.get(1)));
         parents.add(population.get(subProblemId));
 
         return parents;
     }
-    
-    private static List<Integer> matingSelection(int subproblemId, int populationSize ,int numberOfSolutionsToSelect,
+
+    private static List<Integer> matingSelection(int subproblemId, int populationSize, int numberOfSolutionsToSelect,
             int[][] neighborhood, NeighborType neighbourType) {
         int neighbourSize;
         int selectedSolution;
@@ -151,7 +170,7 @@ public class EvolutionaryAlgorithms {
         while (listOfSolutions.size() < numberOfSolutionsToSelect) {
             int random;
             if (neighbourType == NeighborType.NEIGHBOR) {
-                random = randomGenerator.nextInt( neighbourSize - 1);
+                random = randomGenerator.nextInt(neighbourSize - 1);
                 selectedSolution = neighborhood[subproblemId][random];
             } else {
                 selectedSolution = randomGenerator.nextInt(populationSize - 1);
@@ -163,7 +182,6 @@ public class EvolutionaryAlgorithms {
                     break;
                 }
             }
-
             if (flag) {
                 listOfSolutions.add(selectedSolution);
             }
