@@ -87,9 +87,9 @@ public class EvolutionaryAlgorithms {
         }
     }
 
-   private static void updateNeighborhood(ProblemSolution individual, int[][] neighborhood, double[][] lambda,
-            List<ProblemSolution> population,int subProblemId, NeighborType neighborType,
-            int maximumNumberOfReplacedSolutions) {
+   private static void updateNeighborhood(ProblemSolution individual, int[][] neighborhood,
+            List<ProblemSolution> population, int subProblemId, NeighborType neighborType, double[][] lambda,
+            double[] idealPoint, int maximumNumberOfReplacedSolutions, int numberOfObjectives, FunctionType functionType) {
         int size;
         int time;
         
@@ -113,8 +113,8 @@ public class EvolutionaryAlgorithms {
             }
             double f1, f2;
 
-            f1 = fitnessFunction(population.get(k), lambda[k]);
-            f2 = fitnessFunction(individual, lambda[k]);
+            f1 = fitnessFunction(population.get(k), lambda[k], idealPoint, numberOfObjectives, functionType);
+            f2 = fitnessFunction(individual, lambda[k], idealPoint, numberOfObjectives, functionType);
 
             if (f2 < f1) {
                 population.set(k, (ProblemSolution) individual);//retirei o .copy() dessa parte aqui do código
@@ -128,7 +128,8 @@ public class EvolutionaryAlgorithms {
     }
 
    
-   private double fitnessFunction(ProblemSolution individual, double[] lambda,double[] idealPoint, int numberOfObjectives) {
+   private static double fitnessFunction(ProblemSolution individual, double[] lambda, double[] idealPoint, int numberOfObjectives,
+           FunctionType functionType) {
         double fitness = 0.0;
 
         if (FunctionType.TCHE.equals(functionType)) {
@@ -182,7 +183,8 @@ public class EvolutionaryAlgorithms {
     }
    
     public static void MOEAD(String instanceName, int neighborSize, int maxEvaluations,int maximumNumberOfReplacedSolutions,
-            int reducedDimension, List<Double> parameters, List<Double> nadirPoint, Integer populationSize, Integer maximumNumberOfGenerations,
+            int reducedDimension, List<Double> parameters, List<Double> nadirPoint, Integer populationSize,
+            Integer maximumNumberOfGenerations, EvolutionaryAlgorithms.FunctionType functionType,
             Integer maximumNumberOfExecutions, double neighborhoodSelectionProbability, double probabilityOfMutation,
             double probabilityOfCrossover, List<Request> requests, Map<Integer, List<Request>> requestsWhichBoardsInNode,
             Map<Integer, List<Request>> requestsWhichLeavesInNode, Integer numberOfNodes, Integer vehicleCapacity,
@@ -204,6 +206,8 @@ public class EvolutionaryAlgorithms {
         initializeIdealPoint(idealPoint, numberOfObjectives, populationSize, population);
         int evaluations = population.size();
 
+        population.forEach(u -> System.out.println(u));
+        
         do {
             int[] permutation = new int[populationSize];
             MOEADUtils.randomPermutation(permutation, populationSize);
@@ -227,16 +231,16 @@ public class EvolutionaryAlgorithms {
                         requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                         requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
 
-//                System.out.println(parents);
-//                System.out.println(child);
                 evaluations++;
 
                 updateIdealPoint(idealPoint, child, numberOfObjectives);
-                updateNeighborhood(child, subProblemId, neighborType);
+                updateNeighborhood(child, neighborhood, population, subProblemId, neighborType, lambda,
+                idealPoint,  maximumNumberOfReplacedSolutions, numberOfObjectives, functionType);
             }
 
         } while (evaluations < maxEvaluations);
-
+        System.out.println("Final Population");
+        population.forEach(u -> System.out.println(u));
     }
 
     private static List<ProblemSolution> parentSelection(List<ProblemSolution> population, int[][] neighborhood,

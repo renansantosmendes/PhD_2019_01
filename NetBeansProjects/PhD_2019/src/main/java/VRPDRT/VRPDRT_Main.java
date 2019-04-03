@@ -65,10 +65,12 @@ public class VRPDRT_Main {
         double probabilityOfMutation = 0.2;
         double probabilityOfCrossover = 0.7;
         double neighborhoodSelectionProbability = 0.5;
-        int numberOfEvaluations = 20000;
+        int numberOfEvaluations = 2000;
         int neighborSize = 100;
         int maximumNumberOfReplacedSolutions = 10;
         int fileSize = populationSize;
+        EvolutionaryAlgorithms.FunctionType functionType = EvolutionaryAlgorithms.FunctionType.AGG;
+        
         List<Double> parameters = new ArrayList<>();//0.0273, 0.5208, 0.0161, 0.3619, 0.0739
         List<Double> nadirPoint = new ArrayList<>();
 
@@ -105,11 +107,13 @@ public class VRPDRT_Main {
         System.out.println("Instance Name = " + instanceName);
 
         int reducedDimension = 9;
+        
         MOEAD(instanceName, neighborSize, numberOfEvaluations,maximumNumberOfReplacedSolutions, reducedDimension, parameters,
-                nadirPoint, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions,neighborhoodSelectionProbability,
-                probabilityOfMutation, probabilityOfCrossover, requests, requestsWhichBoardsInNode, requestsWhichLeavesInNode,
-                numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, requestList, loadIndexList, 
-                timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
+                nadirPoint, populationSize, maximumNumberOfGenerations,functionType, maximumNumberOfExecutions,
+                neighborhoodSelectionProbability, probabilityOfMutation, probabilityOfCrossover, requests,
+                requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, 
+                listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows,
+                currentTime, lastNode);
         
 //        NSGAII(instanceName, reducedDimension, parameters, nadirPoint, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
 //                requests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
