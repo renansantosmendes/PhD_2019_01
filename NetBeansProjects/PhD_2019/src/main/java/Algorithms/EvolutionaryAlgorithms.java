@@ -27,6 +27,10 @@ public class EvolutionaryAlgorithms {
     protected enum NeighborType {
         NEIGHBOR, POPULATION
     }
+    
+    public enum FunctionType {
+        TCHE, PBI, AGG
+    }
 
     protected static NeighborType chooseNeighborType(double neighborhoodSelectionProbability) {
         Random rd = new Random();
@@ -83,7 +87,102 @@ public class EvolutionaryAlgorithms {
         }
     }
 
-    public static void MOEAD(String instanceName, int neighborSize, int maxEvaluations, int reducedDimension, List<Double> parameters, List<Double> nadirPoint, Integer populationSize, Integer maximumNumberOfGenerations,
+   private static void updateNeighborhood(ProblemSolution individual, int[][] neighborhood, double[][] lambda,
+            List<ProblemSolution> population,int subProblemId, NeighborType neighborType,
+            int maximumNumberOfReplacedSolutions) {
+        int size;
+        int time;
+        
+        time = 0;
+
+        if (neighborType == NeighborType.NEIGHBOR) {
+            size = neighborhood[subProblemId].length;
+        } else {
+            size = population.size();
+        }
+        int[] perm = new int[size];
+
+        MOEADUtils.randomPermutation(perm, size);
+
+        for (int i = 0; i < size; i++) {
+            int k;
+            if (neighborType == NeighborType.NEIGHBOR) {
+                k = neighborhood[subProblemId][perm[i]];
+            } else {
+                k = perm[i];
+            }
+            double f1, f2;
+
+            f1 = fitnessFunction(population.get(k), lambda[k]);
+            f2 = fitnessFunction(individual, lambda[k]);
+
+            if (f2 < f1) {
+                population.set(k, (ProblemSolution) individual);//retirei o .copy() dessa parte aqui do código
+                time++;
+            }
+
+            if (time >= maximumNumberOfReplacedSolutions) {
+                return;
+            }
+        }
+    }
+
+   
+   private double fitnessFunction(ProblemSolution individual, double[] lambda,double[] idealPoint, int numberOfObjectives) {
+        double fitness = 0.0;
+
+        if (FunctionType.TCHE.equals(functionType)) {
+            double maxFun = -1.0e+30;
+
+            for (int n = 0; n < numberOfObjectives; n++) {
+                double diff = Math.abs(individual.getObjective(n) - idealPoint[n]);//alterar idealPoint e nadirPoint fazer eles
+                //na dimensão original e depois reduzir ou olhar para o atributo problem e ver o que é melhor
+
+                double feval;
+                if (lambda[n] == 0) {
+                    feval = 0.0001 * diff;
+                } else {
+                    feval = diff * lambda[n];
+                }
+                if (feval > maxFun) {
+                    maxFun = feval;
+                }
+            }
+
+            fitness = maxFun;
+        } else if (FunctionType.AGG.equals(functionType)) {
+            double sum = 0.0;
+            for (int n = 0; n < numberOfObjectives; n++) {
+                sum += (lambda[n]) * individual.getObjective(n);
+            }
+
+            fitness = sum;
+
+        } else if (FunctionType.PBI.equals(functionType)) {
+            double d1, d2, nl;
+            double theta = 5.0;
+
+            d1 = d2 = nl = 0.0;
+
+            for (int i = 0; i < numberOfObjectives; i++) {
+                d1 += (individual.getObjective(i) - idealPoint[i]) * lambda[i];
+                nl += Math.pow(lambda[i], 2.0);
+            }
+            nl = Math.sqrt(nl);
+            d1 = Math.abs(d1) / nl;
+
+            for (int i = 0; i < numberOfObjectives; i++) {
+                d2 += Math.pow((individual.getObjective(i) - idealPoint[i]) - d1 * (lambda[i] / nl), 2.0);
+            }
+            d2 = Math.sqrt(d2);
+
+            fitness = (d1 + theta * d2);
+        } 
+        return fitness;
+    }
+   
+    public static void MOEAD(String instanceName, int neighborSize, int maxEvaluations,int maximumNumberOfReplacedSolutions,
+            int reducedDimension, List<Double> parameters, List<Double> nadirPoint, Integer populationSize, Integer maximumNumberOfGenerations,
             Integer maximumNumberOfExecutions, double neighborhoodSelectionProbability, double probabilityOfMutation,
             double probabilityOfCrossover, List<Request> requests, Map<Integer, List<Request>> requestsWhichBoardsInNode,
             Map<Integer, List<Request>> requestsWhichLeavesInNode, Integer numberOfNodes, Integer vehicleCapacity,
@@ -133,7 +232,7 @@ public class EvolutionaryAlgorithms {
                 evaluations++;
 
                 updateIdealPoint(idealPoint, child, numberOfObjectives);
-//                updateNeighborhood(child, subProblemId, neighborType);
+                updateNeighborhood(child, subProblemId, neighborType);
             }
 
         } while (evaluations < maxEvaluations);
