@@ -24,10 +24,24 @@ import ReductionTechniques.HierarchicalCluster;
  */
 public class EvolutionaryAlgorithms {
 
+    private static PrintStream executionStream;
+    private static PrintStream fileSizeStream;
+    private static PrintStream testStream;
+    private static PrintStream currentExecutionPareto;
+    private static PrintStream printStreamForCombinedParetoStream;
+    private static PrintStream printStreamForObjectiveFunctionOfCombinedParetoStream;
+    private static PrintStream printStreamForAllObjectivesStream;
+    private static PrintStream printStreamForAllObjectivesStream2;
+    private static String folderName;
+    private static String fileName;
+    private static String instanceNameVariable;
+    private static int currentExecutionNumber = 0;
+    private static int vehicleCapacityVariable = 0;
+
     protected enum NeighborType {
         NEIGHBOR, POPULATION
     }
-    
+
     public enum FunctionType {
         TCHE, PBI, AGG
     }
@@ -87,12 +101,12 @@ public class EvolutionaryAlgorithms {
         }
     }
 
-   private static void updateNeighborhood(ProblemSolution individual, int[][] neighborhood,
+    private static void updateNeighborhood(ProblemSolution individual, int[][] neighborhood,
             List<ProblemSolution> population, int subProblemId, NeighborType neighborType, double[][] lambda,
             double[] idealPoint, int maximumNumberOfReplacedSolutions, int numberOfObjectives, FunctionType functionType) {
         int size;
         int time;
-        
+
         time = 0;
 
         if (neighborType == NeighborType.NEIGHBOR) {
@@ -127,9 +141,8 @@ public class EvolutionaryAlgorithms {
         }
     }
 
-   
-   private static double fitnessFunction(ProblemSolution individual, double[] lambda, double[] idealPoint, int numberOfObjectives,
-           FunctionType functionType) {
+    private static double fitnessFunction(ProblemSolution individual, double[] lambda, double[] idealPoint, int numberOfObjectives,
+            FunctionType functionType) {
         double fitness = 0.0;
 
         if (FunctionType.TCHE.equals(functionType)) {
@@ -178,11 +191,47 @@ public class EvolutionaryAlgorithms {
             d2 = Math.sqrt(d2);
 
             fitness = (d1 + theta * d2);
-        } 
+        }
         return fitness;
     }
-   
-    public static void MOEAD(String instanceName, int neighborSize, int maxEvaluations,int maximumNumberOfReplacedSolutions,
+
+    private static void initializeCurrentExecutionStreams() {
+        try {
+            executionStream = new PrintStream(folderName + "/" + fileName + "-Execucao-" + currentExecutionNumber + ".txt");
+            fileSizeStream = new PrintStream(folderName + "/" + fileName + "-tamanho_arquivo-" + currentExecutionNumber + ".txt");
+            testStream = new PrintStream(folderName + "/" + fileName + "-teste-" + currentExecutionNumber + ".csv");
+            currentExecutionPareto = new PrintStream(folderName + "/" + fileName + "-Pareto-" + currentExecutionNumber + ".csv");
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+        }
+
+    }
+
+    private static void initializeStreams(String algorithmName) {
+        LocalDateTime time = LocalDateTime.now();
+
+        fileName = algorithmName;
+
+        folderName = "NewResults//" + fileName.toUpperCase() + "//" + instanceNameVariable + "k"
+                + vehicleCapacityVariable + "_" + time.getYear() + "_" + time.getMonthValue()
+                + "_" + time.getDayOfMonth();
+
+        boolean success = (new File(folderName)).mkdirs();
+        if (!success) {
+            System.out.println("Folder already exists!");
+        }        
+        try {
+            printStreamForCombinedParetoStream = new PrintStream(folderName + "/" + fileName + "-Combined_Pareto.csv");
+            printStreamForObjectiveFunctionOfCombinedParetoStream = new PrintStream(folderName + "/" + fileName + "-Combined_Pareto_Objective_Functions.csv");
+            printStreamForAllObjectivesStream = new PrintStream(folderName + "/nsga_pareto_9fo.csv");
+            printStreamForAllObjectivesStream2 = new PrintStream(folderName + "/nsga_pareto_reduced.csv");
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+        }
+
+    }
+
+    public static void MOEAD(String instanceName, int neighborSize, int maxEvaluations, int maximumNumberOfReplacedSolutions,
             int reducedDimension, List<Double> parameters, List<Double> nadirPoint, Integer populationSize,
             Integer maximumNumberOfGenerations, EvolutionaryAlgorithms.FunctionType functionType,
             Integer maximumNumberOfExecutions, double neighborhoodSelectionProbability, double probabilityOfMutation,
@@ -192,55 +241,61 @@ public class EvolutionaryAlgorithms {
             List<Integer> loadIndexList, List<List<Long>> timeBetweenNodes, List<List<Long>> distanceBetweenNodes,
             Long timeWindows, Long currentTime, Integer lastNode) throws IOException {
 
-        List<ProblemSolution> population = new ArrayList<>();
+        instanceNameVariable = instanceName;
+        vehicleCapacityVariable = vehicleCapacity;
+        initializeStreams("MOEAD");
+        for (currentExecutionNumber = 0; currentExecutionNumber < maximumNumberOfExecutions; currentExecutionNumber++) {
+            initializeCurrentExecutionStreams();
+            
+            List<ProblemSolution> population = new ArrayList<>();
+            inicializeRandomPopulation(parameters, reducedDimension, population, populationSize, requests,
+                    requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
+                    requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
 
-        inicializeRandomPopulation(parameters, reducedDimension, population, populationSize, requests,
-                requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
-                requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
+            int numberOfObjectives = reducedDimension;
+            int[][] neighborhood = new int[populationSize][neighborSize];
+            double[][] lambda = initializeUniformWeight(numberOfObjectives, populationSize);
+            initializeNeighborhood(populationSize, neighborSize, lambda, neighborhood);
+            double[] idealPoint = new double[numberOfObjectives];
+            initializeIdealPoint(idealPoint, numberOfObjectives, populationSize, population);
+            int evaluations = population.size();
 
-        int numberOfObjectives = reducedDimension;
-        int[][] neighborhood = new int[populationSize][neighborSize];
-        double[][] lambda = initializeUniformWeight(numberOfObjectives, populationSize);
-        initializeNeighborhood(populationSize, neighborSize, lambda, neighborhood);
-        double[] idealPoint = new double[numberOfObjectives];
-        initializeIdealPoint(idealPoint, numberOfObjectives, populationSize, population);
-        int evaluations = population.size();
+            population.forEach(u -> System.out.println(u));
 
-        population.forEach(u -> System.out.println(u));
-        
-        do {
-            int[] permutation = new int[populationSize];
-            MOEADUtils.randomPermutation(permutation, populationSize);
+            do {
+                int[] permutation = new int[populationSize];
+                MOEADUtils.randomPermutation(permutation, populationSize);
 
-            for (int i = 0; i < population.size(); i++) {
-                int subProblemId = permutation[i];
-                NeighborType neighborType = chooseNeighborType(0.7);
-                List<ProblemSolution> parents = parentSelection(population, neighborhood, subProblemId, neighborType);
-                List<ProblemSolution> children = new ArrayList<>();
+                for (int i = 0; i < population.size(); i++) {
+                    int subProblemId = permutation[i];
+                    NeighborType neighborType = chooseNeighborType(0.7);
+                    List<ProblemSolution> parents = parentSelection(population, neighborhood, subProblemId, neighborType);
+                    List<ProblemSolution> children = new ArrayList<>();
 
-                int maximumSize = parents.size();
+                    int maximumSize = parents.size();
 
-                twoPointsCrossoverForMOEAD(reducedDimension, parameters, children, population, maximumSize, probabilityOfCrossover, parents, requests,
-                        requestList, setOfVehicles, listOfNonAttendedRequests, requestsWhichBoardsInNode,
-                        requestsWhichLeavesInNode, timeBetweenNodes, distanceBetweenNodes, numberOfNodes,
-                        vehicleCapacity, timeWindows);
+                    twoPointsCrossoverForMOEAD(reducedDimension, parameters, children, population, maximumSize, probabilityOfCrossover, parents, requests,
+                            requestList, setOfVehicles, listOfNonAttendedRequests, requestsWhichBoardsInNode,
+                            requestsWhichLeavesInNode, timeBetweenNodes, distanceBetweenNodes, numberOfNodes,
+                            vehicleCapacity, timeWindows);
 
-                ProblemSolution child = children.get(0);
+                    ProblemSolution child = children.get(0);
 
-                mutation2ShuffleForMOEAD(reducedDimension, parameters, child, probabilityOfMutation, requests, requestsWhichBoardsInNode,
-                        requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
-                        requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
+                    mutation2ShuffleForMOEAD(reducedDimension, parameters, child, probabilityOfMutation, requests, requestsWhichBoardsInNode,
+                            requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
+                            requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
 
-                evaluations++;
+                    evaluations++;
 
-                updateIdealPoint(idealPoint, child, numberOfObjectives);
-                updateNeighborhood(child, neighborhood, population, subProblemId, neighborType, lambda,
-                idealPoint,  maximumNumberOfReplacedSolutions, numberOfObjectives, functionType);
-            }
+                    updateIdealPoint(idealPoint, child, numberOfObjectives);
+                    updateNeighborhood(child, neighborhood, population, subProblemId, neighborType, lambda,
+                            idealPoint, maximumNumberOfReplacedSolutions, numberOfObjectives, functionType);
+                }
 
-        } while (evaluations < maxEvaluations);
-        System.out.println("Final Population");
-        population.forEach(u -> System.out.println(u));
+            } while (evaluations < maxEvaluations);
+            System.out.println("Final Population");
+            population.forEach(u -> System.out.println(u));
+        }
     }
 
     private static List<ProblemSolution> parentSelection(List<ProblemSolution> population, int[][] neighborhood,
