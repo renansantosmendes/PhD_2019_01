@@ -31,7 +31,6 @@ public class EvolutionaryAlgorithms {
     private static PrintStream printStreamForCombinedParetoStream;
     private static PrintStream printStreamForObjectiveFunctionOfCombinedParetoStream;
     private static PrintStream printStreamForAllObjectivesStream;
-    private static PrintStream printStreamForAllObjectivesStream2;
     private static String folderName;
     private static String fileName;
     private static String instanceNameVariable;
@@ -197,10 +196,12 @@ public class EvolutionaryAlgorithms {
 
     private static void initializeCurrentExecutionStreams() {
         try {
-            executionStream = new PrintStream(folderName + "/" + fileName + "-Execucao-" + currentExecutionNumber + ".txt");
-            fileSizeStream = new PrintStream(folderName + "/" + fileName + "-tamanho_arquivo-" + currentExecutionNumber + ".txt");
-            testStream = new PrintStream(folderName + "/" + fileName + "-teste-" + currentExecutionNumber + ".csv");
-            currentExecutionPareto = new PrintStream(folderName + "/" + fileName + "-Pareto-" + currentExecutionNumber + ".csv");
+            executionStream = new PrintStream(folderName + "/" + fileName.toLowerCase() 
+                    + "-execution-" + currentExecutionNumber + ".txt");
+            testStream = new PrintStream(folderName + "/" + fileName.toLowerCase() 
+                    + "-test-" + currentExecutionNumber + ".csv");
+            currentExecutionPareto = new PrintStream(folderName + "/" + fileName.toLowerCase() 
+                    + "-pareto-" + currentExecutionNumber + ".csv");
         } catch (FileNotFoundException ex) {
             ex.printStackTrace();
         }
@@ -219,16 +220,25 @@ public class EvolutionaryAlgorithms {
         boolean success = (new File(folderName)).mkdirs();
         if (!success) {
             System.out.println("Folder already exists!");
-        }        
+        }
         try {
-            printStreamForCombinedParetoStream = new PrintStream(folderName + "/" + fileName + "-Combined_Pareto.csv");
-            printStreamForObjectiveFunctionOfCombinedParetoStream = new PrintStream(folderName + "/" + fileName + "-Combined_Pareto_Objective_Functions.csv");
-            printStreamForAllObjectivesStream = new PrintStream(folderName + "/nsga_pareto_9fo.csv");
-            printStreamForAllObjectivesStream2 = new PrintStream(folderName + "/nsga_pareto_reduced.csv");
+            printStreamForCombinedParetoStream = new PrintStream(folderName + "/" +
+                    fileName.toLowerCase() + "-combined_pareto.csv");
+            printStreamForObjectiveFunctionOfCombinedParetoStream = new PrintStream(folderName + "/" +
+                    fileName.toLowerCase() + "-combined_pareto_objective_functions.csv");
+            printStreamForAllObjectivesStream = new PrintStream(folderName + "/"+
+                    fileName.toLowerCase()+"_pareto_9fo.csv");
         } catch (FileNotFoundException ex) {
             ex.printStackTrace();
         }
+    }
 
+    public static void saveNonDominatedSolutionsFromCurrentExecution(List<ProblemSolution> solutions) {
+        List<ProblemSolution> nonDominatedSolutions = new ArrayList<>();
+        genericDominanceAlgorithm(solutions,  nonDominatedSolutions);
+        for (ProblemSolution s : nonDominatedSolutions) {
+            executionStream.print(s.getStringWithAllNonReducedObjectivesForCsvFile() + "\n");
+        }
     }
 
     public static void MOEAD(String instanceName, int neighborSize, int maxEvaluations, int maximumNumberOfReplacedSolutions,
@@ -244,9 +254,10 @@ public class EvolutionaryAlgorithms {
         instanceNameVariable = instanceName;
         vehicleCapacityVariable = vehicleCapacity;
         initializeStreams("MOEAD");
+
         for (currentExecutionNumber = 0; currentExecutionNumber < maximumNumberOfExecutions; currentExecutionNumber++) {
             initializeCurrentExecutionStreams();
-            
+
             List<ProblemSolution> population = new ArrayList<>();
             inicializeRandomPopulation(parameters, reducedDimension, population, populationSize, requests,
                     requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
@@ -293,6 +304,9 @@ public class EvolutionaryAlgorithms {
                 }
 
             } while (evaluations < maxEvaluations);
+            
+            
+            saveNonDominatedSolutionsFromCurrentExecution(population);
             System.out.println("Final Population");
             population.forEach(u -> System.out.println(u));
         }
