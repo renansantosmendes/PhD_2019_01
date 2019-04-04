@@ -69,7 +69,7 @@ public class VRPDRT_Main {
         int neighborSize = 100;
         int maximumNumberOfReplacedSolutions = 10;
         int fileSize = populationSize;
-        EvolutionaryAlgorithms.FunctionType functionType = EvolutionaryAlgorithms.FunctionType.AGG;
+        EvolutionaryAlgorithms.FunctionType functionType = EvolutionaryAlgorithms.FunctionType.PBI;
         
         List<Double> parameters = new ArrayList<>();//0.0273, 0.5208, 0.0161, 0.3619, 0.0739
         List<Double> nadirPoint = new ArrayList<>();

@@ -30,7 +30,7 @@ public class EvolutionaryAlgorithms {
     private static PrintStream currentExecutionPareto;
     private static PrintStream combinedParetoStream;
     private static PrintStream objectiveFunctionOfCombinedParetoStream;
-    private static PrintStream allObjectivesStream;
+    private static PrintStream combinedParetoForHVStream;
     private static String folderName;
     private static String fileName;
     private static String instanceNameVariable;
@@ -199,10 +199,10 @@ public class EvolutionaryAlgorithms {
         try {
             executionStream = new PrintStream(folderName + "/" + fileName.toLowerCase() 
                     + "-execution-" + currentExecutionNumber + ".txt");
-            testStream = new PrintStream(folderName + "/" + fileName.toLowerCase() 
-                    + "-test-" + currentExecutionNumber + ".csv");
-            currentExecutionPareto = new PrintStream(folderName + "/" + fileName.toLowerCase() 
-                    + "-pareto-" + currentExecutionNumber + ".csv");
+//            testStream = new PrintStream(folderName + "/" + fileName.toLowerCase() 
+//                    + "-test-" + currentExecutionNumber + ".csv");
+//            currentExecutionPareto = new PrintStream(folderName + "/" + fileName.toLowerCase() 
+//                    + "-pareto-" + currentExecutionNumber + ".csv");
         } catch (FileNotFoundException ex) {
             ex.printStackTrace();
         }
@@ -225,10 +225,8 @@ public class EvolutionaryAlgorithms {
         try {
             combinedParetoStream = new PrintStream(folderName + "/" +
                     fileName.toLowerCase() + "-combined_pareto.csv");
-            objectiveFunctionOfCombinedParetoStream = new PrintStream(folderName + "/" +
-                    fileName.toLowerCase() + "-combined_pareto_objective_functions.csv");
-            allObjectivesStream = new PrintStream(folderName + "/"+
-                    fileName.toLowerCase()+"_pareto_9fo.csv");
+            combinedParetoForHVStream = new PrintStream(folderName + "/"+
+                    fileName.toLowerCase()+"_pareto_hv.txt");
         } catch (FileNotFoundException ex) {
             ex.printStackTrace();
         }
@@ -237,8 +235,11 @@ public class EvolutionaryAlgorithms {
     public static void saveNonDominatedSolutionsFromCurrentExecution(List<ProblemSolution> solutions) {
         List<ProblemSolution> nonDominatedSolutions = new ArrayList<>();
         genericDominanceAlgorithm(solutions,  nonDominatedSolutions);
+        
+        combinedParetoForHVStream.print("#\n");
         for (ProblemSolution s : nonDominatedSolutions) {
             executionStream.print(s.getStringWithAllNonReducedObjectivesForCsvFile() + "\n");
+            combinedParetoForHVStream.print(s.getStringWithAllObjectives());
         }
     }
     
@@ -248,6 +249,7 @@ public class EvolutionaryAlgorithms {
         for (ProblemSolution s : nonDominatedSolutions) {
             combinedParetoStream.print(s.getStringWithAllNonReducedObjectivesForCsvFile() + "\n");
         }
+        combinedParetoForHVStream.print("#\n");
     }
 
     public static void MOEAD(String instanceName, int neighborSize, int maxEvaluations, int maximumNumberOfReplacedSolutions,

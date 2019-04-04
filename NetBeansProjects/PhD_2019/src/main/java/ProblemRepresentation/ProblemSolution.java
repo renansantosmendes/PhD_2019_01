@@ -79,7 +79,7 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
 
         aggregatedObjective1 = -1;
         aggregatedObjective2 = -1;
-        aggregatedObjectives = new double [11];
+        aggregatedObjectives = new double[11];
         aggregatedObjective1Normalized = 0;
         aggregatedObjective2Normalized = 0;
 
@@ -95,7 +95,6 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
         logger = "";
     }
 
-    
     public ProblemSolution(int reducedDimension) {
         setOfRoutes = new HashSet<Route>();
         listOfSolutionsDominatedByThisSolution = new ArrayList<>();
@@ -123,7 +122,7 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
 
         aggregatedObjective1 = -1;
         aggregatedObjective2 = -1;
-        aggregatedObjectives = new double [reducedDimension];
+        aggregatedObjectives = new double[reducedDimension];
         aggregatedObjective1Normalized = 0;
         aggregatedObjective2Normalized = 0;
 
@@ -138,8 +137,7 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
         linkedRouteList = new ArrayList<Integer>();
         logger = "";
     }
-    
-    
+
     public ProblemSolution(int numberOfAggregatedObjectives, List<Double> objectives, Set<Route> setOfRoutes, double objectiveFunction, long totalDistance,
             long totalDeliveryDelay, int numberOfNonAttendedRequests, int numberOfVehicles, long totalTravelTime,
             long totalWaintingTime, long deliveryTimeWindowAntecipation, long totalRouteTimeChargeBanlance,
@@ -176,7 +174,7 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
         this.deliveryTimeWindowAntecipationNormalized = deliveryTimeWindowAntecipationNormalized;
         this.totalRouteTimeChargeBanlanceNormalized = totalRouteTimeChargeBanlanceNormalized;
         this.totalOccupationRateNormalized = totalOccupationRateNormalized;
-        
+
         this.numberOfAggregatedObjectives = numberOfAggregatedObjectives;
         this.aggregatedObjectives = new double[this.numberOfAggregatedObjectives];
         this.aggregatedObjective1 = aggregatedObjective1;
@@ -185,7 +183,7 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
         this.aggregatedObjective2Normalized = aggregatedObjective2Normalized;
         this.numberOfDominatedSolutionsByThisSolution = numberOfDominatedSolutionsByThisSolution;
         this.numberOfSolutionsWichDomineThisSolution = numberOfSolutionsWichDomineThisSolution;
-        
+
         this.listOfSolutionsDominatedByThisSolution.clear();
         this.listOfSolutionsDominatedByThisSolution.addAll(listOfSolutionsDominatedByThisSolution);
         this.fitness = fitness;
@@ -193,10 +191,10 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
         this.crowdDistance = crowdDistance;
         this.S = S;
         this.R = R;
-        
+
         this.nonAttendedRequestsList.clear();
         this.nonAttendedRequestsList.addAll(nonAttendedRequestsList);
-        
+
         this.linkedRouteList.clear();
         this.linkedRouteList.addAll(linkedRouteList);
         this.logger = logger;
@@ -230,7 +228,7 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
 
         aggregatedObjectives = solution.getAggregatedObjectives();
         numberOfAggregatedObjectives = solution.getNumberOfAggregatedObjectives();
-        
+
         aggregatedObjective1 = solution.getAggregatedObjective1();
         aggregatedObjective2 = solution.getAggregatedObjective2();
         aggregatedObjective1Normalized = solution.getAggregatedObjective1Normalized();
@@ -276,7 +274,7 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
 
         setAggregatedObjectives(solution.getAggregatedObjectives().clone());
         setNumberOfAggregatedObjectives(solution.getNumberOfAggregatedObjectives());
-        
+
         setAggregatedObjective1(solution.getAggregatedObjective1());
         setAggregatedObjective2(solution.getAggregatedObjective2());
         setAggregatedObjective1Normalized(solution.getAggregatedObjective1Normalized());
@@ -357,31 +355,31 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
 //                + lambdas.get(8) * totalOccupatioNumberOfNumberOfAggregatedObjectives()AggregatedObjectives()nRate);
     }
 
-    public double getObjective(int n){
+    public double getObjective(int n) {
         return this.aggregatedObjectives[n];
     }
-    
-    public double[] getAggregatedObjectives(){
+
+    public double[] getAggregatedObjectives() {
         return this.aggregatedObjectives.clone();
     }
-    
-    public int getNumberOfAggregatedObjectives(){
+
+    public int getNumberOfAggregatedObjectives() {
         return this.numberOfAggregatedObjectives;
     }
-    
-    public void setNumberOfAggregatedObjectives(int reducedDimension){
+
+    public void setNumberOfAggregatedObjectives(int reducedDimension) {
         this.numberOfAggregatedObjectives = reducedDimension;
     }
-    
-    public List<Double> getListOfAggregatedObjectives(){
+
+    public List<Double> getListOfAggregatedObjectives() {
         List<Double> list = new ArrayList<>();
-        
-        for(int i = 0; i< this.aggregatedObjectives.length; i++){
+
+        for (int i = 0; i < this.aggregatedObjectives.length; i++) {
             list.add(this.aggregatedObjectives[i]);
         }
         return list;
     }
-    
+
     public Set<Route> getSetOfRoutes() {
         return setOfRoutes;
     }
@@ -435,11 +433,11 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
     public void setCrowdDistance(double crowdDistance) {
         this.crowdDistance = crowdDistance;
     }
-    
-    public void setAggregatedObjectives(double [] objectives){
+
+    public void setAggregatedObjectives(double[] objectives) {
         this.aggregatedObjectives = objectives;
     }
-    
+
     public void setSetOfRoutes(Set<Route> conjRotas) {
         this.setOfRoutes.clear();
         this.setOfRoutes.addAll(new HashSet<Route>(conjRotas));
@@ -811,6 +809,22 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
         return stringWithObjectives;
     }
 
+    public String getStringWithAllObjectives() {
+
+        String string = "";
+
+        for (int i = 0; i < this.aggregatedObjectives.length; i++) {
+            if (i != this.aggregatedObjectives.length - 1) {
+                string += this.aggregatedObjectives[i] + " ";
+            }else{
+                string += this.aggregatedObjectives[i];
+            }
+        }
+
+        string += "\n";
+        return string;
+    }
+
     public String getStringWithAllNonReducedObjectivesForCsvFile() {
 
         String stringWithObjectives = totalDistance + ","
@@ -834,7 +848,7 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
     public String toString() {
         DecimalFormat df = new DecimalFormat("0.0000");
 
-        String s = this.objectives + "\t" + getListOfAggregatedObjectives() + "\t"+ totalDistance + "\t"
+        String s = this.objectives + "\t" + getListOfAggregatedObjectives() + "\t" + totalDistance + "\t"
                 + totalDeliveryDelay + "\t" + totalRouteTimeChargeBanlance + "\t" + numberOfNonAttendedRequests + "\t"
                 + numberOfVehicles + "\t" + totalWaintingTime + "\t" + totalTravelTime + "\t" + deliveryTimeWindowAntecipation
                 + "\t" + totalOccupationRate + "\t";
@@ -850,12 +864,9 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
 //        }
 
 //        s += "\t";
-
         //for(Request req : r.listaAtendimento)
 //        s += listaAtendimento;// + " ";
-
 //        s += "\t";
-
 //		for(Request req : listaNaoAtendimento)
 //			s += req + " ";
 //
@@ -920,12 +931,12 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
 
     @Override
     public Object clone() {
-        
+
         Set<Route> routesClone = new HashSet<>();
         for (Route route : setOfRoutes) {
             routesClone.add((Route) route.clone());
         }
-        
+
         return new ProblemSolution(numberOfAggregatedObjectives, objectives, routesClone, objectiveFunction, totalDistance,
                 totalDeliveryDelay, numberOfNonAttendedRequests, numberOfVehicles, totalTravelTime,
                 totalWaintingTime, deliveryTimeWindowAntecipation, totalRouteTimeChargeBanlance,
