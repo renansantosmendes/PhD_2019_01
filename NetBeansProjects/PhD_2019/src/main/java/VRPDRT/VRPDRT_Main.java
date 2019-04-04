@@ -61,7 +61,7 @@ public class VRPDRT_Main {
 
         Integer populationSize = 100;
         Integer maximumNumberOfGenerations = 1000;
-        Integer maximumNumberOfExecutions = 1;
+        Integer maximumNumberOfExecutions = 5;
         double probabilityOfMutation = 0.2;
         double probabilityOfCrossover = 0.7;
         double neighborhoodSelectionProbability = 0.5;

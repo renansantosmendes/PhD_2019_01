@@ -28,14 +28,15 @@ public class EvolutionaryAlgorithms {
     private static PrintStream fileSizeStream;
     private static PrintStream testStream;
     private static PrintStream currentExecutionPareto;
-    private static PrintStream printStreamForCombinedParetoStream;
-    private static PrintStream printStreamForObjectiveFunctionOfCombinedParetoStream;
-    private static PrintStream printStreamForAllObjectivesStream;
+    private static PrintStream combinedParetoStream;
+    private static PrintStream objectiveFunctionOfCombinedParetoStream;
+    private static PrintStream allObjectivesStream;
     private static String folderName;
     private static String fileName;
     private static String instanceNameVariable;
     private static int currentExecutionNumber = 0;
     private static int vehicleCapacityVariable = 0;
+    private static List<ProblemSolution> combinedPareto = new ArrayList<>();
 
     protected enum NeighborType {
         NEIGHBOR, POPULATION
@@ -222,11 +223,11 @@ public class EvolutionaryAlgorithms {
             System.out.println("Folder already exists!");
         }
         try {
-            printStreamForCombinedParetoStream = new PrintStream(folderName + "/" +
+            combinedParetoStream = new PrintStream(folderName + "/" +
                     fileName.toLowerCase() + "-combined_pareto.csv");
-            printStreamForObjectiveFunctionOfCombinedParetoStream = new PrintStream(folderName + "/" +
+            objectiveFunctionOfCombinedParetoStream = new PrintStream(folderName + "/" +
                     fileName.toLowerCase() + "-combined_pareto_objective_functions.csv");
-            printStreamForAllObjectivesStream = new PrintStream(folderName + "/"+
+            allObjectivesStream = new PrintStream(folderName + "/"+
                     fileName.toLowerCase()+"_pareto_9fo.csv");
         } catch (FileNotFoundException ex) {
             ex.printStackTrace();
@@ -238,6 +239,14 @@ public class EvolutionaryAlgorithms {
         genericDominanceAlgorithm(solutions,  nonDominatedSolutions);
         for (ProblemSolution s : nonDominatedSolutions) {
             executionStream.print(s.getStringWithAllNonReducedObjectivesForCsvFile() + "\n");
+        }
+    }
+    
+    public static void saveCombinedPareto() {
+        List<ProblemSolution> nonDominatedSolutions = new ArrayList<>();
+        genericDominanceAlgorithm(combinedPareto,  nonDominatedSolutions);
+        for (ProblemSolution s : nonDominatedSolutions) {
+            combinedParetoStream.print(s.getStringWithAllNonReducedObjectivesForCsvFile() + "\n");
         }
     }
 
@@ -307,9 +316,12 @@ public class EvolutionaryAlgorithms {
             
             
             saveNonDominatedSolutionsFromCurrentExecution(population);
+            combinedPareto.addAll(population);
             System.out.println("Final Population");
             population.forEach(u -> System.out.println(u));
         }
+        
+        saveCombinedPareto();
     }
 
     private static List<ProblemSolution> parentSelection(List<ProblemSolution> population, int[][] neighborhood,
