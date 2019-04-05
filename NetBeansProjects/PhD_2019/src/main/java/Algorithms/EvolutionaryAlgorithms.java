@@ -29,7 +29,7 @@ public class EvolutionaryAlgorithms {
     private static PrintStream testStream;
     private static PrintStream currentExecutionPareto;
     private static PrintStream combinedParetoStream;
-    private static PrintStream objectiveFunctionOfCombinedParetoStream;
+    private static PrintStream fullCombinedParetoStream;
     private static PrintStream combinedParetoForHVStream;
     private static String folderName;
     private static String fileName;
@@ -227,6 +227,8 @@ public class EvolutionaryAlgorithms {
                     fileName.toLowerCase() + "-combined_pareto.csv");
             combinedParetoForHVStream = new PrintStream(folderName + "/"+
                     fileName.toLowerCase()+"_pareto_hv.txt");
+            fullCombinedParetoStream = new PrintStream(folderName + "/" +
+                    fileName.toLowerCase() + "-full_combined_pareto.csv");
         } catch (FileNotFoundException ex) {
             ex.printStackTrace();
         }
@@ -248,6 +250,7 @@ public class EvolutionaryAlgorithms {
         genericDominanceAlgorithm(combinedPareto,  nonDominatedSolutions);
         for (ProblemSolution s : nonDominatedSolutions) {
             combinedParetoStream.print(s.getStringWithAllNonReducedObjectivesForCsvFile() + "\n");
+            fullCombinedParetoStream.print(s + "\n");
         }
         combinedParetoForHVStream.print("#\n");
     }

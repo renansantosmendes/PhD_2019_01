@@ -45,7 +45,7 @@ public class VRPDRT_Main {
     public static void main(String[] args) throws ApiException, InterruptedException, IOException, BiffException {
         String directionsApiKey = "AIzaSyD9W0em7H723uVOMD6QFe_1Mns71XAi5JU";
         String filePath = "/home/renansantos/Área de Trabalho/Excel Instances/";
-//        filePath = "/home/rmendes/VRPDRT/";
+        filePath = "/home/rmendes/VRPDRT/";
 
         int numberOfRequests = 50;
         int requestTimeWindows = 10;
@@ -61,15 +61,15 @@ public class VRPDRT_Main {
 
         Integer populationSize = 100;
         Integer maximumNumberOfGenerations = 1000;
-        Integer maximumNumberOfExecutions = 5;
-        double probabilityOfMutation = 0.2;
+        Integer maximumNumberOfExecutions = 30;
+        double probabilityOfMutation = 0.02;
         double probabilityOfCrossover = 0.7;
-        double neighborhoodSelectionProbability = 0.5;
-        int numberOfEvaluations = 2000;
+        double neighborhoodSelectionProbability = 0.7;
+        int numberOfEvaluations = 300000;
         int neighborSize = 100;
-        int maximumNumberOfReplacedSolutions = 10;
+        int maximumNumberOfReplacedSolutions = 20;
         int fileSize = populationSize;
-        EvolutionaryAlgorithms.FunctionType functionType = EvolutionaryAlgorithms.FunctionType.PBI;
+        EvolutionaryAlgorithms.FunctionType functionType = EvolutionaryAlgorithms.FunctionType.AGG;
         
         List<Double> parameters = new ArrayList<>();//0.0273, 0.5208, 0.0161, 0.3619, 0.0739
         List<Double> nadirPoint = new ArrayList<>();

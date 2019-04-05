@@ -852,16 +852,16 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
                 + totalDeliveryDelay + "\t" + totalRouteTimeChargeBanlance + "\t" + numberOfNonAttendedRequests + "\t"
                 + numberOfVehicles + "\t" + totalWaintingTime + "\t" + totalTravelTime + "\t" + deliveryTimeWindowAntecipation
                 + "\t" + totalOccupationRate + "\t";
-        s = "" + getListOfAggregatedObjectives();
-//        int indice = 1;
-//        String listaAtendimento = " ";
-//        for (Route r : setOfRoutes) {
-//            s += "R" + indice + ": " + r + " ";
-//            listaAtendimento += "R" + indice++ + ": ";
-//            for (Request req : r.getRequestAttendanceList()) {
-//                listaAtendimento += req + " ";
-//            }
-//        }
+        s = "" + getStringWithAllNonReducedObjectivesForCsvFile() + " ";
+        int indice = 1;
+        String listaAtendimento = " ";
+        for (Route r : setOfRoutes) {
+            s += "R" + indice + ": " + r + " ";
+            listaAtendimento += "R" + indice++ + ": ";
+            for (Request req : r.getRequestAttendanceList()) {
+                listaAtendimento += req + " ";
+            }
+        }
 
 //        s += "\t";
         //for(Request req : r.listaAtendimento)
