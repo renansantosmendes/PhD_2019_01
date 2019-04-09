@@ -42,15 +42,15 @@ public class SolutionGeneratorForAggregationTree {
     private int numberOfSolutionsPerInstance;
     private int idealNumberOfSolutions = 10000;
 
-    public void generateSolutionsForAggregationTree(int reducedDimension, List<Double> parameters) throws FileNotFoundException {
+    public void generateSolutionsForAggregationTree(int reducedDimension, String filePath, List<Double> parameters) throws FileNotFoundException {
         this.numberOfInstances = this.vehicleCapacities.length * this.nodesDistance.length
                 * this.numberOfRequests.length * this.timeWindows.length;
         this.numberOfSolutionsPerInstance = idealNumberOfSolutions / this.numberOfInstances + 1;
 
-        String folder = "AutoEncoderRandomSolutions";
+        String folder = "RandomSolutions";
         boolean success = (new File(folder)).mkdirs();
-        String destinationFileForObjectives = folder + "/Random_Solutions_AT_Objectives_"+idealNumberOfSolutions+".txt";
-        String destinationFileForSolutions = folder + "/Random_Solutions_AT_Solutions_"+idealNumberOfSolutions+".txt";
+        String destinationFileForObjectives = folder + "/Random_Solutions_Objectives_"+idealNumberOfSolutions+".txt";
+        String destinationFileForSolutions = folder + "/Random_Solutions_Solutions_"+idealNumberOfSolutions+".txt";
 
         PrintStream printStreamForObjectives = new PrintStream(destinationFileForObjectives);
         PrintStream printStreamForSolutions = new PrintStream(destinationFileForSolutions);
@@ -68,7 +68,7 @@ public class SolutionGeneratorForAggregationTree {
 
                         System.out.println("Instance configuration = " + requestsInstance + "-" + vehicleCapacityForInstance
                                 + "-" + nodesInstance + "-" + adjacenciesInstance);
-                        generateSolution(reducedDimension, parameters, requestsInstance, vehicleCapacityForInstance, nodesInstance, adjacenciesInstance,
+                        generateSolution(reducedDimension, filePath, parameters, requestsInstance, vehicleCapacityForInstance, nodesInstance, adjacenciesInstance,
                                 printStreamForObjectives, printStreamForSolutions);
 
                     }
@@ -77,7 +77,7 @@ public class SolutionGeneratorForAggregationTree {
         }
     }
 
-    private void generateSolution(int reducedDimension, List<Double> parameters, String requestsInstance, int vehicleCapacityForInstance, String nodesInstance,
+    private void generateSolution(int reducedDimension, String dataFilePath, List<Double> parameters, String requestsInstance, int vehicleCapacityForInstance, String nodesInstance,
             String adjacenciesInstance, PrintStream printStreamForObjectives, PrintStream printStreamForSolutions)
             throws FileNotFoundException {
         final Long timeWindows = (long) 3;
@@ -103,7 +103,7 @@ public class SolutionGeneratorForAggregationTree {
         String adjacenciesData = adjacenciesInstance;
         final Integer numberOfVehicles = 250;
         final Integer vehicleCapacity = vehicleCapacityForInstance;
-        String filePath = "/home/renansantos/Área de Trabalho/Excel Instances/";
+        String filePath = dataFilePath;
 //        numberOfNodes = readProblemData(instanceName, nodesData, adjacenciesData, listOfRequests, distanceBetweenNodes,
 //                timeBetweenNodes, Pmais, Pmenos, requestsWichBoardsInNode, requestsWichLeavesInNode, setOfNodes,
 //                numberOfNodes, loadIndexList);

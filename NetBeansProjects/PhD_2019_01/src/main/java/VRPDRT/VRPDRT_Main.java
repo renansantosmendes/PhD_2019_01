@@ -108,13 +108,13 @@ public class VRPDRT_Main {
         int reducedDimension = 9;
        
         
-        List<ProblemSolution> population = new ArrayList<>();
-            inicializeRandomPopulation(parameters, reducedDimension, population, populationSize, requests,
-                    requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
-                    requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
-        
-        System.out.println();
-        population.forEach(u -> System.out.println(u));
+//        List<ProblemSolution> population = new ArrayList<>();
+//            inicializeRandomPopulation(parameters, reducedDimension, population, populationSize, requests,
+//                    requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
+//                    requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
+//        
+//        System.out.println();
+//        population.forEach(u -> System.out.println(u));
         
 //        MOEAD(instanceName, neighborSize, numberOfEvaluations,maximumNumberOfReplacedSolutions, reducedDimension, parameters,
 //                nadirPoint, populationSize, maximumNumberOfGenerations,functionType, maximumNumberOfExecutions,
@@ -133,7 +133,7 @@ public class VRPDRT_Main {
 //                numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, requestList, loadIndexList,
 //                timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
         //new GoogleStaticMap(new NodeDAO(nodesData).getListOfNodes(), adjacenciesData, nodesData).getStaticMapForInstance();
-        //new SolutionGeneratorForAggregationTree().generateSolutionsForAggregationTree(reducedDimension,parameters);
+        new SolutionGeneratorForAggregationTree().generateSolutionsForAggregationTree(reducedDimension, filePath, parameters);
     }
 
 }
