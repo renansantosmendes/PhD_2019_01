@@ -312,7 +312,7 @@ public class Algorithms {
         objectives[8] = S.getTotalOccupationRate();
 
         S.setAggregatedObjectives(objectives);
-       
+
     }
 
     public static void evaluateAggregatedObjectiveFunctions(List<Double> parameters, List<List<Integer>> matrix, ProblemSolution S) {
@@ -714,6 +714,8 @@ public class Algorithms {
             }
         }
 
+        long currentTime = 0;
+//        while ((!P.isEmpty() && itK.hasNext()) || !vizinho.isEmpty()) {
         while (!P.isEmpty() && itK.hasNext() && !vizinho.isEmpty()) {
             /*do{*/
             //U.clear();
@@ -752,7 +754,7 @@ public class Algorithms {
              System.out.println("ROTA BREMA");*/
             //Step 3
             R.addVisitedNodes(0);
-            long currentTime = 0;
+            currentTime = 0;
 
             Integer lastNode = R.getLastNode();
             Integer newNode;
@@ -950,7 +952,9 @@ public class Algorithms {
             }
 
             //Step 9
+            boolean hasRequest = false;
             if (!U.isEmpty() && itK.hasNext()) {
+                hasRequest = true;
                 List<Request> auxU = new LinkedList<>(U);
                 for (Request request : auxU) {
                     if (vizinho.contains(request.getOrigin()) && vizinho.contains(request.getDestination()) && d.get(0).get(request.getOrigin()) <= request.getPickupTimeWindowUpper()) {
@@ -958,8 +962,26 @@ public class Algorithms {
                         U.remove((Request) request.clone());
                     }
                 }
+                if (!U.isEmpty() && itK.hasNext()) {
+                    hasRequest = true;
+                } else {
+                    hasRequest = false;
+                }
+            }
+
+            if (hasRequest) {
+//                P.addAll(U);
+//                U.clear();
             }
         }
+
+        
+//        ProblemSolution greedySolution = greedyConstructive(0.25, 0.25, 0.25, 0.25,
+//                U, Pin, Pout, n, Qmax,
+//                K, listRequests, P,
+//                loadIndexList, d, c,
+//                TimeWindows, currentTime, 0);
+
         solution.setAggregatedObjectives(new double[reducedDimension]);
         solution.setNonAttendedRequestsList(U);
         evaluateSolution(solution, c, Qmax, listRequests);
@@ -968,6 +990,18 @@ public class Algorithms {
 
         return solution;
     }
+
+//    private static List<Integer> generateLoadIndex() {
+//        List<Integer> loadIndex = new LinkedList<>();
+//        for (int i = 0; i < numberOfNodes; i++) {
+//            if (requestsWichBoardsInNode.get(i) != null && requestsWichLeavesInNode.get(i) != null) {
+//                loadIndex.add(requestsWichBoardsInNode.get(i).size() - requestsWichLeavesInNode.get(i).size());
+//            } else {
+//                loadIndex.add(0);
+//            }
+//        }
+//        return loadIndex;
+//    }
 
     public static void GeneticAlgorithm(int reducedDimension, List<Double> parameters, List<ProblemSolution> Pop, Integer TamPop, Integer MaxGer, double Pm, double Pc, List<Request> listRequests,
             Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout, Integer n, Integer Qmax, Set<Integer> K,
