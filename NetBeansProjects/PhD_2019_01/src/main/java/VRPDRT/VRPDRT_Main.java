@@ -60,7 +60,7 @@ public class VRPDRT_Main {
                 requestTimeWindows, instanceSize);
         final Integer numberOfVehicles = 250;
 
-        Integer populationSize = 10;
+        Integer populationSize = 100;
         Integer maximumNumberOfGenerations = 1000;
         Integer maximumNumberOfExecutions = 30;
         double probabilityOfMutation = 0.02;
