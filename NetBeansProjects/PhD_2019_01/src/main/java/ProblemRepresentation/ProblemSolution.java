@@ -355,6 +355,25 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
 //                + lambdas.get(8) * totalOccupatioNumberOfNumberOfAggregatedObjectives()AggregatedObjectives()nRate);
     }
 
+    public int getAttendanceRequestSize(){
+        int size = 0;
+        for(Route route: this.setOfRoutes){
+            size += route.getRequestAttendanceList().size();
+        }
+        
+        
+        return size;
+    }
+    
+    public List<Integer> getAttendanceRequestList(){
+        List<Integer> requestList = new ArrayList<>();
+        for(Route route: this.setOfRoutes){
+            requestList.addAll(route.getRequestAttendanceIdsList());
+        }
+        return requestList;
+    }
+    
+    
     public double getObjective(int n) {
         return this.aggregatedObjectives[n];
     }

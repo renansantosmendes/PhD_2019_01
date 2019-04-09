@@ -60,7 +60,7 @@ public class VRPDRT_Main {
                 requestTimeWindows, instanceSize);
         final Integer numberOfVehicles = 250;
 
-        Integer populationSize = 20;
+        Integer populationSize = 10;
         Integer maximumNumberOfGenerations = 1000;
         Integer maximumNumberOfExecutions = 30;
         double probabilityOfMutation = 0.02;
@@ -106,33 +106,16 @@ public class VRPDRT_Main {
         System.out.println("Instance Name = " + instanceName);
 
         int reducedDimension = 9;
-
-        for (int i = 0; i < 20; i++) {
-            Random rnd = new Random();
-            double x, y, z, w;
-
-            do {
-                x = rnd.nextDouble();
-                y = rnd.nextDouble();
-                z = rnd.nextDouble();
-                w = 1 - x - y - z;
-            } while (x + y + z + w != 1);
-
-            ProblemSolution solution = greedyConstructive(x, y, z, w,
-                    requests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity,
-                    setOfVehicles, listOfNonAttendedRequests, requestList,
-                    loadIndexList, timeBetweenNodes, distanceBetweenNodes,
-                    timeWindows, currentTime, lastNode);
-            System.out.println(solution);
-        }
-        
+       
         
         List<ProblemSolution> population = new ArrayList<>();
             inicializeRandomPopulation(parameters, reducedDimension, population, populationSize, requests,
                     requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                     requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
+        
         System.out.println();
         population.forEach(u -> System.out.println(u));
+        
 //        MOEAD(instanceName, neighborSize, numberOfEvaluations,maximumNumberOfReplacedSolutions, reducedDimension, parameters,
 //                nadirPoint, populationSize, maximumNumberOfGenerations,functionType, maximumNumberOfExecutions,
 //                neighborhoodSelectionProbability, probabilityOfMutation, probabilityOfCrossover, requests,

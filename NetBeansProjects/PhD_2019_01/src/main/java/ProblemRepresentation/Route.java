@@ -79,6 +79,15 @@ public class Route implements Comparable<Route> {
     public List<Request> getRequestAttendanceList() {
         return requestAttendanceList;
     }
+    
+    public List<Integer> getRequestAttendanceIdsList() {
+        List<Integer> ids = new ArrayList<>();
+        for(Request request: this.requestAttendanceList){
+            ids.add(request.getId());
+        }
+        
+        return ids;
+    }
 
     public void setRequestAttendanceList(List<Request> requestAttendanceList) {
         this.requestAttendanceList.clear();

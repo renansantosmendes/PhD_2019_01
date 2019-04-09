@@ -143,7 +143,7 @@ public class Algorithms {
     public static long FO1(ProblemSolution S, List<List<Long>> c) {
         int totalCost = 0;
         //o custo do veiculo é de 1000
-        int W = 1000,//1000,
+        int W = 0,//1000,
                 costU = 0;//800;//200;
 
         for (Route r : S.getSetOfRoutes()) {
@@ -153,7 +153,7 @@ public class Algorithms {
             }
         }
 
-        totalCost += S.getNonAttendedRequestsList().size() * costU;
+        //totalCost += S.getNonAttendedRequestsList().size() * costU;
 
         return totalCost;
     }
@@ -694,6 +694,11 @@ public class Algorithms {
         P.clear();
         P.addAll(listRequests);
 
+        
+        List<Request> requestListForSecondFase = new ArrayList<>();
+        for(Request request: listRequests){
+            requestListForSecondFase.add((Request) request.clone());
+        }
         //Step 1
         ProblemSolution solution = new ProblemSolution(reducedDimension);
         solution.setLinkedRouteList(vizinho);
@@ -952,9 +957,7 @@ public class Algorithms {
             }
 
             //Step 9
-            boolean hasRequest = false;
             if (!U.isEmpty() && itK.hasNext()) {
-                hasRequest = true;
                 List<Request> auxU = new LinkedList<>(U);
                 for (Request request : auxU) {
                     if (vizinho.contains(request.getOrigin()) && vizinho.contains(request.getDestination()) && d.get(0).get(request.getOrigin()) <= request.getPickupTimeWindowUpper()) {
@@ -962,46 +965,47 @@ public class Algorithms {
                         U.remove((Request) request.clone());
                     }
                 }
-                if (!U.isEmpty() && itK.hasNext()) {
-                    hasRequest = true;
-                } else {
-                    hasRequest = false;
-                }
-            }
-
-            if (hasRequest) {
-//                P.addAll(U);
-//                U.clear();
             }
         }
-
+      
+        ProblemSolution greedySolution = null;
+        if (!U.isEmpty()) {
+            List<Integer> loadIndex = generateLoadIndex(n, Pin, Pout);
+            greedySolution = greedyConstructive(0.25, 0.25, 0.25, 0.25,
+                    U, Pin, Pout, n, Qmax,
+                    K, requestListForSecondFase, P,
+                    loadIndex, d, c,
+                    TimeWindows, currentTime, 0);
+            U.clear();
+        }
         
-//        ProblemSolution greedySolution = greedyConstructive(0.25, 0.25, 0.25, 0.25,
-//                U, Pin, Pout, n, Qmax,
-//                K, listRequests, P,
-//                loadIndexList, d, c,
-//                TimeWindows, currentTime, 0);
-
         solution.setAggregatedObjectives(new double[reducedDimension]);
         solution.setNonAttendedRequestsList(U);
         evaluateSolution(solution, c, Qmax, listRequests);
         evaluateAggregatedObjectiveFunctions(parameters, solution);
         solution.setLogger(log);
-
-        return solution;
+        
+        if (greedySolution == null){
+            return solution;
+        }else{
+            System.out.println(greedySolution);
+            System.out.println(solution);
+            return solution;
+        }        
     }
 
-//    private static List<Integer> generateLoadIndex() {
-//        List<Integer> loadIndex = new LinkedList<>();
-//        for (int i = 0; i < numberOfNodes; i++) {
-//            if (requestsWichBoardsInNode.get(i) != null && requestsWichLeavesInNode.get(i) != null) {
-//                loadIndex.add(requestsWichBoardsInNode.get(i).size() - requestsWichLeavesInNode.get(i).size());
-//            } else {
-//                loadIndex.add(0);
-//            }
-//        }
-//        return loadIndex;
-//    }
+    private static List<Integer> generateLoadIndex(int numberOfNodes, Map<Integer, List<Request>> Pin,
+            Map<Integer, List<Request>> Pout) {
+        List<Integer> loadIndex = new LinkedList<>();
+        for (int i = 0; i < numberOfNodes; i++) {
+            if (Pin.get(i) != null && Pout.get(i) != null) {
+                loadIndex.add(Pin.get(i).size() - Pout.get(i).size());
+            } else {
+                loadIndex.add(0);
+            }
+        }
+        return loadIndex;
+    }
 
     public static void GeneticAlgorithm(int reducedDimension, List<Double> parameters, List<ProblemSolution> Pop, Integer TamPop, Integer MaxGer, double Pm, double Pc, List<Request> listRequests,
             Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout, Integer n, Integer Qmax, Set<Integer> K,
