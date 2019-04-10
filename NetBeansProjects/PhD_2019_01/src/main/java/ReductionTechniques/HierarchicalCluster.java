@@ -91,6 +91,9 @@ public class HierarchicalCluster {
         this.numberOfClusters = numberOfClusters;
         this.clusters = new ArrayList<>();
         this.listData = readData();
+        createMatrix();
+        calculateSilimarity();
+        calculateDissilimarity();
     }
 
     public List<List<Double>> getListData() {

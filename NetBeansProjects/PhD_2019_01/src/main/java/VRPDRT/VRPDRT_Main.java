@@ -15,6 +15,7 @@ import static Algorithms.EvolutionaryAlgorithms.*;
 import static Algorithms.Methods.inicializeRandomPopulation;
 import static Algorithms.Methods.readProblemUsingExcelData;
 import InstanceReader.*;
+import ReductionTechniques.HierarchicalCluster;
 import jxl.read.biff.BiffException;
 
 /**
@@ -133,7 +134,13 @@ public class VRPDRT_Main {
 //                numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, requestList, loadIndexList,
 //                timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
         //new GoogleStaticMap(new NodeDAO(nodesData).getListOfNodes(), adjacenciesData, nodesData).getStaticMapForInstance();
-        new SolutionGeneratorForAggregationTree().generateSolutionsForAggregationTree(reducedDimension, filePath, parameters);
+        //new SolutionGeneratorForAggregationTree().generateSolutionsForAggregationTree(reducedDimension, filePath, parameters);
+        
+        String solutionsPath = "/home/renansantos/Área de Trabalho/Experimentos/new_solutions.csv";
+        int numberOfClusters = 2;
+        HierarchicalCluster hc = new HierarchicalCluster(solutionsPath, numberOfClusters);
+        hc.reduce();
+        hc.printTransformationList();
     }
 
 }
