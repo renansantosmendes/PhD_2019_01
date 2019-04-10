@@ -872,7 +872,7 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
                 + numberOfVehicles + "\t" + totalWaintingTime + "\t" + totalTravelTime + "\t" + deliveryTimeWindowAntecipation
                 + "\t" + totalOccupationRate + "\t";
         
-        s =  getListOfAggregatedObjectives() + "\t" + getStringWithAllNonReducedObjectivesForCsvFile() + " ";
+        s =  getListOfAggregatedObjectives() + "\t" + getStringWithAllNonReducedObjectivesForCsvFile() + " " + this.getAttendanceRequestSize() + " ";
 //        s =  getListOfAggregatedObjectives() + "\t";
         int indice = 1;
         String listaAtendimento = " ";

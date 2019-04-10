@@ -48,7 +48,7 @@ public class VRPDRT_Main {
     public static void main(String[] args) throws ApiException, InterruptedException, IOException, BiffException {
         String directionsApiKey = "AIzaSyD9W0em7H723uVOMD6QFe_1Mns71XAi5JU";
         String filePath = "/home/renansantos/Área de Trabalho/Excel Instances/";
-        //filePath = "/home/rmendes/VRPDRT/";
+//        filePath = "/home/rmendes/VRPDRT/";
 
         int numberOfRequests = 50;
         int requestTimeWindows = 10;
@@ -63,13 +63,13 @@ public class VRPDRT_Main {
         final Integer numberOfVehicles = 250;
 
         Integer populationSize = 100;
-        Integer maximumNumberOfGenerations = 10;
+        Integer maximumNumberOfGenerations = 1000;
         Integer maximumNumberOfExecutions = 1;
         double probabilityOfMutation = 0.02;
         double probabilityOfCrossover = 0.7;
         double neighborhoodSelectionProbability = 0.7;
         
-        int numberOfEvaluations = 300000;
+        int numberOfEvaluations = 300;
         int neighborSize = 100;
         int maximumNumberOfReplacedSolutions = 20;
         int fileSize = populationSize;
@@ -108,7 +108,7 @@ public class VRPDRT_Main {
         System.out.println("Nadir Point = " + nadirPoint);
         System.out.println("Instance Name = " + instanceName);
 
-        int reducedDimension = 2;
+        int reducedDimension = 9;
        
         
 //        List<ProblemSolution> population = new ArrayList<>();
@@ -119,17 +119,17 @@ public class VRPDRT_Main {
 //        System.out.println();
 //        population.forEach(u -> System.out.println(u));
         
-//        MOEAD(instanceName, neighborSize, numberOfEvaluations,maximumNumberOfReplacedSolutions, reducedDimension, parameters,
-//                nadirPoint, populationSize, maximumNumberOfGenerations,functionType, maximumNumberOfExecutions,
-//                neighborhoodSelectionProbability, probabilityOfMutation, probabilityOfCrossover, requests,
-//                requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, 
-//                listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows,
-//                currentTime, lastNode);
+        MOEAD(instanceName, neighborSize, numberOfEvaluations,maximumNumberOfReplacedSolutions, reducedDimension, parameters,
+                nadirPoint, populationSize, maximumNumberOfGenerations,functionType, maximumNumberOfExecutions,
+                neighborhoodSelectionProbability, probabilityOfMutation, probabilityOfCrossover, requests,
+                requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, 
+                listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows,
+                currentTime, lastNode);
 //        
-        NSGAII(instanceName, reducedDimension, parameters, nadirPoint, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
-                requests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
-                listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes,
-                timeWindows, currentTime, lastNode);
+//        NSGAII(instanceName, reducedDimension, parameters, nadirPoint, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
+//                requests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
+//                listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes,
+//                timeWindows, currentTime, lastNode);
 
 //        SPEA2(instanceName, reducedDimension, parameters, nadirPoint, populationSize, fileSize, maximumNumberOfGenerations, maximumNumberOfExecutions,
 //                probabilityOfMutation, probabilityOfCrossover, requests, requestsWhichBoardsInNode, requestsWhichLeavesInNode,
