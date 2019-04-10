@@ -15,6 +15,7 @@ import static Algorithms.EvolutionaryAlgorithms.*;
 import static Algorithms.Methods.inicializeRandomPopulation;
 import static Algorithms.Methods.readProblemUsingExcelData;
 import InstanceReader.*;
+import ReductionTechniques.CorrelationType;
 import ReductionTechniques.HierarchicalCluster;
 import jxl.read.biff.BiffException;
 
@@ -62,11 +63,12 @@ public class VRPDRT_Main {
         final Integer numberOfVehicles = 250;
 
         Integer populationSize = 100;
-        Integer maximumNumberOfGenerations = 1000;
-        Integer maximumNumberOfExecutions = 30;
+        Integer maximumNumberOfGenerations = 10;
+        Integer maximumNumberOfExecutions = 1;
         double probabilityOfMutation = 0.02;
         double probabilityOfCrossover = 0.7;
         double neighborhoodSelectionProbability = 0.7;
+        
         int numberOfEvaluations = 300000;
         int neighborSize = 100;
         int maximumNumberOfReplacedSolutions = 20;
@@ -106,7 +108,7 @@ public class VRPDRT_Main {
         System.out.println("Nadir Point = " + nadirPoint);
         System.out.println("Instance Name = " + instanceName);
 
-        int reducedDimension = 9;
+        int reducedDimension = 2;
        
         
 //        List<ProblemSolution> population = new ArrayList<>();
@@ -124,10 +126,10 @@ public class VRPDRT_Main {
 //                listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows,
 //                currentTime, lastNode);
 //        
-//        NSGAII(instanceName, reducedDimension, parameters, nadirPoint, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
-//                requests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
-//                listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes,
-//                timeWindows, currentTime, lastNode);
+        NSGAII(instanceName, reducedDimension, parameters, nadirPoint, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
+                requests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
+                listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes,
+                timeWindows, currentTime, lastNode);
 
 //        SPEA2(instanceName, reducedDimension, parameters, nadirPoint, populationSize, fileSize, maximumNumberOfGenerations, maximumNumberOfExecutions,
 //                probabilityOfMutation, probabilityOfCrossover, requests, requestsWhichBoardsInNode, requestsWhichLeavesInNode,
@@ -136,11 +138,12 @@ public class VRPDRT_Main {
         //new GoogleStaticMap(new NodeDAO(nodesData).getListOfNodes(), adjacenciesData, nodesData).getStaticMapForInstance();
         //new SolutionGeneratorForAggregationTree().generateSolutionsForAggregationTree(reducedDimension, filePath, parameters);
         
-        String solutionsPath = "/home/renansantos/Área de Trabalho/Experimentos/new_solutions.csv";
-        int numberOfClusters = 2;
-        HierarchicalCluster hc = new HierarchicalCluster(solutionsPath, numberOfClusters);
-        hc.reduce();
-        hc.printTransformationList();
+//        String solutionsPath = "/home/renansantos/Área de Trabalho/Experimentos/new_solutions.csv";
+//        int numberOfClusters = 2;
+//        HierarchicalCluster hc = new HierarchicalCluster(solutionsPath, numberOfClusters)
+//                .setCorrelation(CorrelationType.KENDALL);
+//        hc.reduce();
+//        hc.printTransformationList();
     }
 
 }

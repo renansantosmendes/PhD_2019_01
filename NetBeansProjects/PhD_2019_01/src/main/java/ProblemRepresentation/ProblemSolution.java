@@ -871,7 +871,9 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
                 + totalDeliveryDelay + "\t" + totalRouteTimeChargeBanlance + "\t" + numberOfNonAttendedRequests + "\t"
                 + numberOfVehicles + "\t" + totalWaintingTime + "\t" + totalTravelTime + "\t" + deliveryTimeWindowAntecipation
                 + "\t" + totalOccupationRate + "\t";
-        s = "" + getStringWithAllNonReducedObjectivesForCsvFile() + " ";
+        
+        s =  getListOfAggregatedObjectives() + "\t" + getStringWithAllNonReducedObjectivesForCsvFile() + " ";
+//        s =  getListOfAggregatedObjectives() + "\t";
         int indice = 1;
         String listaAtendimento = " ";
         for (Route r : setOfRoutes) {
@@ -881,7 +883,7 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
                 listaAtendimento += req + " ";
             }
         }
-
+//        s =  getListOfAggregatedObjectives() + "\t";
 //        s += "\t";
         //for(Request req : r.listaAtendimento)
 //        s += listaAtendimento;// + " ";

@@ -300,17 +300,29 @@ public class Algorithms {
 //                + parameters.get(7) * S.getDeliveryTimeWindowAntecipation() + parameters.get(2) * S.getTotalRouteTimeChargeBanlance()
 //                + parameters.get(4) * S.getNumberOfVehicles());
 
-        double[] objectives = new double[S.getAggregatedObjectives().length];
-        objectives[0] = S.getTotalDistance();
-        objectives[1] = S.getTotalDeliveryDelay();
-        objectives[2] = S.getTotalRouteTimeChargeBanlance();
-        objectives[3] = S.getNumberOfNonAttendedRequests();
-        objectives[4] = S.getNumberOfVehicles();
-        objectives[5] = S.getTotalTravelTime();
-        objectives[6] = S.getTotalWaintingTime();
-        objectives[7] = S.getDeliveryTimeWindowAntecipation();
-        objectives[8] = S.getTotalOccupationRate();
+//        double[] objectives = new double[S.getAggregatedObjectives().length];
+//        objectives[0] = S.getTotalDistance();
+//        objectives[1] = S.getTotalDeliveryDelay();
+//        objectives[2] = S.getTotalRouteTimeChargeBanlance();
+//        objectives[3] = S.getNumberOfNonAttendedRequests();
+//        objectives[4] = S.getNumberOfVehicles();
+//        objectives[5] = S.getTotalTravelTime();
+//        objectives[6] = S.getTotalWaintingTime();
+//        objectives[7] = S.getDeliveryTimeWindowAntecipation();
+//        objectives[8] = S.getTotalOccupationRate();
 
+        double[] objectives = new double[S.getAggregatedObjectives().length];
+        
+        objectives[0] = parameters.get(1) * S.getTotalDeliveryDelay()
+                + parameters.get(2) * S.getTotalRouteTimeChargeBanlance()
+                + parameters.get(5) * S.getTotalTravelTime()
+                + parameters.get(6) * S.getTotalWaintingTime();
+        
+        objectives[1] = parameters.get(0) * S.getTotalDistance() 
+                + parameters.get(8) * S.getTotalOccupationRate()
+                + parameters.get(7) * S.getDeliveryTimeWindowAntecipation() 
+                + parameters.get(4) * S.getNumberOfVehicles();
+        
         S.setAggregatedObjectives(objectives);
 
     }
@@ -858,13 +870,14 @@ public class Algorithms {
         if (greedySolution == null){
             return solution;
         }else{
-            concatenatesSolutions(solution, greedySolution, c, Qmax, listRequests);
+            concatenatesSolutions(solution, greedySolution,parameters, c, Qmax, listRequests);
             return solution;
         }        
     }
     
     private static ProblemSolution concatenatesSolutions(ProblemSolution solution1, ProblemSolution solution2,
-            List<List<Long>> distanceBetweenNodes, Integer vehicleCapacity, List<Request> listOfRequests){
+            List<Double> parameters,List<List<Long>> distanceBetweenNodes, Integer vehicleCapacity,
+            List<Request> listOfRequests){
         Set<Route> setOfRoutes = new HashSet<>();
         
         setOfRoutes.addAll(solution1.getSetOfRoutes());
@@ -873,7 +886,7 @@ public class Algorithms {
         ProblemSolution solution = new ProblemSolution();
         solution.setSetOfRoutes(setOfRoutes);
         evaluateSolution(solution, distanceBetweenNodes, vehicleCapacity, listOfRequests);
-
+        evaluateAggregatedObjectiveFunctions(parameters, solution);
         return solution;
     }
 

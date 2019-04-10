@@ -393,7 +393,7 @@ public class EvolutionaryAlgorithms {
         String folderName, fileName;
 
         LocalDateTime time = LocalDateTime.now();
-        folderName = "AlgorithmsResults//9FO//NSGA-II//" + instanceName + "k" + vehicleCapacity + "_" + time.getYear() + "_" + time.getMonthValue() + "_" + time.getDayOfMonth();
+        folderName = "NewResults//NSGA-II//" + instanceName + "k" + vehicleCapacity + "_" + time.getYear() + "_" + time.getMonthValue() + "_" + time.getDayOfMonth();
         fileName = "NSGAII";
 
         boolean success = (new File(folderName)).mkdirs();
@@ -402,10 +402,10 @@ public class EvolutionaryAlgorithms {
         }
         try {
             List<ProblemSolution> combinedPareto = new ArrayList<>();
-            PrintStream printStreamForCombinedPareto = new PrintStream(folderName + "/" + fileName + "-Pareto_Combinado.txt");
-            PrintStream printStreamForObjectiveFunctionOfCombinedPareto = new PrintStream(folderName + "/" + fileName + "-Pareto_Combinado_Funcoes_Objetivo.txt");
+            PrintStream printStreamForCombinedPareto = new PrintStream(folderName + "/" + fileName + "-combined_pareto.csv");
+            PrintStream printStreamForObjectiveFunctionOfCombinedPareto = new PrintStream(folderName + "/" + fileName + "-combined_pareto_objective_functions.csv");
             PrintStream printStreamForAllObjectives = new PrintStream(folderName + "/nsga_pareto_9fo.csv");
-            PrintStream printStreamForAllObjectives2 = new PrintStream(folderName + "/nsga_pareto_reduced.txt");
+            PrintStream printStreamForAllObjectives2 = new PrintStream(folderName + "/nsga_pareto_reduced.csv");
             for (int executionCounter = 0; executionCounter < maximumNumberOfExecutions; executionCounter++) {
                 String executionNumber;
                 List<Double> listOfHypervolumes = new ArrayList<>();
@@ -538,9 +538,10 @@ public class EvolutionaryAlgorithms {
             printPopulation(finalPareto);
             for (ProblemSolution individual : finalPareto) {
                 printStreamForCombinedPareto.print(individual + "\n");
-                printStreamForObjectiveFunctionOfCombinedPareto.print(individual.getStringWithObjectives() + "\n");
+                printStreamForObjectiveFunctionOfCombinedPareto.print(individual.getStringWithAllNonReducedObjectivesForCsvFile() + "\n");
                 printStreamForAllObjectives.print(individual.getStringWithAllNonReducedObjectivesForCsvFile() + "\n");
-                printStreamForAllObjectives2.print(individual.getAggregatedObjective1() + "\t" + individual.getAggregatedObjective2() + "\n");
+                String string = individual.getListOfAggregatedObjectives() + "\n";
+                printStreamForAllObjectives2.print(string.replace("[", "").replace("]", ""));
             }
 
 //            new ResultsGraphicsForParetoCombinedSet(finalPareto, "ResultGraphics", "CombinedParetoSet");
