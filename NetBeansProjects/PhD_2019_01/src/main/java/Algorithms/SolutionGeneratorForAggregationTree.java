@@ -5,10 +5,8 @@
  */
 package Algorithms;
 
-import static Algorithms.Algorithms.generateRandomSolutionsUsingPerturbation;
 import static Algorithms.Algorithms.greedyConstructive;
 import static Algorithms.Algorithms.perturbation;
-import static Algorithms.Methods.readProblemData;
 import static Algorithms.Methods.readProblemUsingExcelData;
 import ProblemRepresentation.Request;
 import ProblemRepresentation.ProblemSolution;
@@ -119,7 +117,7 @@ public class SolutionGeneratorForAggregationTree {
 
         Methods.initializeFleetOfVehicles(setOfVehicles, numberOfVehicles);
 
-        ProblemSolution solution = greedyConstructive(0.2, 0.15, 0.55, 0.1, requestList, requestsWichBoardsInNode,
+        ProblemSolution solution = greedyConstructive(0.2, 0.15, 0.55, 0.1,reducedDimension, requestList, requestsWichBoardsInNode,
                 requestsWichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, listOfRequests,
                 loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
 

@@ -1723,12 +1723,12 @@ public class EvolutionaryAlgorithms {
         }
     }
 
-    public static void initializePopulation(List<ProblemSolution> Pop, int TamPop, List<Request> listRequests, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout,
+    public static void initializePopulation(List<ProblemSolution> Pop,int reducedDimension, int TamPop, List<Request> listRequests, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout,
             Integer n, Integer Qmax, Set<Integer> K, List<Request> U, List<Request> P, List<Integer> m, List<List<Long>> d,
             List<List<Long>> c, Long TimeWindows, Long currentTime, Integer lastNode) {
         ProblemSolution s0 = new ProblemSolution();
         for (int i = 0; i < TamPop; i++) {
-            s0.setSolution(geraPesos(i, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode));
+            s0.setSolution(geraPesos(reducedDimension, i, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode));
             //Pop.add(s0);
             Pop.get(i).setSolution(s0);
             //System.out.println("s0 = " + s0);
