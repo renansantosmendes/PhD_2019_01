@@ -154,7 +154,6 @@ public class Algorithms {
         }
 
         //totalCost += S.getNonAttendedRequestsList().size() * costU;
-
         return totalCost;
     }
 
@@ -300,31 +299,32 @@ public class Algorithms {
 //                + parameters.get(7) * S.getDeliveryTimeWindowAntecipation() + parameters.get(2) * S.getTotalRouteTimeChargeBanlance()
 //                + parameters.get(4) * S.getNumberOfVehicles());
 
-        double[] objectives = new double[S.getAggregatedObjectives().length];
-        objectives[0] = S.getTotalDistance();
-        objectives[1] = S.getTotalDeliveryDelay();
-        objectives[2] = S.getTotalRouteTimeChargeBanlance();
-        objectives[3] = S.getNumberOfNonAttendedRequests();
-        objectives[4] = S.getNumberOfVehicles();
-        objectives[5] = S.getTotalTravelTime();
-        objectives[6] = S.getTotalWaintingTime();
-        objectives[7] = S.getDeliveryTimeWindowAntecipation();
-        objectives[8] = S.getTotalOccupationRate();
-        
-   
+        double[] objectives = null;
+        if (S.getAggregatedObjectives().length == 9) {
+            objectives = new double[S.getAggregatedObjectives().length];
+            objectives[0] = S.getTotalDistance();
+            objectives[1] = S.getTotalDeliveryDelay();
+            objectives[2] = S.getTotalRouteTimeChargeBanlance();
+            objectives[3] = S.getNumberOfNonAttendedRequests();
+            objectives[4] = S.getNumberOfVehicles();
+            objectives[5] = S.getTotalTravelTime();
+            objectives[6] = S.getTotalWaintingTime();
+            objectives[7] = S.getDeliveryTimeWindowAntecipation();
+            objectives[8] = S.getTotalOccupationRate();
+        } else {
 
-//        double[] objectives = new double[S.getAggregatedObjectives().length];
-//        
-//        objectives[0] = parameters.get(1) * S.getTotalDeliveryDelay()
-//                + parameters.get(2) * S.getTotalRouteTimeChargeBanlance()
-//                + parameters.get(5) * S.getTotalTravelTime()
-//                + parameters.get(6) * S.getTotalWaintingTime();
-//        
-//        objectives[1] = parameters.get(0) * S.getTotalDistance() 
-//                + parameters.get(8) * S.getTotalOccupationRate()
-//                + parameters.get(7) * S.getDeliveryTimeWindowAntecipation() 
-//                + parameters.get(4) * S.getNumberOfVehicles();
-        
+            objectives = new double[S.getAggregatedObjectives().length];
+
+            objectives[0] = parameters.get(1) * S.getTotalDeliveryDelay()
+                    + parameters.get(2) * S.getTotalRouteTimeChargeBanlance()
+                    + parameters.get(5) * S.getTotalTravelTime()
+                    + parameters.get(6) * S.getTotalWaintingTime();
+
+            objectives[1] = parameters.get(0) * S.getTotalDistance()
+                    + parameters.get(8) * S.getTotalOccupationRate()
+                    + parameters.get(7) * S.getDeliveryTimeWindowAntecipation()
+                    + parameters.get(4) * S.getNumberOfVehicles();
+        }
         S.setAggregatedObjectives(objectives);
 
     }
@@ -556,7 +556,6 @@ public class Algorithms {
         return solution;
     }
 
-
     private static void evaluateSolution(ProblemSolution solution, List<List<Long>> distanceBetweenNodes, Integer vehicleCapacity, List<Request> listOfRequests) {
         solution.setTotalDistance(FO1(solution, distanceBetweenNodes));
         solution.setTotalDeliveryDelay(FO2(solution));
@@ -578,9 +577,8 @@ public class Algorithms {
         P.clear();
         P.addAll(listRequests);
 
-        
         List<Request> requestListForSecondFase = new ArrayList<>();
-        for(Request request: listRequests){
+        for (Request request : listRequests) {
             requestListForSecondFase.add((Request) request.clone());
         }
         //Step 1
@@ -851,7 +849,7 @@ public class Algorithms {
                 }
             }
         }
-      
+
         ProblemSolution greedySolution = new ProblemSolution(reducedDimension);
         if (!U.isEmpty()) {
             List<Integer> loadIndex = generateLoadIndex(n, Pin, Pout);
@@ -862,32 +860,32 @@ public class Algorithms {
                     TimeWindows, currentTime, 0);
             U.clear();
         }
-        
+
         solution.setAggregatedObjectives(new double[reducedDimension]);
         solution.setNonAttendedRequestsList(U);
         evaluateSolution(solution, c, Qmax, listRequests);
         evaluateAggregatedObjectiveFunctions(parameters, solution);
         solution.setLogger(log);
-        
-        if (greedySolution == null){
+
+        if (greedySolution == null) {
             return solution;
-        }else{
+        } else {
             ProblemSolution newSolution = new ProblemSolution(reducedDimension);
-            newSolution.setSolution(concatenatesSolutions(solution, greedySolution, reducedDimension, 
+            newSolution.setSolution(concatenatesSolutions(solution, greedySolution, reducedDimension,
                     parameters, c, Qmax, listRequests));
             //solution.setSolution(newSolution);
             return newSolution;
-        }        
+        }
     }
-    
-    private static ProblemSolution concatenatesSolutions(ProblemSolution solution1, ProblemSolution solution2, 
+
+    private static ProblemSolution concatenatesSolutions(ProblemSolution solution1, ProblemSolution solution2,
             int reducedDimension, List<Double> parameters, List<List<Long>> distanceBetweenNodes, Integer vehicleCapacity,
-            List<Request> listOfRequests){
+            List<Request> listOfRequests) {
         Set<Route> setOfRoutes = new HashSet<>();
-        
+
         setOfRoutes.addAll(solution1.getSetOfRoutes());
         setOfRoutes.addAll(solution2.getSetOfRoutes());
-        
+
         ProblemSolution solution = new ProblemSolution(reducedDimension);
         solution.setSetOfRoutes(setOfRoutes);
         solution.linkTheRoutes();
@@ -1251,7 +1249,7 @@ public class Algorithms {
         } while (x + y + z > 1);
 
         //System.out.println(x + "\t" + y + "\t" + z + "\t" + w);
-        S.setSolution(greedyConstructive(x, y, z, w, reducedDimension, listRequests, Pin, Pout, n, Qmax, 
+        S.setSolution(greedyConstructive(x, y, z, w, reducedDimension, listRequests, Pin, Pout, n, Qmax,
                 K, U, P, m, d, c, TimeWindows, currentTime, lastNode));
         //System.out.println("SolucaoGulosaAleatoria = "+ S);
         //S.setSolution(GeraSolucaoAleatoria(Pop, TamPop, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode));
@@ -1357,7 +1355,7 @@ public class Algorithms {
         //initializePopulation(Pop, TamPop, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode);
 
         for (int i = 0; i < TamPop; i++) {
-            s.setSolution(geraPesos(reducedDimension, i, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, 
+            s.setSolution(geraPesos(reducedDimension, i, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d,
                     c, TimeWindows, currentTime, lastNode));
             //Pop.add(s);
             //System.out.println(s);
@@ -2088,7 +2086,7 @@ public class Algorithms {
             List<Integer> loadIndexList, List<List<Long>> timeBetweenNodes, List<List<Long>> distanceBetweenNodes,
             Long timeWindows, Long currentTime, Integer lastNode) {
 
-        ProblemSolution solution = greedyConstructive(0.2, 0.15, 0.55, 0.1,reducedDimension, listOfRequests, requestsWichBoardsInNode,
+        ProblemSolution solution = greedyConstructive(0.2, 0.15, 0.55, 0.1, reducedDimension, listOfRequests, requestsWichBoardsInNode,
                 requestsWichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, requestList,
                 loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
 
@@ -2145,7 +2143,7 @@ public class Algorithms {
             List<Integer> loadIndexList, List<List<Long>> timeBetweenNodes, List<List<Long>> distanceBetweenNodes,
             Long timeWindows, Long currentTime, Integer lastNode) throws FileNotFoundException {
 
-        ProblemSolution solution = greedyConstructive(0.2, 0.15, 0.55, 0.1,reducedDimension, listOfRequests, requestsWichBoardsInNode,
+        ProblemSolution solution = greedyConstructive(0.2, 0.15, 0.55, 0.1, reducedDimension, listOfRequests, requestsWichBoardsInNode,
                 requestsWichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, requestList,
                 loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
 
