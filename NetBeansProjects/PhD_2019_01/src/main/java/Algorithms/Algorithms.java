@@ -315,15 +315,27 @@ public class Algorithms {
 
             objectives = new double[S.getAggregatedObjectives().length];
 
-            objectives[0] = parameters.get(1) * S.getTotalDeliveryDelay()
-                    + parameters.get(2) * S.getTotalRouteTimeChargeBanlance()
-                    + parameters.get(5) * S.getTotalTravelTime()
+            //redução abaixo foi feita usando DBSCAN
+            //primeira tentativa
+            //array([-1, -1,  0,  1, -1,  0, -1,  1])
+            //        0   1   2   4   5   6   7   8
+            objectives[0] = 
+                     parameters.get(2) * S.getTotalRouteTimeChargeBanlance()
                     + parameters.get(6) * S.getTotalWaintingTime();
 
-            objectives[1] = parameters.get(0) * S.getTotalDistance()
-                    + parameters.get(8) * S.getTotalOccupationRate()
-                    + parameters.get(7) * S.getDeliveryTimeWindowAntecipation()
+            objectives[1] = 
+                    parameters.get(8) * S.getTotalOccupationRate()
                     + parameters.get(4) * S.getNumberOfVehicles();
+            
+//            objectives[0] = parameters.get(1) * S.getTotalDeliveryDelay()
+//                    + parameters.get(2) * S.getTotalRouteTimeChargeBanlance()
+//                    + parameters.get(5) * S.getTotalTravelTime()
+//                    + parameters.get(6) * S.getTotalWaintingTime();
+//
+//            objectives[1] = parameters.get(0) * S.getTotalDistance()
+//                    + parameters.get(8) * S.getTotalOccupationRate()
+//                    + parameters.get(7) * S.getDeliveryTimeWindowAntecipation()
+//                    + parameters.get(4) * S.getNumberOfVehicles();
         }
         S.setAggregatedObjectives(objectives);
 
