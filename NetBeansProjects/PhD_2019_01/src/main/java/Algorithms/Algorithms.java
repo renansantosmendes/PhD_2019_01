@@ -318,15 +318,29 @@ public class Algorithms {
             //redução abaixo foi feita usando DBSCAN
             //primeira tentativa
             //array([-1, -1,  0,  1, -1,  0, -1,  1])
-            //        0   1   2   4   5   6   7   8
-            objectives[0] = 
-                     parameters.get(2) * S.getTotalRouteTimeChargeBanlance()
-                    + parameters.get(6) * S.getTotalWaintingTime();
-
-            objectives[1] = 
-                    parameters.get(8) * S.getTotalOccupationRate()
-                    + parameters.get(4) * S.getNumberOfVehicles();
+            //        0   1   2   4   5   6   7   8 índice
+            //        1   2   3   4   5   6   7   8 numero da função
+            // primeira tentativa de usar DBSCAN
+//            objectives[0] = 
+//                     parameters.get(2) * S.getTotalRouteTimeChargeBanlance()
+//                    + parameters.get(6) * S.getTotalWaintingTime();
+//
+//            objectives[1] = 
+//                    parameters.get(8) * S.getTotalOccupationRate()
+//                    + parameters.get(4) * S.getNumberOfVehicles();
             
+            //Usando dados normalizados
+            //array([-1,  0,  1, -1,  0, -1, -1,  1])
+            //        0   1   2   4   5   6   7   8 índice
+            //        1   2   3   4   5   6   7   8 numero da função
+            
+            objectives[0] = parameters.get(1) * S.getTotalDeliveryDelay()
+                    + parameters.get(5) * S.getTotalTravelTime();
+
+            objectives[1] = parameters.get(2) * S.getTotalRouteTimeChargeBanlance()
+                    + parameters.get(8) * S.getTotalOccupationRate();
+            
+            //redução abaixo é usando o cluster hierárquico com tau de kendall
 //            objectives[0] = parameters.get(1) * S.getTotalDeliveryDelay()
 //                    + parameters.get(2) * S.getTotalRouteTimeChargeBanlance()
 //                    + parameters.get(5) * S.getTotalTravelTime()

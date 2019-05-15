@@ -12,11 +12,9 @@ import ProblemRepresentation.*;
 import com.google.maps.errors.ApiException;
 import java.io.IOException;
 import static Algorithms.EvolutionaryAlgorithms.*;
-import static Algorithms.Methods.inicializeRandomPopulation;
-import static Algorithms.Methods.readProblemUsingExcelData;
+import static Algorithms.Methods.*;
 import InstanceReader.*;
-import ReductionTechniques.CorrelationType;
-import ReductionTechniques.HierarchicalCluster;
+import ReductionTechniques.*;
 import jxl.read.biff.BiffException;
 
 /**
@@ -65,7 +63,7 @@ public class VRPDRT_Main {
         Integer populationSize = 100;
         Integer maximumNumberOfGenerations = 1000;
         Integer maximumNumberOfExecutions = 30;
-        double probabilityOfMutation = 0.2;
+        double probabilityOfMutation = 0.02;
         double probabilityOfCrossover = 0.7;
         double neighborhoodSelectionProbability = 0.8;
         
@@ -127,7 +125,7 @@ public class VRPDRT_Main {
 //                numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, requestList, loadIndexList,
 //                timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
         //new GoogleStaticMap(new NodeDAO(nodesData).getListOfNodes(), adjacenciesData, nodesData).getStaticMapForInstance();
-        //new SolutionGeneratorForAggregationTree().generateSolutionsForAggregationTree(reducedDimension, filePath, parameters);
+//       new SolutionGeneratorForAggregationTree().generateSolutionsForAggregationTree(reducedDimension, filePath, parameters);
         
 //        String solutionsPath = "/home/renansantos/Área de Trabalho/Experimentos/new_solutions.csv";
 //        int numberOfClusters = 2;
