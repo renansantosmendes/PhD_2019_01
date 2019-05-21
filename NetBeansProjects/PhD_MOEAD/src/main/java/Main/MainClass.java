@@ -7,14 +7,20 @@ package Main;
 
 import Algorithms.AbstractMOEAD.FunctionType;
 import Algorithms.MOEAD;
+import Algorithms.SolutionsOutput;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.operator.*;
 import org.uma.jmetal.operator.impl.crossover.DifferentialEvolutionCrossover;
 import org.uma.jmetal.operator.impl.mutation.PolynomialMutation;
 import org.uma.jmetal.operator.impl.selection.BinaryTournamentSelection;
 import org.uma.jmetal.problem.Problem;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3;
+import org.uma.jmetal.solution.DoubleSolution;
 import org.uma.jmetal.util.JMetalException;
 
 
@@ -27,8 +33,7 @@ public class MainClass {
     public static void main(String[] args) throws JMetalException, FileNotFoundException {
         
         //initializing problem and algorithm variables
-        int originalDimension = 3;
-        int reducedDimension = 2;
+        int numberOfObjectives = 2;
         int numberOfVariables = 10;
         int populationSize = 100;
         int resultPopulationSize = 100;
@@ -38,15 +43,15 @@ public class MainClass {
         int neighborSize = 10;
         
         //initializing benchmark problem
-        Problem originalProblem = new DTLZ3(numberOfVariables, originalDimension); 
+        Problem problem = new DTLZ1(numberOfVariables, numberOfObjectives); 
         
         //initializing algorithm operators
         CrossoverOperator crossover = new DifferentialEvolutionCrossover();
         MutationOperator mutation = new PolynomialMutation(0.02, 20);
         SelectionOperator selection = new BinaryTournamentSelection();
         
-        Algorithm algorithm = new MOEAD(
-                originalProblem,
+        MOEAD algorithm = new MOEAD(
+                problem,
                 populationSize,
                 resultPopulationSize,
                 maxEvaluations,
@@ -58,9 +63,15 @@ public class MainClass {
                 maximumNumberOfReplacedSolutions,
                 neighborSize);
 
-        algorithm.run();
+//        algorithm.run();
         System.out.println("MOEAD Finished!");
-        System.out.println(algorithm.getResult());
+//        System.out.println(algorithm.getResult());
+        List<DoubleSolution> population = new ArrayList<>();
+        int numberOfSolutions = 10000;
+        population.addAll(algorithm.initializePopulation(problem, numberOfSolutions));
+        population.forEach(u -> System.out.println(u));
+        new SolutionsOutput(problem, population).saveSolutions();
+        
 
     }
 }
