@@ -31,7 +31,7 @@ public class SolutionsOutput {
 
     public void saveSolutions() {
         String folderName = "ClusterAnalysisRandomSolutions";
-        String fileName = problem.getName();
+        String fileName = problem.getName() + "-" + problem.getNumberOfObjectives();
 
         boolean success = (new File(folderName)).mkdirs();
         if (!success) {

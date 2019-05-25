@@ -20,6 +20,7 @@ import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ5;
 import org.uma.jmetal.solution.DoubleSolution;
 import org.uma.jmetal.util.JMetalException;
 
@@ -33,7 +34,7 @@ public class MainClass {
     public static void main(String[] args) throws JMetalException, FileNotFoundException {
         
         //initializing problem and algorithm variables
-        int numberOfObjectives = 2;
+        int numberOfObjectives = 5;//5,10,15
         int numberOfVariables = 10;
         int populationSize = 100;
         int resultPopulationSize = 100;
@@ -43,7 +44,7 @@ public class MainClass {
         int neighborSize = 10;
         
         //initializing benchmark problem
-        Problem problem = new DTLZ1(numberOfVariables, numberOfObjectives); 
+        Problem problem = new DTLZ5(numberOfVariables, numberOfObjectives); 
         
         //initializing algorithm operators
         CrossoverOperator crossover = new DifferentialEvolutionCrossover();
@@ -69,9 +70,9 @@ public class MainClass {
         List<DoubleSolution> population = new ArrayList<>();
         int numberOfSolutions = 10000;
         population.addAll(algorithm.initializePopulation(problem, numberOfSolutions));
-        population.forEach(u -> System.out.println(u));
+//        population.forEach(u -> System.out.println(u));
         new SolutionsOutput(problem, population).saveSolutions();
         
-
+        
     }
 }
