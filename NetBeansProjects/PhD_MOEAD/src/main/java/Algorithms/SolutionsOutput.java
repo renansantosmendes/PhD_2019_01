@@ -23,15 +23,23 @@ public class SolutionsOutput {
 
     List<DoubleSolution> population = new ArrayList<>();
     Problem problem;
+    String fileName;
     public SolutionsOutput(Problem problemPar, List<DoubleSolution> populationPar) {
         population.clear();
         population.addAll(populationPar);
         problem = problemPar;
     }
 
+    public SolutionsOutput(Problem problemPar, List<DoubleSolution> populationPar, String fileName) {
+        population.clear();
+        population.addAll(populationPar);
+        problem = problemPar;
+        fileName = fileName + "_";
+    }
+    
     public void saveSolutions() {
         String folderName = "ClusterAnalysisRandomSolutions";
-        String fileName = problem.getName() + "-" + problem.getNumberOfObjectives();
+       fileName = fileName + problem.getName() + "-" + problem.getNumberOfObjectives();
 
         boolean success = (new File(folderName)).mkdirs();
         if (!success) {

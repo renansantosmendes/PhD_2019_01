@@ -5,6 +5,7 @@
  */
 package Main;
 
+import AggregatedProblems.AggDTLZ5_5;
 import Algorithms.AbstractMOEAD.FunctionType;
 import Algorithms.MOEAD;
 import Algorithms.SolutionsOutput;
@@ -12,6 +13,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import org.uma.jmetal.algorithm.Algorithm;
+import org.uma.jmetal.algorithm.multiobjective.nsgaii.NSGAII;
 import org.uma.jmetal.operator.*;
 import org.uma.jmetal.operator.impl.crossover.DifferentialEvolutionCrossover;
 import org.uma.jmetal.operator.impl.mutation.PolynomialMutation;
@@ -34,7 +36,7 @@ public class MainClass {
     public static void main(String[] args) throws JMetalException, FileNotFoundException {
         
         //initializing problem and algorithm variables
-        int numberOfObjectives = 5;//5,10,15
+        int numberOfObjectives = 2;//5,10,15
         int numberOfVariables = 10;
         int populationSize = 100;
         int resultPopulationSize = 100;
@@ -44,7 +46,7 @@ public class MainClass {
         int neighborSize = 10;
         
         //initializing benchmark problem
-        Problem problem = new DTLZ5(numberOfVariables, numberOfObjectives); 
+        Problem problem = new AggDTLZ5_5(numberOfVariables, numberOfObjectives,2); 
         
         //initializing algorithm operators
         CrossoverOperator crossover = new DifferentialEvolutionCrossover();
@@ -64,14 +66,21 @@ public class MainClass {
                 maximumNumberOfReplacedSolutions,
                 neighborSize);
 
-//        algorithm.run();
+       
+        algorithm.run();
         System.out.println("MOEAD Finished!");
-//        System.out.println(algorithm.getResult());
+        System.out.println(algorithm.getResult());
+        
+        
+        new SolutionsOutput(problem, algorithm.getResult(), "MOEAD_Result").saveSolutions();
+        
+        
         List<DoubleSolution> population = new ArrayList<>();
         int numberOfSolutions = 10000;
         population.addAll(algorithm.initializePopulation(problem, numberOfSolutions));
 //        population.forEach(u -> System.out.println(u));
-        new SolutionsOutput(problem, population).saveSolutions();
+        
+        //new SolutionsOutput(problem, population).saveSolutions();
         
         
     }
