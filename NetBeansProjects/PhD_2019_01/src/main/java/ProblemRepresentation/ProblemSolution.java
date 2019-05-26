@@ -866,9 +866,9 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
     @Override
     public String toString() {
         DecimalFormat df = new DecimalFormat("0.0000");
-
+        //"\t" + numberOfNonAttendedRequests +
         String s = this.objectives + "\t" + getListOfAggregatedObjectives() + "\t" + totalDistance + "\t"
-                + totalDeliveryDelay + "\t" + totalRouteTimeChargeBanlance + "\t" + numberOfNonAttendedRequests + "\t"
+                + totalDeliveryDelay + "\t" + totalRouteTimeChargeBanlance +  "\t"
                 + numberOfVehicles + "\t" + totalWaintingTime + "\t" + totalTravelTime + "\t" + deliveryTimeWindowAntecipation
                 + "\t" + totalOccupationRate + "\t";
         

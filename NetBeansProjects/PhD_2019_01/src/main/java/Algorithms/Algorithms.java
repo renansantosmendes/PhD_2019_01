@@ -300,17 +300,27 @@ public class Algorithms {
 //                + parameters.get(4) * S.getNumberOfVehicles());
 
         double[] objectives = null;
-        if (S.getAggregatedObjectives().length == 9) {
+        if (S.getAggregatedObjectives().length == 8) {
+//            objectives = new double[S.getAggregatedObjectives().length];
+//            objectives[0] = S.getTotalDistance();
+//            objectives[1] = S.getTotalDeliveryDelay();
+//            objectives[2] = S.getTotalRouteTimeChargeBanlance();
+//            objectives[3] = S.getNumberOfNonAttendedRequests();
+//            objectives[4] = S.getNumberOfVehicles();
+//            objectives[5] = S.getTotalTravelTime();
+//            objectives[6] = S.getTotalWaintingTime();
+//            objectives[7] = S.getDeliveryTimeWindowAntecipation();
+//            objectives[8] = S.getTotalOccupationRate();
+            
             objectives = new double[S.getAggregatedObjectives().length];
             objectives[0] = S.getTotalDistance();
             objectives[1] = S.getTotalDeliveryDelay();
             objectives[2] = S.getTotalRouteTimeChargeBanlance();
-            objectives[3] = S.getNumberOfNonAttendedRequests();
-            objectives[4] = S.getNumberOfVehicles();
-            objectives[5] = S.getTotalTravelTime();
-            objectives[6] = S.getTotalWaintingTime();
-            objectives[7] = S.getDeliveryTimeWindowAntecipation();
-            objectives[8] = S.getTotalOccupationRate();
+            objectives[3] = S.getNumberOfVehicles();
+            objectives[4] = S.getTotalTravelTime();
+            objectives[5] = S.getTotalWaintingTime();
+            objectives[6] = S.getDeliveryTimeWindowAntecipation();
+            objectives[7] = S.getTotalOccupationRate();
         } else {
 
             objectives = new double[S.getAggregatedObjectives().length];
@@ -339,6 +349,11 @@ public class Algorithms {
 
             objectives[1] = parameters.get(2) * S.getTotalRouteTimeChargeBanlance()
                     + parameters.get(8) * S.getTotalOccupationRate();
+            
+            objectives[2] = parameters.get(0) * S.getTotalDistance()
+                    + parameters.get(4) * S.getNumberOfVehicles()
+                    + parameters.get(6) * S.getTotalWaintingTime()
+                    + parameters.get(7) * S.getDeliveryTimeWindowAntecipation();
             
             //redução abaixo é usando o cluster hierárquico com tau de kendall
 //            objectives[0] = parameters.get(1) * S.getTotalDeliveryDelay()

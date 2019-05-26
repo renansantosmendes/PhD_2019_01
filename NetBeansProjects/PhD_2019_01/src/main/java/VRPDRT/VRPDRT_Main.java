@@ -67,7 +67,7 @@ public class VRPDRT_Main {
         double probabilityOfCrossover = 0.7;
         double neighborhoodSelectionProbability = 0.8;
         
-        int numberOfEvaluations = 300000;
+        int numberOfEvaluations = 30100;
         int neighborSize = 10;
         int maximumNumberOfReplacedSolutions = 30;
         int fileSize = populationSize;
@@ -106,19 +106,19 @@ public class VRPDRT_Main {
         System.out.println("Nadir Point = " + nadirPoint);
         System.out.println("Instance Name = " + instanceName);
 
-        int reducedDimension = 2;
+        int reducedDimension = 3;
              
-//        MOEAD(instanceName, neighborSize, numberOfEvaluations,maximumNumberOfReplacedSolutions, reducedDimension, parameters,
-//                nadirPoint, populationSize, maximumNumberOfGenerations,functionType, maximumNumberOfExecutions,
-//                neighborhoodSelectionProbability, probabilityOfMutation, probabilityOfCrossover, requests,
-//                requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, 
-//                listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows,
-//                currentTime, lastNode);
+        MOEAD(instanceName, neighborSize, numberOfEvaluations,maximumNumberOfReplacedSolutions, reducedDimension, parameters,
+                nadirPoint, populationSize, maximumNumberOfGenerations,functionType, maximumNumberOfExecutions,
+                neighborhoodSelectionProbability, probabilityOfMutation, probabilityOfCrossover, requests,
+                requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, 
+                listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows,
+                currentTime, lastNode);
 //        
-        NSGAII(instanceName, reducedDimension, parameters, nadirPoint, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
-                requests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
-                listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes,
-                timeWindows, currentTime, lastNode);
+//        NSGAII(instanceName, reducedDimension, parameters, nadirPoint, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
+//                requests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
+//                listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes,
+//                timeWindows, currentTime, lastNode);
 
 //        SPEA2(instanceName, reducedDimension, parameters, nadirPoint, populationSize, fileSize, maximumNumberOfGenerations, maximumNumberOfExecutions,
 //                probabilityOfMutation, probabilityOfCrossover, requests, requestsWhichBoardsInNode, requestsWhichLeavesInNode,
