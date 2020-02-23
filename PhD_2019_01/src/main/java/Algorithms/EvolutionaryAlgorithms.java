@@ -13,7 +13,7 @@ import ProblemRepresentation.*;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Comparator;
-import AlgorithmsResults.ResultsGraphicsForConvergence;
+//import AlgorithmsResults.ResultsGraphicsForConvergence;
 import RandomNumberGenerator.UniformRandomGenerator;
 import ReductionTechniques.CorrelationType;
 import ReductionTechniques.HierarchicalCluster;
@@ -854,9 +854,9 @@ public class EvolutionaryAlgorithms {
         //showHypervolumeConvergence(hypervolumeConvergence);
     }
 
-    private static void showHypervolumeConvergence(List<Double> hypervolumeConvergence) throws IOException {
-        new ResultsGraphicsForConvergence(hypervolumeConvergence, "ResultGraphics", "Convergence");
-    }
+//    private static void showHypervolumeConvergence(List<Double> hypervolumeConvergence) throws IOException {
+//        new ResultsGraphicsForConvergence(hypervolumeConvergence, "ResultGraphics", "Convergence");
+//    }
 
     public static double smetric(List<ProblemSolution> solutions) {
         solutions.sort(Comparator.comparingDouble(ProblemSolution::getAggregatedObjective1));

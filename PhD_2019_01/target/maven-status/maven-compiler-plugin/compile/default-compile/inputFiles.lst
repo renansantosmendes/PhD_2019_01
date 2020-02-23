@@ -3,7 +3,6 @@
 /home/renansantos/Área de Trabalho/Doutorado/PhD_2019_01/PhD_2019_01/src/main/java/InstanceReader/ScriptGenerator.java
 /home/renansantos/Área de Trabalho/Doutorado/PhD_2019_01/PhD_2019_01/src/main/java/InstanceReader/ConnectionFactoryForNewRequests.java
 /home/renansantos/Área de Trabalho/Doutorado/PhD_2019_01/PhD_2019_01/src/main/java/InstanceReader/ReadDataInExcelFile.java
-/home/renansantos/Área de Trabalho/Doutorado/PhD_2019_01/PhD_2019_01/src/main/java/AlgorithmsResults/ResultsGraphicsForParetoCombinedSet.java
 /home/renansantos/Área de Trabalho/Doutorado/PhD_2019_01/PhD_2019_01/src/main/java/InstanceReader/RequestDAOForDataInsertion.java
 /home/renansantos/Área de Trabalho/Doutorado/PhD_2019_01/PhD_2019_01/src/main/java/InstanceReader/ProblemData.java
 /home/renansantos/Área de Trabalho/Doutorado/PhD_2019_01/PhD_2019_01/src/main/java/InstanceReader/ConnectionFactory.java
@@ -23,7 +22,6 @@
 /home/renansantos/Área de Trabalho/Doutorado/PhD_2019_01/PhD_2019_01/src/main/java/ProblemRepresentation/Node.java
 /home/renansantos/Área de Trabalho/Doutorado/PhD_2019_01/PhD_2019_01/src/main/java/ProblemRepresentation/InstanceData.java
 /home/renansantos/Área de Trabalho/Doutorado/PhD_2019_01/PhD_2019_01/src/main/java/ReductionTechniques/HierarchicalCluster.java
-/home/renansantos/Área de Trabalho/Doutorado/PhD_2019_01/PhD_2019_01/src/main/java/Algorithms/AlgorithmsCalibration.java
 /home/renansantos/Área de Trabalho/Doutorado/PhD_2019_01/PhD_2019_01/src/main/java/InstanceReader/Instance.java
 /home/renansantos/Área de Trabalho/Doutorado/PhD_2019_01/PhD_2019_01/src/main/java/ProblemRepresentation/RankedList.java
 /home/renansantos/Área de Trabalho/Doutorado/PhD_2019_01/PhD_2019_01/src/main/java/InstanceReader/NodeDAO.java
@@ -34,6 +32,5 @@
 /home/renansantos/Área de Trabalho/Doutorado/PhD_2019_01/PhD_2019_01/src/main/java/GoogleMapsApi/GoogleStaticMap.java
 /home/renansantos/Área de Trabalho/Doutorado/PhD_2019_01/PhD_2019_01/src/main/java/GoogleMapsApi/DataUpdaterUsingGoogleMapsApi.java
 /home/renansantos/Área de Trabalho/Doutorado/PhD_2019_01/PhD_2019_01/src/main/java/VRPDRT/VRPDRT.java
-/home/renansantos/Área de Trabalho/Doutorado/PhD_2019_01/PhD_2019_01/src/main/java/AlgorithmsResults/ResultsGraphicsForConvergence.java
 /home/renansantos/Área de Trabalho/Doutorado/PhD_2019_01/PhD_2019_01/src/main/java/ProblemRepresentation/Request.java
 /home/renansantos/Área de Trabalho/Doutorado/PhD_2019_01/PhD_2019_01/src/main/java/InstanceReader/DataUpdaterDAO.java
