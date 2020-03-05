@@ -1191,8 +1191,6 @@ public class Methods {
 
                     int min = Collections.min(indices);
                     int max = Collections.max(indices);
-                    //System.out.println("Indices = " + indices);
-                    //System.out.println("Min = " + min + " Max = " + max);
 
                     List<Integer> parte1 = new ArrayList<>(filho1.subList(min, max));
                     List<Integer> parte2 = new ArrayList<>(filho2.subList(min, max));
@@ -1200,9 +1198,6 @@ public class Methods {
                     filho1.subList(min, max).clear();
                     filho2.subList(min, max).clear();
 
-                    //System.out.println(filho1);
-                    //System.out.println(filho2);
-                    //System.out.println("Cruzou!!!");
                     filho1.addAll(min, parte2);
                     filho2.addAll(min, parte1);
 
@@ -1216,18 +1211,14 @@ public class Methods {
 
                 NewPop.add(s1);
                 NewPop.add(s2);
-                //s1.resetSolution(-1);
-                //System.out.println("Pai = "+ pai +" Mae = " + mae);
                 filho1.clear();
                 filho2.clear();
             }
-            //Pop.clear();
+
             Pop_nova.clear();
             Pop_nova.addAll(NewPop);
             NewPop.clear();
-            //OrdenaPopulacao(Pop_nova);
-            //Fitness(Pop);
-            //FitnessSPEA2(Pop_nova);
+ 
         } catch (IllegalArgumentException e) {
             printPopulation(Pop);
         }
