@@ -38,6 +38,15 @@
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
     <name>PhD_VRPDRT_01</name>
+    
+    <distributionManagement>
+       <repository>
+          <id>Central Maven repository</id>
+          <name>Central Maven repository https</name>
+          <url>https://repo.maven.apache.org/maven2</url>
+       </repository>
+    </distributionManagement>
+    
     <dependencies><!-- https://mvnrepository.com/artifact/org.moeaframework/moeaframework -->
         <dependency>
             <groupId>com.google.maps</groupId>

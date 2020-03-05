@@ -6,15 +6,17 @@
 package VRPDRT;
 
 import Algorithms.*;
-import static Algorithms.Algorithms.*;
+import Algorithms.Algorithms.*;
+import static Algorithms.Algorithms.buildInstaceName;
 import java.util.*;
 import ProblemRepresentation.*;
 import com.google.maps.errors.ApiException;
+import Algorithms.EvolutionaryAlgorithms.*;
+import static Algorithms.EvolutionaryAlgorithms.MOEAD;
+import static Algorithms.Methods.readProblemUsingExcelData;
+import InstanceReader.ScriptGenerator;
 import java.io.IOException;
-import static Algorithms.EvolutionaryAlgorithms.*;
-import static Algorithms.Methods.*;
-import InstanceReader.*;
-import ReductionTechniques.*;
+
 import jxl.read.biff.BiffException;
 
 /**
@@ -23,7 +25,7 @@ import jxl.read.biff.BiffException;
  */
 public class VRPDRT_Main {
 
-    final static Long timeWindows = (long) 3;
+    static final Long timeWindows = (long) 3;
     static List<Request> requests = new ArrayList<>();
     static List<List<Integer>> listOfAdjacencies = new LinkedList<>();
     static List<List<Long>> distanceBetweenNodes = new LinkedList<>();
@@ -43,10 +45,10 @@ public class VRPDRT_Main {
     static Long currentTime;
     static Integer lastNode;
 
-    public static void main(String[] args) throws ApiException, InterruptedException, IOException, BiffException {
+    public static void main(String[] args) throws ApiException, Exception, IOException, BiffException {
         String directionsApiKey = "AIzaSyD9W0em7H723uVOMD6QFe_1Mns71XAi5JU";
         String filePath = "/home/renansantos/Área de Trabalho/Excel Instances/";
-        filePath = "/home/rmendes/VRPDRT/";
+        //filePath = "/home/rmendes/VRPDRT/";
 
         int numberOfRequests = 50;
         int requestTimeWindows = 10;
@@ -58,7 +60,7 @@ public class VRPDRT_Main {
         String adjacenciesData = "bh_adj_n" + numberOfNodes + instanceSize;
         String instanceName = buildInstaceName(nodesData, adjacenciesData, numberOfRequests, numberOfNodes,
                 requestTimeWindows, instanceSize);
-        final Integer numberOfVehicles = 250;
+        Integer numberOfVehicles = 250;
 
         Integer populationSize = 100;
         Integer maximumNumberOfGenerations = 1000;
@@ -66,12 +68,12 @@ public class VRPDRT_Main {
         double probabilityOfMutation = 0.02;
         double probabilityOfCrossover = 0.7;
         double neighborhoodSelectionProbability = 0.8;
-        
+
         int numberOfEvaluations = 30100;
         int neighborSize = 10;
         int maximumNumberOfReplacedSolutions = 30;
         int fileSize = populationSize;
-        EvolutionaryAlgorithms.FunctionType functionType = EvolutionaryAlgorithms.FunctionType.AGG;
+        FunctionType functionType = FunctionType.AGG;
 
         List<Double> parameters = new ArrayList<>();//0.0273, 0.5208, 0.0161, 0.3619, 0.0739
         List<Double> nadirPoint = new ArrayList<>();
@@ -79,8 +81,10 @@ public class VRPDRT_Main {
 //        new DataUpdaterUsingGoogleMapsApi(directionsApiKey, new NodeDAO(nodesData).getListOfNodes(),
 //                adjacenciesData).updateAdjacenciesData();
 //        
-        new ScriptGenerator(instanceName, instanceSize, vehicleCapacity).generate("2d", "medium");
-
+        new ScriptGenerator(instanceName, instanceSize, vehicleCapacity)
+                .generate("2d", "medium");
+        System.out.println("fazendo um teste aqui no codigo");
+        System.out.println("fazendo um teste aqui no codigo várias vezes aqui");
 //        numberOfNodes = readProblemData(instanceName, nodesData, adjacenciesData, requests, distanceBetweenNodes,
 //                timeBetweenNodes, Pmais, Pmenos, requestsWhichBoardsInNode, requestsWhichLeavesInNode, setOfNodes,
 //                numberOfNodes, loadIndexList);
@@ -89,6 +93,7 @@ public class VRPDRT_Main {
                 numberOfNodes, loadIndexList);
 
         Algorithms.printProblemInformations(requests, numberOfVehicles, vehicleCapacity, instanceName, adjacenciesData, nodesData);
+
         Methods.initializeFleetOfVehicles(setOfVehicles, numberOfVehicles);
 
         parameters.add(0.10);//1
@@ -107,11 +112,11 @@ public class VRPDRT_Main {
         System.out.println("Instance Name = " + instanceName);
 
         int reducedDimension = 3;
-             
-        MOEAD(instanceName, neighborSize, numberOfEvaluations,maximumNumberOfReplacedSolutions, reducedDimension, parameters,
-                nadirPoint, populationSize, maximumNumberOfGenerations,functionType, maximumNumberOfExecutions,
+
+        MOEAD(instanceName, neighborSize, numberOfEvaluations, maximumNumberOfReplacedSolutions, reducedDimension, parameters,
+                nadirPoint, populationSize, maximumNumberOfGenerations, functionType, maximumNumberOfExecutions,
                 neighborhoodSelectionProbability, probabilityOfMutation, probabilityOfCrossover, requests,
-                requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, 
+                requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
                 listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows,
                 currentTime, lastNode);
 //        
@@ -126,7 +131,6 @@ public class VRPDRT_Main {
 //                timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
         //new GoogleStaticMap(new NodeDAO(nodesData).getListOfNodes(), adjacenciesData, nodesData).getStaticMapForInstance();
 //       new SolutionGeneratorForAggregationTree().generateSolutionsForAggregationTree(reducedDimension, filePath, parameters);
-        
 //        String solutionsPath = "/home/renansantos/Área de Trabalho/Experimentos/new_solutions.csv";
 //        int numberOfClusters = 2;
 //        HierarchicalCluster hc = new HierarchicalCluster(solutionsPath, numberOfClusters)

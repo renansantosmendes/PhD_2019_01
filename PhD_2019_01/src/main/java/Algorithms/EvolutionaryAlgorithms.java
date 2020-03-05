@@ -316,7 +316,7 @@ public class EvolutionaryAlgorithms {
                     updateNeighborhood(child, neighborhood, population, subProblemId, neighborType, lambda,
                             idealPoint, maximumNumberOfReplacedSolutions, numberOfObjectives, functionType);
                 }
-
+                System.out.println("Current evaluation: " + evaluations);
             } while (evaluations < maxEvaluations);
             
             
