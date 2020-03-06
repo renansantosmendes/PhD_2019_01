@@ -13,6 +13,7 @@ import ProblemRepresentation.*;
 import com.google.maps.errors.ApiException;
 import Algorithms.EvolutionaryAlgorithms.*;
 import static Algorithms.EvolutionaryAlgorithms.MOEAD;
+import static Algorithms.EvolutionaryAlgorithms.onMOEAD;
 import static Algorithms.Methods.readProblemUsingExcelData;
 import InstanceReader.ScriptGenerator;
 import java.io.IOException;
@@ -64,12 +65,12 @@ public class VRPDRT_Main {
 
         Integer populationSize = 100;
         Integer maximumNumberOfGenerations = 1000;
-        Integer maximumNumberOfExecutions = 30;
+        Integer maximumNumberOfExecutions = 1;
         double probabilityOfMutation = 0.02;
         double probabilityOfCrossover = 0.7;
         double neighborhoodSelectionProbability = 0.8;
 
-        int numberOfEvaluations = 30100;
+        int numberOfEvaluations = 1000;
         int neighborSize = 10;
         int maximumNumberOfReplacedSolutions = 30;
         int fileSize = populationSize;
@@ -113,30 +114,14 @@ public class VRPDRT_Main {
 
         int reducedDimension = 3;
 
-        MOEAD(instanceName, neighborSize, numberOfEvaluations, maximumNumberOfReplacedSolutions, reducedDimension, parameters,
+        onMOEAD(instanceName, neighborSize, numberOfEvaluations, maximumNumberOfReplacedSolutions, reducedDimension, parameters,
                 nadirPoint, populationSize, maximumNumberOfGenerations, functionType, maximumNumberOfExecutions,
                 neighborhoodSelectionProbability, probabilityOfMutation, probabilityOfCrossover, requests,
                 requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
                 listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows,
                 currentTime, lastNode);
-//        
-//        NSGAII(instanceName, reducedDimension, parameters, nadirPoint, populationSize, maximumNumberOfGenerations, maximumNumberOfExecutions, probabilityOfMutation, probabilityOfCrossover,
-//                requests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
-//                listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes,
-//                timeWindows, currentTime, lastNode);
+       
 
-//        SPEA2(instanceName, reducedDimension, parameters, nadirPoint, populationSize, fileSize, maximumNumberOfGenerations, maximumNumberOfExecutions,
-//                probabilityOfMutation, probabilityOfCrossover, requests, requestsWhichBoardsInNode, requestsWhichLeavesInNode,
-//                numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, requestList, loadIndexList,
-//                timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
-        //new GoogleStaticMap(new NodeDAO(nodesData).getListOfNodes(), adjacenciesData, nodesData).getStaticMapForInstance();
-//       new SolutionGeneratorForAggregationTree().generateSolutionsForAggregationTree(reducedDimension, filePath, parameters);
-//        String solutionsPath = "/home/renansantos/Área de Trabalho/Experimentos/new_solutions.csv";
-//        int numberOfClusters = 2;
-//        HierarchicalCluster hc = new HierarchicalCluster(solutionsPath, numberOfClusters)
-//                .setCorrelation(CorrelationType.KENDALL);
-//        hc.reduce();
-//        hc.printTransformationList();
     }
 
 }
