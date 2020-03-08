@@ -84,8 +84,7 @@ public class VRPDRT_Main {
 //        
         new ScriptGenerator(instanceName, instanceSize, vehicleCapacity)
                 .generate("2d", "medium");
-        System.out.println("fazendo um teste aqui no codigo");
-        System.out.println("fazendo um teste aqui no codigo várias vezes aqui");
+
 //        numberOfNodes = readProblemData(instanceName, nodesData, adjacenciesData, requests, distanceBetweenNodes,
 //                timeBetweenNodes, Pmais, Pmenos, requestsWhichBoardsInNode, requestsWhichLeavesInNode, setOfNodes,
 //                numberOfNodes, loadIndexList);
@@ -112,7 +111,7 @@ public class VRPDRT_Main {
         System.out.println("Nadir Point = " + nadirPoint);
         System.out.println("Instance Name = " + instanceName);
 
-        int reducedDimension = 3;
+        int reducedDimension = 2;
 
         onMOEAD(instanceName, neighborSize, numberOfEvaluations, maximumNumberOfReplacedSolutions, reducedDimension, parameters,
                 nadirPoint, populationSize, maximumNumberOfGenerations, functionType, maximumNumberOfExecutions,

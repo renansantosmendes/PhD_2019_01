@@ -291,27 +291,9 @@ public class Algorithms {
 
     public static void evaluateAggregatedObjectiveFunctions(List<Double> parameters, ProblemSolution S) {
         evaluationNumber++;
-//        S.setAggregatedObjective1(parameters.get(1) * S.getTotalDeliveryDelay() + parameters.get(5) * S.getTotalTravelTime()
-//                + parameters.get(3) * S.getNumberOfNonAttendedRequests()
-//                + parameters.get(6) * S.getTotalWaintingTime());
-//
-//        S.setAggregatedObjective2(parameters.get(0) * S.getTotalDistance() + parameters.get(8) * S.getTotalOccupationRate()
-//                + parameters.get(7) * S.getDeliveryTimeWindowAntecipation() + parameters.get(2) * S.getTotalRouteTimeChargeBanlance()
-//                + parameters.get(4) * S.getNumberOfVehicles());
-
         double[] objectives = null;
         if (S.getAggregatedObjectives().length == 8) {
-//            objectives = new double[S.getAggregatedObjectives().length];
-//            objectives[0] = S.getTotalDistance();
-//            objectives[1] = S.getTotalDeliveryDelay();
-//            objectives[2] = S.getTotalRouteTimeChargeBanlance();
-//            objectives[3] = S.getNumberOfNonAttendedRequests();
-//            objectives[4] = S.getNumberOfVehicles();
-//            objectives[5] = S.getTotalTravelTime();
-//            objectives[6] = S.getTotalWaintingTime();
-//            objectives[7] = S.getDeliveryTimeWindowAntecipation();
-//            objectives[8] = S.getTotalOccupationRate();
-            
+
             objectives = new double[S.getAggregatedObjectives().length];
             objectives[0] = S.getTotalDistance();
             objectives[1] = S.getTotalDeliveryDelay();
@@ -324,25 +306,9 @@ public class Algorithms {
         } else {
 
             objectives = new double[S.getAggregatedObjectives().length];
-
-            //redução abaixo foi feita usando DBSCAN
-            //primeira tentativa
-            //array([-1, -1,  0,  1, -1,  0, -1,  1])
-            //        0   1   2   4   5   6   7   8 índice
-            //        1   2   3   4   5   6   7   8 numero da função
-            // primeira tentativa de usar DBSCAN
-//            objectives[0] = 
-//                     parameters.get(2) * S.getTotalRouteTimeChargeBanlance()
-//                    + parameters.get(6) * S.getTotalWaintingTime();
-//
-//            objectives[1] = 
-//                    parameters.get(8) * S.getTotalOccupationRate()
-//                    + parameters.get(4) * S.getNumberOfVehicles();
-            
-            //Usando dados normalizados
-            //array([-1,  0,  1, -1,  0, -1, -1,  1])
-            //        0   1   2   4   5   6   7   8 índice
-            //        1   2   3   4   5   6   7   8 numero da função
+            for(int i=0; i<objectives.length; i++){
+                objectives[i] = 1;
+            }
             
             objectives[0] = parameters.get(1) * S.getTotalDeliveryDelay()
                     + parameters.get(5) * S.getTotalTravelTime();
@@ -354,17 +320,7 @@ public class Algorithms {
                     + parameters.get(4) * S.getNumberOfVehicles()
                     + parameters.get(6) * S.getTotalWaintingTime()
                     + parameters.get(7) * S.getDeliveryTimeWindowAntecipation();
-            
-            //redução abaixo é usando o cluster hierárquico com tau de kendall
-//            objectives[0] = parameters.get(1) * S.getTotalDeliveryDelay()
-//                    + parameters.get(2) * S.getTotalRouteTimeChargeBanlance()
-//                    + parameters.get(5) * S.getTotalTravelTime()
-//                    + parameters.get(6) * S.getTotalWaintingTime();
-//
-//            objectives[1] = parameters.get(0) * S.getTotalDistance()
-//                    + parameters.get(8) * S.getTotalOccupationRate()
-//                    + parameters.get(7) * S.getDeliveryTimeWindowAntecipation()
-//                    + parameters.get(4) * S.getNumberOfVehicles();
+
         }
         S.setAggregatedObjectives(objectives);
 
