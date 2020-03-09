@@ -99,7 +99,7 @@ public class VRPDRT_Main {
         parameters.add(0.10);//1
         parameters.add((double) requestTimeWindows);//delta_t
         parameters.add((double) numberOfNodes);//n
-        parameters.add((double) numberOfRequests * numberOfNodes * requestTimeWindows);// r n delta_t
+        //parameters.add((double) numberOfRequests * numberOfNodes * requestTimeWindows);// r n delta_t
         parameters.add((double) numberOfRequests * numberOfNodes);//r n
         parameters.add((double) numberOfRequests);//r
         parameters.add((double) numberOfNodes);//n

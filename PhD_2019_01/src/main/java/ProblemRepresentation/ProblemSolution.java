@@ -315,65 +315,52 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
     }
 
     public void setObjectivesList() {
+        //alterei esse método aqui pra ver se estava com problema
         this.objectives.clear();
         this.objectives.add((double) this.totalDistance);//f1
         this.objectives.add((double) this.totalDeliveryDelay);//f2
         this.objectives.add((double) this.totalRouteTimeChargeBanlance);//f3
-        this.objectives.add((double) this.numberOfNonAttendedRequests);//f4
+        //this.objectives.add((double) this.numberOfNonAttendedRequests);//f4
         this.objectives.add((double) this.numberOfVehicles);//f5
         this.objectives.add((double) this.totalTravelTime);//f6
         this.objectives.add((double) this.totalWaintingTime);//f7
         this.objectives.add((double) this.deliveryTimeWindowAntecipation);//f8
         this.objectives.add((double) this.totalOccupationRate);//f9
 
-//        this.objectives.add((double) totalDeliveryDelay + numberOfNonAttendedRequests + totalTravelTime
-//                + totalWaintingTime);
-//        this.objectives.add((double) totalDistance + totalRouteTimeChargeBanlance + numberOfVehicles
-//                + deliveryTimeWindowAntecipation + totalOccupationRate);
     }
 
     public void setObjectivesList(Parameters parameters) {
+        //alterei esse método aqui pra ver se estava com problema
         this.objectives.clear();
         this.objectives.add((double) this.totalDistance);//f1
         this.objectives.add((double) this.totalDeliveryDelay);//f2
         this.objectives.add((double) this.totalRouteTimeChargeBanlance);//f3
-        this.objectives.add((double) this.numberOfNonAttendedRequests);//f4
+        //this.objectives.add((double) this.numberOfNonAttendedRequests);//f4
         this.objectives.add((double) this.numberOfVehicles);//f5
         this.objectives.add((double) this.totalTravelTime);//f6
         this.objectives.add((double) this.totalWaintingTime);//f7
         this.objectives.add((double) this.deliveryTimeWindowAntecipation);//f8
         this.objectives.add((double) this.totalOccupationRate);//f9
 
-//        this.objectives.clear();
-//        List<Double> lambdas = new ArrayList<>();
-//        lambdas.addAll(parameters.getParameters());
-//
-//        this.objectives.add((double) lambdas.get(1) * totalDeliveryDelay + lambdas.get(3) * numberOfNonAttendedRequests
-//                + lambdas.get(5) * totalTravelTime + lambdas.get(6) * totalWaintingTime);
-//        this.objectives.add((double) lambdas.get(0) * totalDistance + lambdas.get(2) * totalRouteTimeChargeBanlance
-//                + lambdas.get(4) * numberOfVehicles + lambdas.get(7) * deliveryTimeWindowAntecipation
-//                + lambdas.get(8) * totalOccupatioNumberOfNumberOfAggregatedObjectives()AggregatedObjectives()nRate);
     }
 
-    public int getAttendanceRequestSize(){
+    public int getAttendanceRequestSize() {
         int size = 0;
-        for(Route route: this.setOfRoutes){
+        for (Route route : this.setOfRoutes) {
             size += route.getRequestAttendanceList().size();
         }
-        
-        
+
         return size;
     }
-    
-    public List<Integer> getAttendanceRequestList(){
+
+    public List<Integer> getAttendanceRequestList() {
         List<Integer> requestList = new ArrayList<>();
-        for(Route route: this.setOfRoutes){
+        for (Route route : this.setOfRoutes) {
             requestList.addAll(route.getRequestAttendanceIdsList());
         }
         return requestList;
     }
-    
-    
+
     public double getObjective(int n) {
         return this.aggregatedObjectives[n];
     }
@@ -835,7 +822,7 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
         for (int i = 0; i < this.aggregatedObjectives.length; i++) {
             if (i != this.aggregatedObjectives.length - 1) {
                 string += this.aggregatedObjectives[i] + " ";
-            }else{
+            } else {
                 string += this.aggregatedObjectives[i];
             }
         }
@@ -868,11 +855,11 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
         DecimalFormat df = new DecimalFormat("0.0000");
         //"\t" + numberOfNonAttendedRequests +
         String s = this.objectives + "\t" + getListOfAggregatedObjectives() + "\t" + totalDistance + "\t"
-                + totalDeliveryDelay + "\t" + totalRouteTimeChargeBanlance +  "\t"
+                + totalDeliveryDelay + "\t" + totalRouteTimeChargeBanlance + "\t"
                 + numberOfVehicles + "\t" + totalWaintingTime + "\t" + totalTravelTime + "\t" + deliveryTimeWindowAntecipation
                 + "\t" + totalOccupationRate + "\t";
-        
-        s =  getListOfAggregatedObjectives() + "\t" + getStringWithAllNonReducedObjectivesForCsvFile() + " " + this.getAttendanceRequestSize() + " ";
+
+        s = getListOfAggregatedObjectives() + "\t" + getStringWithAllNonReducedObjectivesForCsvFile() + " " + this.getAttendanceRequestSize() + " ";
 //        s =  getListOfAggregatedObjectives() + "\t";
         int indice = 1;
         String listaAtendimento = " ";

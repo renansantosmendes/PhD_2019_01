@@ -1149,6 +1149,83 @@ public class Methods {
         }
     }
 
+    public static void twoPointsCrossoverForOnlineMOEAD(int reducedDimension, List<List<Integer>> transformationList, List<Double> parameters, List<ProblemSolution> Pop_nova, List<ProblemSolution> Pop, Integer TamMax, double Pc,
+            List<ProblemSolution> pais, List<Request> listRequests,
+            List<Request> P, Set<Integer> K, List<Request> U, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout,
+            List<List<Long>> d, List<List<Long>> c, Integer n, Integer Qmax, Long TimeWindows) {
+        ProblemSolution pai;
+        ProblemSolution mae;
+        int pontoCorte;
+        int menorTamanho;
+        double valor;
+        Random rnd = new Random();
+        List<ProblemSolution> NewPop = new ArrayList<>();
+        List<Integer> filho1 = new ArrayList<>();
+        List<Integer> filho2 = new ArrayList<>();
+        NewPop.clear();
+        try {
+            for (int i = 0; i < (TamMax - 1); i = i + 2) {
+
+                valor = rnd.nextFloat();
+
+                pai = pais.get(i);
+                mae = pais.get(i + 1);
+                ProblemSolution s1 = new ProblemSolution();
+                ProblemSolution s2 = new ProblemSolution();
+                if (valor < Pc) {
+
+                    int index1, index2;
+                    menorTamanho = Math.min(pai.getLinkedRouteList().size(), mae.getLinkedRouteList().size());
+
+                    filho1.addAll(pai.getLinkedRouteList());
+                    filho2.addAll(mae.getLinkedRouteList());
+
+                    do {
+                        index1 = rnd.nextInt(menorTamanho);
+                        index2 = rnd.nextInt(menorTamanho);
+                    } while (index1 == index2);
+
+                    List<Integer> indices = new ArrayList<>();
+                    indices.add(index1);
+                    indices.add(index2);
+
+                    int min = Collections.min(indices);
+                    int max = Collections.max(indices);
+
+                    List<Integer> parte1 = new ArrayList<>(filho1.subList(min, max));
+                    List<Integer> parte2 = new ArrayList<>(filho2.subList(min, max));
+
+                    filho1.subList(min, max).clear();
+                    filho2.subList(min, max).clear();
+
+                    filho1.addAll(min, parte2);
+                    filho2.addAll(min, parte1);
+
+                    s1.setSolution(rebuildSolutionForOnlineAlgorithms(reducedDimension, transformationList, 
+                            parameters, filho1, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
+                    s2.setSolution(rebuildSolutionForOnlineAlgorithms(reducedDimension, transformationList, 
+                            parameters, filho2, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
+
+                } else {
+                    s1.setSolution(mae);
+                    s2.setSolution(pai);
+                }
+
+                NewPop.add(s1);
+                NewPop.add(s2);
+                filho1.clear();
+                filho2.clear();
+            }
+
+            Pop_nova.clear();
+            Pop_nova.addAll(NewPop);
+            NewPop.clear();
+
+        } catch (IllegalArgumentException e) {
+            printPopulation(Pop);
+        }
+    }
+    
     public static void twoPointsCrossoverForMOEAD(int reducedDimension, List<Double> parameters, List<ProblemSolution> Pop_nova, List<ProblemSolution> Pop, Integer TamMax, double Pc,
             List<ProblemSolution> pais, List<Request> listRequests,
             List<Request> P, Set<Integer> K, List<Request> U, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout,
@@ -1218,12 +1295,12 @@ public class Methods {
             Pop_nova.clear();
             Pop_nova.addAll(NewPop);
             NewPop.clear();
- 
+
         } catch (IllegalArgumentException e) {
             printPopulation(Pop);
         }
     }
-
+    
     public static ProblemSolution copyBestSolution(List<ProblemSolution> population, ProblemSolution bestSolution) {
         for (ProblemSolution solution : population) {
             if (solution.getObjectiveFunction() < bestSolution.getObjectiveFunction()) {

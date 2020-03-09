@@ -379,7 +379,7 @@ public class EvolutionaryAlgorithms {
 
                     int maximumSize = parents.size();
 
-                    twoPointsCrossoverForMOEAD(reducedDimension, parameters, children, population, maximumSize, probabilityOfCrossover, parents, requests,
+                    twoPointsCrossoverForOnlineMOEAD(reducedDimension, hc.getTransfomationList(), parameters, children, population, maximumSize, probabilityOfCrossover, parents, requests,
                             requestList, setOfVehicles, listOfNonAttendedRequests, requestsWhichBoardsInNode,
                             requestsWhichLeavesInNode, timeBetweenNodes, distanceBetweenNodes, numberOfNodes,
                             vehicleCapacity, timeWindows);
