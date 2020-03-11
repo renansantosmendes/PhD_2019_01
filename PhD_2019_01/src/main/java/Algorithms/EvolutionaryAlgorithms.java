@@ -369,7 +369,7 @@ public class EvolutionaryAlgorithms {
                 HierarchicalCluster hc = new HierarchicalCluster(getMatrixOfObjetives(population, parameters), numberOfClusters, CorrelationType.KENDALL);
                 hc.reduce();
                 hc.getTransfomationList().forEach(System.out::println);
-                hc.setTransformationList(createTransformationList());
+//                hc.setTransformationList(createTransformationList(reducedDimension, parameters.size()));
                 
                 for (int i = 0; i < population.size(); i++) {
                     int subProblemId = permutation[i];
@@ -405,6 +405,36 @@ public class EvolutionaryAlgorithms {
         }
         
         saveCombinedPareto();
+    }
+    
+    public static List<List<Integer>> createTransformationList(int reducedDimension, int numberOfObjectives) {
+        List<List<Integer>> transformationList = new ArrayList<>();
+        List<Integer> line = new ArrayList<>();
+        for (int i = 0; i < reducedDimension; i++) {
+            if (i % 2 == 0) {
+                for (int j = 0; j < numberOfObjectives; j++) {
+                    if (j % 2 == 0) {
+                        line.add(0);
+                    } else {
+                        line.add(1);
+                    }
+                }
+                transformationList.add(new ArrayList(line));
+                line.clear();
+            } else {
+                for (int j = 0; j < numberOfObjectives; j++) {
+                    if (j % 2 == 0) {
+                        line.add(1);
+                    } else {
+                        line.add(0);
+                    }
+                }
+                transformationList.add(new ArrayList(line));
+                line.clear();
+            }
+        }
+
+        return transformationList;
     }
     
     private static List<ProblemSolution> parentSelection(List<ProblemSolution> population, int[][] neighborhood,
