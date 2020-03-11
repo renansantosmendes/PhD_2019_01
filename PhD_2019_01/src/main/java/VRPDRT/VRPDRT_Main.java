@@ -111,7 +111,7 @@ public class VRPDRT_Main {
         System.out.println("Nadir Point = " + nadirPoint);
         System.out.println("Instance Name = " + instanceName);
 
-        int reducedDimension = 2;
+        int reducedDimension = 3;
 
         onMOEAD(instanceName, neighborSize, numberOfEvaluations, maximumNumberOfReplacedSolutions, reducedDimension, parameters,
                 nadirPoint, populationSize, maximumNumberOfGenerations, functionType, maximumNumberOfExecutions,

@@ -544,7 +544,22 @@ public class Methods {
         S.setSolution(GeraSolucaoAleatoria(reducedDimension, Pop, TamPop, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode));
         for (int i = 0; i < TamPop; i++) {
             ProblemSolution S2 = new ProblemSolution(reducedDimension);
-            S2.setSolution(PerturbacaoSemente(i, reducedDimension, parameters, S, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows));
+            S2.setSolution(randomPerturbationWithSeedForOnlineAlgorithm(i, reducedDimension, parameters, S, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows));
+            Pop.add(S2);
+            System.out.println(S2);
+        }
+    }
+    
+    public static void inicializeRandomPopulationForOnlineAlgorithm(List<Double> parameters, int reducedDimension, List<ProblemSolution> Pop, Integer TamPop, List<Request> listRequests,
+            Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout, Integer n, Integer Qmax, Set<Integer> K,
+            List<Request> U, List<Request> P, List<Integer> m, List<List<Long>> d, List<List<Long>> c,
+            Long TimeWindows, Long currentTime, Integer lastNode) {
+
+        ProblemSolution S = new ProblemSolution(reducedDimension);
+        S.setSolution(GeraSolucaoAleatoria(reducedDimension, Pop, TamPop, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode));
+        for (int i = 0; i < TamPop; i++) {
+            ProblemSolution S2 = new ProblemSolution(reducedDimension);
+            S2.setSolution(randomPerturbationWithSeed(i, reducedDimension, parameters, S, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows));
             Pop.add(S2);
             System.out.println(S2);
         }
@@ -570,7 +585,7 @@ public class Methods {
             ProblemSolution S_linha = new ProblemSolution();
             S.setSolution(GeraSolucaoAleatoria(reducedDimension, Pop, TamPop, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode));
             //S_linha.setSolution(perturbation(S, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows));
-            S_linha.setSolution(PerturbacaoSemente(i, reducedDimension, parameters, S, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows));
+            S_linha.setSolution(randomPerturbationWithSeed(i, reducedDimension, parameters, S, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows));
             Pop.add(S_linha);
         }
     }

@@ -1235,7 +1235,7 @@ public class Algorithms {
         solution.setAggregatedObjectives(new double[reducedDimension]);
         solution.setNonAttendedRequestsList(U);
         evaluateSolution(solution, c, Qmax, listRequests);
-        evaluateAggregatedObjectiveFunctions(parameters, solution);
+        evaluateAggregatedObjectiveFunctionsForOnlineAlgorithm(parameters, transfomationList, solution);
         solution.setLogger(log);
 
         if (greedySolution == null) {
@@ -1645,32 +1645,88 @@ public class Algorithms {
         //}
     }
 
-    public static ProblemSolution PerturbacaoSemente(int i, int reducedDimension, List<Double> parameters, ProblemSolution s, List<Request> listRequests, Map<Integer, List<Request>> Pin,
+    public static ProblemSolution randomPerturbationWithSeed(int i, int reducedDimension, List<Double> parameters, ProblemSolution s, List<Request> listRequests, Map<Integer, List<Request>> Pin,
             Map<Integer, List<Request>> Pout, Integer n, Integer Qmax, Set<Integer> K, List<Request> U, List<Request> P,
             List<Integer> m, List<List<Long>> d, List<List<Long>> c, Long TimeWindows) {
         Random rnd = new Random(i + 1);
         Random p1 = new Random(i + 2234234);
         Random p2 = new Random(86554 * i);
         int posicao1, posicao2;
-        int NUMPERT = rnd.nextInt();//número de perturções
+        int NUMPERT = rnd.nextInt();
 
         List<Integer> original = new ArrayList<>(s.getLinkedRouteList());
-        //for (int i = 0; i < NUMPERT; i++) {
+
         posicao1 = p1.nextInt(original.size());
 
         do {
             posicao2 = p2.nextInt(original.size());
         } while (Objects.equals(original.get(posicao1), original.get(posicao2)));
 
-        //Collections.swap(original, posicao1, posicao2);
-        //Collections.shuffle(original);
         original.add(posicao1, original.remove(posicao2));
-        //}
+
         ProblemSolution S = new ProblemSolution(reducedDimension);
         S.setSolution(rebuildSolution(reducedDimension, parameters, original, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
         s.setSolution(S);
 
         return s;
+    }
+
+    public static ProblemSolution randomPerturbationWithSeedForOnlineAlgorithm(int i, int reducedDimension, List<Double> parameters,
+            ProblemSolution s, List<Request> listRequests, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout, Integer n,
+            Integer Qmax, Set<Integer> K, List<Request> U, List<Request> P, List<Integer> m, List<List<Long>> d, List<List<Long>> c,
+            Long TimeWindows) {
+        Random rnd = new Random(i + 1);
+        Random p1 = new Random(i + 2234234);
+        Random p2 = new Random(86554 * i);
+        int posicao1, posicao2;
+        int NUMPERT = rnd.nextInt();
+
+        List<Integer> original = new ArrayList<>(s.getLinkedRouteList());
+        posicao1 = p1.nextInt(original.size());
+
+        do {
+            posicao2 = p2.nextInt(original.size());
+        } while (Objects.equals(original.get(posicao1), original.get(posicao2)));
+
+        original.add(posicao1, original.remove(posicao2));
+
+        ProblemSolution S = new ProblemSolution(reducedDimension);
+        List<List<Integer>> transformationList = createTransformationList(reducedDimension, s.getObjectives().size());
+        S.setSolution(rebuildSolutionForOnlineAlgorithms(reducedDimension, transformationList,
+                parameters, original, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
+        s.setSolution(S);
+
+        return s;
+    }
+
+    public static List<List<Integer>> createTransformationList(int reducedDimension, int numberOfObjectives) {
+        List<List<Integer>> transformationList = new ArrayList<>();
+        List<Integer> line = new ArrayList<>();
+        for (int i = 0; i < reducedDimension; i++) {
+            if (i % 2 == 0) {
+                for (int j = 0; j < numberOfObjectives; j++) {
+                    if (j % 2 == 0) {
+                        line.add(0);
+                    } else {
+                        line.add(1);
+                    }
+                }
+                transformationList.add(new ArrayList(line));
+                line.clear();
+            } else {
+                for (int j = 0; j < numberOfObjectives; j++) {
+                    if (j % 2 == 0) {
+                        line.add(1);
+                    } else {
+                        line.add(0);
+                    }
+                }
+                transformationList.add(new ArrayList(line));
+                line.clear();
+            }
+        }
+
+        return transformationList;
     }
 
     public static ProblemSolution IteratedLocalSearch(int reducedDimension, List<Double> parameters, ProblemSolution s_0, List<Request> listRequests, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout, Integer n, Integer Qmax, Set<Integer> K,
