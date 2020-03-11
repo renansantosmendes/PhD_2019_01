@@ -369,7 +369,6 @@ public class EvolutionaryAlgorithms {
                 HierarchicalCluster hc = new HierarchicalCluster(getMatrixOfObjetives(population, parameters), numberOfClusters, CorrelationType.KENDALL);
                 hc.reduce();
                 hc.getTransfomationList().forEach(System.out::println);
-//                hc.setTransformationList(createTransformationList(reducedDimension, parameters.size()));
                 
                 for (int i = 0; i < population.size(); i++) {
                     int subProblemId = permutation[i];
@@ -386,7 +385,7 @@ public class EvolutionaryAlgorithms {
 
                     ProblemSolution child = children.get(0);
 
-                    mutation2ShuffleForMOEAD(reducedDimension, parameters, child, probabilityOfMutation, requests, requestsWhichBoardsInNode,
+                    mutation2ShuffleForOnlineMOEAD(reducedDimension, hc.getTransfomationList(), parameters, child, probabilityOfMutation, requests, requestsWhichBoardsInNode,
                             requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                             requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
 

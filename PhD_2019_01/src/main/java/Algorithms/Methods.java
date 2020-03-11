@@ -931,6 +931,49 @@ public class Methods {
         }
     }
 
+    public static void mutation2ShuffleForOnlineMOEAD(int reducedDimension,List<List<Integer>> transformationList,
+            List<Double> parameters, ProblemSolution Pop, double Pm, List<Request> listRequests, Map<Integer, List<Request>> Pin,
+            Map<Integer, List<Request>> Pout, Integer n, Integer Qmax, Set<Integer> K, List<Request> U, List<Request> P,
+            List<Integer> m, List<List<Long>> d, List<List<Long>> c, Long TimeWindows, Long currentTime, Integer lastNode) {
+        Random rnd = new Random();
+        Random p1 = new Random();
+        Random p2 = new Random();
+        int posicao1, posicao2;
+        double prob;
+
+        prob = rnd.nextFloat();
+
+        if (prob < Pm) {
+            List<Integer> individuo = new ArrayList<>(Pop.getLinkedRouteList());
+
+            int index1, index2;
+
+            do {
+                index1 = rnd.nextInt(individuo.size());
+                index2 = rnd.nextInt(individuo.size());
+            } while (index1 == index2);
+
+            List<Integer> indices = new ArrayList<>();
+            indices.add(index1);
+            indices.add(index2);
+
+            int min = Collections.min(indices);
+            int max = Collections.max(indices);
+
+            List<Integer> aux = new ArrayList<>(individuo.subList(min, max));
+
+            Collections.shuffle(aux);
+
+            individuo.subList(min, max).clear();
+            individuo.addAll(min, aux);
+
+            ProblemSolution S = new ProblemSolution();
+            S.setSolution(rebuildSolutionForOnlineAlgorithms(reducedDimension, transformationList,  
+                            parameters, individuo, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
+            Pop.setSolution(S);            
+        }
+    }
+
     public static void MutacaoILS(int reducedDimension, List<Double> parameters, List<ProblemSolution> Pop, double Pm, List<Request> listRequests, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout,
             Integer n, Integer Qmax, Set<Integer> K, List<Request> U, List<Request> P, List<Integer> m, List<List<Long>> d, List<List<Long>> c,
             Long TimeWindows, Long currentTime, Integer lastNode) {
