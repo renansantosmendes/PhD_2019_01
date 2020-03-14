@@ -1284,10 +1284,10 @@ public class Methods {
         }
     }
     
-    public static void twoPointsCrossoverForMOEAD(int reducedDimension, List<Double> parameters, List<ProblemSolution> Pop_nova, List<ProblemSolution> Pop, Integer TamMax, double Pc,
-            List<ProblemSolution> pais, List<Request> listRequests,
-            List<Request> P, Set<Integer> K, List<Request> U, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout,
-            List<List<Long>> d, List<List<Long>> c, Integer n, Integer Qmax, Long TimeWindows) {
+    public static void twoPointsCrossoverForMOEAD(int reducedDimension, List<List<Integer>> transformationList, List<Double> parameters,
+            List<ProblemSolution> Pop_nova, List<ProblemSolution> Pop, Integer TamMax, double Pc, List<ProblemSolution> pais,
+            List<Request> listRequests, List<Request> P, Set<Integer> K, List<Request> U, Map<Integer, List<Request>> Pin,
+            Map<Integer, List<Request>> Pout, List<List<Long>> d, List<List<Long>> c, Integer n, Integer Qmax, Long TimeWindows) {
         ProblemSolution pai;
         ProblemSolution mae;
         int pontoCorte;
@@ -1336,8 +1336,10 @@ public class Methods {
                     filho1.addAll(min, parte2);
                     filho2.addAll(min, parte1);
 
-                    s1.setSolution(rebuildSolution(reducedDimension, parameters, filho1, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
-                    s2.setSolution(rebuildSolution(reducedDimension, parameters, filho2, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
+                    s1.setSolution(rebuildSolutionForOfflineAlgorithms(reducedDimension, transformationList, parameters, filho1, listRequests,
+                            P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
+                    s2.setSolution(rebuildSolutionForOfflineAlgorithms(reducedDimension, transformationList, parameters, filho2, listRequests,
+                            P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
 
                 } else {
                     s1.setSolution(mae);

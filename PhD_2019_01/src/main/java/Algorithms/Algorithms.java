@@ -344,6 +344,52 @@ public class Algorithms {
         S.setAggregatedObjectives(objectives);
 
     }
+    
+    public static void evaluateAggregatedObjectiveFunctionsForMOEAD(List<List<Integer>> transformationList, List<Double> parameters,
+            ProblemSolution S) {
+        evaluationNumber++;
+        double[] objectives = null;
+        if (S.getAggregatedObjectives().length == 8) {
+
+            objectives = new double[S.getAggregatedObjectives().length];
+            objectives[0] = S.getTotalDistance();
+            objectives[1] = S.getTotalDeliveryDelay();
+            objectives[2] = S.getTotalRouteTimeChargeBanlance();
+            objectives[3] = S.getNumberOfVehicles();
+            objectives[4] = S.getTotalTravelTime();
+            objectives[5] = S.getTotalWaintingTime();
+            objectives[6] = S.getDeliveryTimeWindowAntecipation();
+            objectives[7] = S.getTotalOccupationRate();
+        } else {
+
+            double[] single_objectives = new double[8];
+            single_objectives[0] = S.getTotalDistance();
+            single_objectives[1] = S.getTotalDeliveryDelay();
+            single_objectives[2] = S.getTotalRouteTimeChargeBanlance();
+            single_objectives[3] = S.getNumberOfVehicles();
+            single_objectives[4] = S.getTotalTravelTime();
+            single_objectives[5] = S.getTotalWaintingTime();
+            single_objectives[6] = S.getDeliveryTimeWindowAntecipation();
+            single_objectives[7] = S.getTotalOccupationRate();
+
+            objectives = new double[S.getAggregatedObjectives().length];
+            for (int i = 0; i < objectives.length; i++) {
+                objectives[i] = 1;
+            }
+
+            for (int i = 0; i < objectives.length; i++) {
+                float objectives_sum = 0;
+                for (int j = 0; j < parameters.size(); j++) {
+                    objectives_sum += transformationList.get(i).get(j)*parameters.get(j) * single_objectives[j];
+
+                }
+                objectives[i] = objectives_sum;
+            }
+ 
+        }
+        S.setAggregatedObjectives(objectives);
+
+    }
 
     public static void evaluateAggregatedObjectiveFunctionsForOnlineAlgorithm(List<Double> parameters, List<List<Integer>> transformationList,
             ProblemSolution S) {
@@ -665,14 +711,8 @@ public class Algorithms {
         }
 
         long currentTime = 0;
-//        while ((!P.isEmpty() && itK.hasNext()) || !vizinho.isEmpty()) {
         while (!P.isEmpty() && itK.hasNext() && !vizinho.isEmpty()) {
-            /*do{*/
-            //U.clear();
-            //SeparaOrigemDestino(U,Pin,Pout,n,P);
-            //----------------------------------------------------------------------------------------------------------
-            //     Tomar cuidado com essa parte aqui, modularizando ela o funcionamento alterou significativamente   
-            //----------------------------------------------------------------------------------------------------------
+
             Pin.clear();
             Pout.clear();
             List<Request> origem = new LinkedList<Request>();
@@ -700,8 +740,6 @@ public class Algorithms {
             currentK = itK.next();
             log += "\tROTA " + (currentK + 1) + " ";
 
-            /*if(currentK+1 == 3)
-             System.out.println("ROTA BREMA");*/
             //Step 3
             R.addVisitedNodes(0);
             currentTime = 0;
@@ -712,7 +750,6 @@ public class Algorithms {
 
             while (!P.isEmpty()) {
 
-//				lastNode = R.getLastNode();
                 newNode = -1;
                 encontrado = false;
 
@@ -928,6 +965,305 @@ public class Algorithms {
         solution.setNonAttendedRequestsList(U);
         evaluateSolution(solution, c, Qmax, listRequests);
         evaluateAggregatedObjectiveFunctions(parameters, solution);
+        solution.setLogger(log);
+
+        if (greedySolution == null) {
+            return solution;
+        } else {
+            ProblemSolution newSolution = new ProblemSolution(reducedDimension);
+            newSolution.setSolution(concatenatesSolutions(solution, greedySolution, reducedDimension,
+                    parameters, c, Qmax, listRequests));
+            //solution.setSolution(newSolution);
+            return newSolution;
+        }
+    }
+    
+    public static ProblemSolution rebuildSolutionForOfflineAlgorithms(int reducedDimension, List<List<Integer>> transformationList,
+            List<Double> parameters, List<Integer> vizinho, List<Request> listRequests, List<Request> P,
+            Set<Integer> K, List<Request> U, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout,
+            List<List<Long>> d, List<List<Long>> c, Integer n, Integer Qmax, Long TimeWindows) {
+        P.clear();
+        P.addAll(listRequests);
+
+        List<Request> requestListForSecondFase = new ArrayList<>();
+        for (Request request : listRequests) {
+            requestListForSecondFase.add((Request) request.clone());
+        }
+        //Step 1
+        ProblemSolution solution = new ProblemSolution(reducedDimension);
+        solution.setLinkedRouteList(vizinho);
+        String log = "";
+
+        int currentK;
+
+        Iterator<Integer> itK = K.iterator();
+        U.clear();
+        //Pin.clear();
+        //Pout.clear();
+
+        List<Request> auxP = new LinkedList<>(P);
+        for (Request request : auxP) {//para cada solicitação, olha se apos o movimento nn contem os nos de embarque, desembarque e a janela de tempo
+            if (!vizinho.contains(request.getOrigin()) || !vizinho.contains(request.getDestination()) || !(d.get(0).get(request.getOrigin()) <= request.getPickupTimeWindowUpper())) {
+                U.add((Request) request.clone());
+                P.remove((Request) request.clone());
+            }
+        }
+
+        long currentTime = 0;
+        while (!P.isEmpty() && itK.hasNext() && !vizinho.isEmpty()) {
+
+            Pin.clear();
+            Pout.clear();
+            List<Request> origem = new LinkedList<Request>();
+            List<Request> destino = new LinkedList<Request>();
+            for (int j = 0; j < n; j++) {
+
+                for (Request request : P) {
+                    if (request.getOrigin() == j) {
+                        origem.add((Request) request.clone());
+                    }
+                    if (request.getDestination() == j) {
+                        destino.add((Request) request.clone());
+                    }
+                }
+
+                Pin.put(j, new LinkedList<Request>(origem));
+                Pout.put(j, new LinkedList<Request>(destino));
+
+                origem.clear();
+                destino.clear();
+            }
+            //----------------------------------------------------------------------------------------------------------
+            //Step 2
+            Route R = new Route();
+            currentK = itK.next();
+            log += "\tROTA " + (currentK + 1) + " ";
+
+            //Step 3
+            R.addVisitedNodes(0);
+            currentTime = 0;
+
+            Integer lastNode = R.getLastNode();
+            Integer newNode;
+            boolean encontrado;
+
+            while (!P.isEmpty()) {
+
+                newNode = -1;
+                encontrado = false;
+
+                //List<Integer> vizinhoCopia = new ArrayList<Integer>(vizinho);
+                for (int k = 0; !encontrado && k < vizinho.size(); k++) {
+                    int i = vizinho.get(k);
+
+                    if (i != lastNode) {
+                        if (R.getActualOccupation() < Qmax) {
+                            for (Request request : Pin.get(i)) {
+                                if (lastNode == 0 && d.get(lastNode).get(i) <= request.getPickupTimeWindowUpper() && vizinho.contains(request.getDestination())) {
+                                    newNode = vizinho.remove(k);
+                                    encontrado = true;
+                                    break;
+                                }
+                                //if( (currentTime + d.get(lastNode).get(i)) <= request.getPickupTimeWindowUpper()){
+                                if (currentTime + d.get(lastNode).get(i) >= request.getPickupTimeWIndowLower() - TimeWindows
+                                        && currentTime + d.get(lastNode).get(i) <= request.getPickupTimeWindowUpper() && vizinho.contains(request.getDestination())) {
+                                    newNode = vizinho.remove(k);
+                                    encontrado = true;
+                                    break;
+                                }
+                            }
+                        }
+
+                        /**
+                         * E OS N�S DE ENTREGA? DEVEM SER VI�VEIS TAMB�M?*
+                         */
+                        if (!encontrado && R.getActualOccupation() > 0) {
+                            for (Request request : Pout.get(i)) {
+                                if (!Pin.get(request.getOrigin()).contains(request)) {
+                                    newNode = vizinho.remove(k);
+                                    encontrado = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                if (newNode == -1) {
+                    System.out.println("newNode Invalido");
+                }
+                //-------------------------------------------------------------------------------------------------
+                //Step 6
+                List<Long> EarliestTime = new ArrayList<>();
+
+                if (lastNode == 0) {
+                    //System.out.println("VIZINHO PROBLEMATICO "+vizinho);
+                    for (Request request : Pin.get(newNode)) {
+                        if (d.get(lastNode).get(newNode) <= request.getPickupTimeWindowUpper() && vizinho.contains(request.getDestination())) {
+                            EarliestTime.add(request.getPickupTimeWIndowLower());
+                        }
+                    }
+
+                    currentTime = Math.max(Collections.min(EarliestTime) - d.get(lastNode).get(newNode), 0);
+                    R.setDepartureTimeFromDepot(currentTime);
+
+                    EarliestTime.clear();
+                }
+
+                currentTime += d.get(lastNode).get(newNode);
+
+                R.addVisitedNodes(newNode);
+                lastNode = R.getLastNode();
+
+                List<Request> listRequestAux = new LinkedList<>(Pout.get(lastNode));
+
+                for (Request request : listRequestAux) {
+
+                    if (!Pin.get(request.getOrigin()).contains(request)) {
+                        Pout.get(lastNode).remove((Request) request.clone());
+                        P.remove((Request) request.clone());
+
+                        //if(currentK == 1){
+                        log += "ENTREGA: " + currentTime + ": " + (Request) request.clone() + " ";
+                        //}
+
+                        R.leavePassenger((Request) request.clone(), currentTime);
+
+                        //EXTRA
+                        log += "Q=" + R.getActualOccupation() + " ";
+                    }
+                }
+                listRequestAux.clear();
+
+                listRequestAux.addAll(Pin.get(lastNode));
+
+                for (Request request : listRequestAux) {
+                    if (R.getActualOccupation() < Qmax && currentTime >= request.getPickupTimeWIndowLower() && currentTime <= request.getPickupTimeWindowUpper() && vizinho.contains(request.getDestination())) {
+                        Pin.get(lastNode).remove((Request) request.clone());
+                        log += "COLETA: " + currentTime + ": " + (Request) request.clone() + " ";
+                        R.boardPassenger((Request) request.clone(), currentTime);
+                        log += "Q=" + R.getActualOccupation() + " ";
+                    }
+                }
+
+                listRequestAux.clear();
+
+                listRequestAux.addAll(Pin.get(lastNode));
+
+                long waitTime = TimeWindows;
+                long aux;
+
+                for (Request request : listRequestAux) {
+                    if (R.getActualOccupation() < Qmax && currentTime + waitTime >= request.getPickupTimeWIndowLower() && currentTime + waitTime <= request.getPickupTimeWindowUpper() && vizinho.contains(request.getDestination())) {
+
+                        aux = currentTime + waitTime - request.getPickupTimeWIndowLower();
+                        currentTime = Math.min(currentTime + waitTime, request.getPickupTimeWIndowLower());
+                        waitTime = aux;
+                        Pin.get(lastNode).remove((Request) request.clone());
+                        log += "COLETAw: " + currentTime + ": " + (Request) request.clone() + " ";
+                        R.boardPassenger((Request) request.clone(), currentTime);
+                        log += "Q=" + R.getActualOccupation() + " ";
+                    }
+                }
+
+                listRequestAux.clear();
+
+                for (Integer key : Pin.keySet()) {
+                    listRequestAux.addAll(Pin.get(key));
+                    for (Integer i = 0, k = listRequestAux.size(); i < k; i++) {
+                        Request request = listRequestAux.get(i);
+                        if (currentTime > request.getPickupTimeWindowUpper() || !vizinho.contains(request.getOrigin()) || !vizinho.contains(request.getDestination())) {
+                            U.add((Request) request.clone());
+                            P.remove((Request) request.clone());
+                            Pin.get(key).remove((Request) request.clone());
+                            Pout.get(request.getDestination()).remove((Request) request.clone());
+                        }
+                    }
+                    listRequestAux.clear();
+
+                }
+
+                encontrado = false;
+                for (int k = 0; !encontrado && k < vizinho.size(); k++) {
+                    int i = vizinho.get(k);
+
+                    if (i != lastNode) {
+
+                        if (R.getActualOccupation() < Qmax) {
+                            for (Request request : Pin.get(i)) {
+                                if (currentTime + d.get(lastNode).get(i) >= request.getPickupTimeWIndowLower() - TimeWindows
+                                        && currentTime + d.get(lastNode).get(i) <= request.getPickupTimeWindowUpper() && vizinho.contains(request.getDestination())) {
+                                    encontrado = true;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (!encontrado && R.getActualOccupation() > 0) {
+                            for (Request request : Pout.get(i)) {
+                                if (!Pin.get(request.getOrigin()).contains(request)) {
+                                    encontrado = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (!encontrado) {
+                    for (Integer key : Pin.keySet()) {
+
+                        listRequestAux.addAll(Pin.get(key));
+
+                        for (Integer i = 0, k = listRequestAux.size(); i < k; i++) {
+                            Request request = listRequestAux.get(i);
+
+                            U.add((Request) request.clone());
+                            P.remove((Request) request.clone());
+                            Pin.get(key).remove((Request) request.clone());
+                            Pout.get(request.getDestination()).remove((Request) request.clone());
+
+                        }
+                        listRequestAux.clear();
+
+                    }
+                }
+
+                //Step 8
+                if (P.isEmpty()) {
+                    R.addVisitedNodes(0);
+                    currentTime += d.get(lastNode).get(0);
+                    solution.getSetOfRoutes().add(R);
+                }
+
+            }
+
+            //Step 9
+            if (!U.isEmpty() && itK.hasNext()) {
+                List<Request> auxU = new LinkedList<>(U);
+                for (Request request : auxU) {
+                    if (vizinho.contains(request.getOrigin()) && vizinho.contains(request.getDestination()) && d.get(0).get(request.getOrigin()) <= request.getPickupTimeWindowUpper()) {
+                        P.add((Request) request.clone());
+                        U.remove((Request) request.clone());
+                    }
+                }
+            }
+        }
+
+        ProblemSolution greedySolution = new ProblemSolution(reducedDimension);
+        if (!U.isEmpty()) {
+            List<Integer> loadIndex = generateLoadIndex(n, Pin, Pout);
+            greedySolution = greedyConstructive(0.25, 0.25, 0.25, 0.25,
+                    reducedDimension, U, Pin, Pout, n, Qmax,
+                    K, requestListForSecondFase, P,
+                    loadIndex, d, c,
+                    TimeWindows, currentTime, 0);
+            U.clear();
+        }
+
+        solution.setAggregatedObjectives(new double[reducedDimension]);
+        solution.setNonAttendedRequestsList(U);
+        evaluateSolution(solution, c, Qmax, listRequests);
+        evaluateAggregatedObjectiveFunctionsForMOEAD(transformationList, parameters, solution);
         solution.setLogger(log);
 
         if (greedySolution == null) {

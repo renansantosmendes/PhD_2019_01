@@ -66,22 +66,19 @@ public class VRPDRT_Main {
         Integer populationSize = 100;
         Integer maximumNumberOfGenerations = 1000;
         Integer maximumNumberOfExecutions = 1;
-        double probabilityOfMutation = 0.9;
+        double probabilityOfMutation = 0.02;
         double probabilityOfCrossover = 0.7;
         double neighborhoodSelectionProbability = 0.8;
 
-        int numberOfEvaluations = 1000;
-        int neighborSize = 10;
-        int maximumNumberOfReplacedSolutions = 30;
+        int numberOfEvaluations = 300;
+        int neighborSize = 4;
+        int maximumNumberOfReplacedSolutions = 10;
         int fileSize = populationSize;
-        FunctionType functionType = FunctionType.AGG;
+        FunctionType functionType = FunctionType.TCHE;
 
-        List<Double> parameters = new ArrayList<>();//0.0273, 0.5208, 0.0161, 0.3619, 0.0739
+        List<Double> parameters = new ArrayList<>();
         List<Double> nadirPoint = new ArrayList<>();
-
-//        new DataUpdaterUsingGoogleMapsApi(directionsApiKey, new NodeDAO(nodesData).getListOfNodes(),
-//                adjacenciesData).updateAdjacenciesData();
-//        
+        List<List<Integer>> transformationList = new ArrayList<>();
         new ScriptGenerator(instanceName, instanceSize, vehicleCapacity)
                 .generate("2d", "medium");
 
@@ -113,13 +110,12 @@ public class VRPDRT_Main {
 
         int reducedDimension = 3;
 
-        onMOEAD(instanceName, neighborSize, numberOfEvaluations, maximumNumberOfReplacedSolutions, reducedDimension, parameters,
+        MOEAD(instanceName, neighborSize, numberOfEvaluations, maximumNumberOfReplacedSolutions, reducedDimension, transformationList, parameters,
                 nadirPoint, populationSize, maximumNumberOfGenerations, functionType, maximumNumberOfExecutions,
                 neighborhoodSelectionProbability, probabilityOfMutation, probabilityOfCrossover, requests,
                 requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
                 listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows,
                 currentTime, lastNode);
-       
 
     }
 

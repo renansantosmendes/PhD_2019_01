@@ -197,7 +197,7 @@ public class EvolutionaryAlgorithms {
 
     private static void initializeCurrentExecutionStreams() {
         try {
-            executionStream = new PrintStream(folderName + "/" + fileName.toLowerCase() 
+            executionStream = new PrintStream(folderName + "/" + fileName.toLowerCase()
                     + "-execution-" + currentExecutionNumber + ".txt");
 //            testStream = new PrintStream(folderName + "/" + fileName.toLowerCase() 
 //                    + "-test-" + currentExecutionNumber + ".csv");
@@ -214,7 +214,7 @@ public class EvolutionaryAlgorithms {
 
         fileName = algorithmName;
 
-        folderName = "NewResults//" + fileName.toUpperCase() + "//" + instanceNameVariable + "k"
+        folderName = "Results_2020//" + fileName.toUpperCase() + "//" + instanceNameVariable + "k"
                 + vehicleCapacityVariable + "_" + time.getYear() + "_" + time.getMonthValue()
                 + "_" + time.getDayOfMonth();
 
@@ -223,12 +223,12 @@ public class EvolutionaryAlgorithms {
             System.out.println("Folder already exists!");
         }
         try {
-            combinedParetoStream = new PrintStream(folderName + "/" +
-                    fileName.toLowerCase() + "-combined_pareto.csv");
-            combinedParetoForHVStream = new PrintStream(folderName + "/"+
-                    fileName.toLowerCase()+"_pareto_hv.txt");
-            fullCombinedParetoStream = new PrintStream(folderName + "/" +
-                    fileName.toLowerCase() + "-full_combined_pareto.csv");
+            combinedParetoStream = new PrintStream(folderName + "/"
+                    + fileName.toLowerCase() + "-combined_pareto.csv");
+            combinedParetoForHVStream = new PrintStream(folderName + "/"
+                    + fileName.toLowerCase() + "_pareto_hv.txt");
+            fullCombinedParetoStream = new PrintStream(folderName + "/"
+                    + fileName.toLowerCase() + "-full_combined_pareto.csv");
         } catch (FileNotFoundException ex) {
             ex.printStackTrace();
         }
@@ -236,18 +236,18 @@ public class EvolutionaryAlgorithms {
 
     public static void saveNonDominatedSolutionsFromCurrentExecution(List<ProblemSolution> solutions) {
         List<ProblemSolution> nonDominatedSolutions = new ArrayList<>();
-        genericDominanceAlgorithm(solutions,  nonDominatedSolutions);
-        
+        genericDominanceAlgorithm(solutions, nonDominatedSolutions);
+
         combinedParetoForHVStream.print("#\n");
         for (ProblemSolution s : nonDominatedSolutions) {
             executionStream.print(s.getStringWithAllNonReducedObjectivesForCsvFile() + "\n");
             combinedParetoForHVStream.print(s.getStringWithAllObjectives());
         }
     }
-    
+
     public static void saveCombinedPareto() {
         List<ProblemSolution> nonDominatedSolutions = new ArrayList<>();
-        genericDominanceAlgorithm(combinedPareto,  nonDominatedSolutions);
+        genericDominanceAlgorithm(combinedPareto, nonDominatedSolutions);
         for (ProblemSolution s : nonDominatedSolutions) {
             combinedParetoStream.print(s.getStringWithAllNonReducedObjectivesForCsvFile() + "\n");
             fullCombinedParetoStream.print(s + "\n");
@@ -256,7 +256,7 @@ public class EvolutionaryAlgorithms {
     }
 
     public static void MOEAD(String instanceName, int neighborSize, int maxEvaluations, int maximumNumberOfReplacedSolutions,
-            int reducedDimension, List<Double> parameters, List<Double> nadirPoint, Integer populationSize,
+            int reducedDimension, List<List<Integer>> transformationList, List<Double> parameters, List<Double> nadirPoint, Integer populationSize,
             Integer maximumNumberOfGenerations, EvolutionaryAlgorithms.FunctionType functionType,
             Integer maximumNumberOfExecutions, double neighborhoodSelectionProbability, double probabilityOfMutation,
             double probabilityOfCrossover, List<Request> requests, Map<Integer, List<Request>> requestsWhichBoardsInNode,
@@ -264,7 +264,8 @@ public class EvolutionaryAlgorithms {
             Set<Integer> setOfVehicles, List<Request> listOfNonAttendedRequests, List<Request> requestList,
             List<Integer> loadIndexList, List<List<Long>> timeBetweenNodes, List<List<Long>> distanceBetweenNodes,
             Long timeWindows, Long currentTime, Integer lastNode) throws IOException {
-
+        
+        System.out.println("Algorithms.EvolutionaryAlgorithms.MOEAD()");
         instanceNameVariable = instanceName;
         vehicleCapacityVariable = vehicleCapacity;
         initializeStreams("MOEAD");
@@ -285,12 +286,17 @@ public class EvolutionaryAlgorithms {
             initializeIdealPoint(idealPoint, numberOfObjectives, populationSize, population);
             int evaluations = population.size();
 
-            population.forEach(u -> System.out.println(u));
-
             do {
                 int[] permutation = new int[populationSize];
                 MOEADUtils.randomPermutation(permutation, populationSize);
-
+                
+                int numberOfClusters = reducedDimension;
+                HierarchicalCluster hc = new HierarchicalCluster(getMatrixOfObjetives(population, parameters), numberOfClusters, CorrelationType.KENDALL);
+                hc.reduce();
+//                hc.getTransfomationList().forEach(System.out::println);
+                transformationList = hc.getTransfomationList();
+                transformationList.forEach(System.out::println);
+                
                 for (int i = 0; i < population.size(); i++) {
                     int subProblemId = permutation[i];
                     NeighborType neighborType = chooseNeighborType(0.7);
@@ -299,7 +305,7 @@ public class EvolutionaryAlgorithms {
 
                     int maximumSize = parents.size();
 
-                    twoPointsCrossoverForMOEAD(reducedDimension, parameters, children, population, maximumSize, probabilityOfCrossover, parents, requests,
+                    twoPointsCrossoverForMOEAD(reducedDimension, transformationList, parameters, children, population, maximumSize, probabilityOfCrossover, parents, requests,
                             requestList, setOfVehicles, listOfNonAttendedRequests, requestsWhichBoardsInNode,
                             requestsWhichLeavesInNode, timeBetweenNodes, distanceBetweenNodes, numberOfNodes,
                             vehicleCapacity, timeWindows);
@@ -316,16 +322,19 @@ public class EvolutionaryAlgorithms {
                     updateNeighborhood(child, neighborhood, population, subProblemId, neighborType, lambda,
                             idealPoint, maximumNumberOfReplacedSolutions, numberOfObjectives, functionType);
                 }
-                System.out.println("Current evaluation: " + evaluations);
+
+                if (evaluations % populationSize == 0) {
+                    System.out.println("Current evaluation: " + evaluations);
+                    saveNonDominatedSolutionsFromCurrentExecution(population);
+                }
             } while (evaluations < maxEvaluations);
-            
-            
+
             saveNonDominatedSolutionsFromCurrentExecution(population);
             combinedPareto.addAll(population);
             System.out.println("Final Population");
             population.forEach(u -> System.out.println(u));
         }
-        
+
         saveCombinedPareto();
     }
 
@@ -364,12 +373,12 @@ public class EvolutionaryAlgorithms {
             do {
                 int[] permutation = new int[populationSize];
                 MOEADUtils.randomPermutation(permutation, populationSize);
-                
+
                 int numberOfClusters = reducedDimension;
                 HierarchicalCluster hc = new HierarchicalCluster(getMatrixOfObjetives(population, parameters), numberOfClusters, CorrelationType.KENDALL);
                 hc.reduce();
                 hc.getTransfomationList().forEach(System.out::println);
-                
+
                 for (int i = 0; i < population.size(); i++) {
                     int subProblemId = permutation[i];
                     NeighborType neighborType = chooseNeighborType(0.7);
@@ -397,15 +406,16 @@ public class EvolutionaryAlgorithms {
                 }
                 System.out.println("Current evaluation: " + evaluations);
             } while (evaluations < maxEvaluations);
-            
-            
+
             saveNonDominatedSolutionsFromCurrentExecution(population);
             combinedPareto.addAll(population);
+            System.out.println("Final Population");
+            population.forEach(u -> System.out.println(u));
         }
-        
+
         saveCombinedPareto();
     }
-    
+
     public static List<List<Integer>> createTransformationList(int reducedDimension, int numberOfObjectives) {
         List<List<Integer>> transformationList = new ArrayList<>();
         List<Integer> line = new ArrayList<>();
@@ -435,7 +445,7 @@ public class EvolutionaryAlgorithms {
 
         return transformationList;
     }
-    
+
     private static List<ProblemSolution> parentSelection(List<ProblemSolution> population, int[][] neighborhood,
             int subProblemId, NeighborType neighborType) {
 
@@ -964,7 +974,6 @@ public class EvolutionaryAlgorithms {
 //    private static void showHypervolumeConvergence(List<Double> hypervolumeConvergence) throws IOException {
 //        new ResultsGraphicsForConvergence(hypervolumeConvergence, "ResultGraphics", "Convergence");
 //    }
-
     public static double smetric(List<ProblemSolution> solutions) {
         solutions.sort(Comparator.comparingDouble(ProblemSolution::getAggregatedObjective1));
         //        .thenComparingDouble(ProblemSolution::getAggregatedObjective2).reversed());
@@ -1830,7 +1839,7 @@ public class EvolutionaryAlgorithms {
         }
     }
 
-    public static void initializePopulation(List<ProblemSolution> Pop,int reducedDimension, int TamPop, List<Request> listRequests, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout,
+    public static void initializePopulation(List<ProblemSolution> Pop, int reducedDimension, int TamPop, List<Request> listRequests, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout,
             Integer n, Integer Qmax, Set<Integer> K, List<Request> U, List<Request> P, List<Integer> m, List<List<Long>> d,
             List<List<Long>> c, Long TimeWindows, Long currentTime, Integer lastNode) {
         ProblemSolution s0 = new ProblemSolution();
