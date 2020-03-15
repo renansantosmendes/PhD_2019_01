@@ -344,7 +344,7 @@ public class Algorithms {
         S.setAggregatedObjectives(objectives);
 
     }
-    
+
     public static void evaluateAggregatedObjectiveFunctionsForMOEAD(List<List<Integer>> transformationList, List<Double> parameters,
             ProblemSolution S) {
         evaluationNumber++;
@@ -380,12 +380,12 @@ public class Algorithms {
             for (int i = 0; i < objectives.length; i++) {
                 float objectives_sum = 0;
                 for (int j = 0; j < parameters.size(); j++) {
-                    objectives_sum += transformationList.get(i).get(j)*parameters.get(j) * single_objectives[j];
+                    objectives_sum += transformationList.get(i).get(j) * parameters.get(j) * single_objectives[j];
 
                 }
                 objectives[i] = objectives_sum;
             }
- 
+
         }
         S.setAggregatedObjectives(objectives);
 
@@ -608,6 +608,143 @@ public class Algorithms {
 
         solution.setNonAttendedRequestsList(listOfNonAttendedRequests);
         evaluateSolution(solution, distanceBetweenNodes, vehicleCapacity, requests);
+        solution.setLogger(log);
+        solution.linkTheRoutes();
+
+        return solution;
+    }
+
+    public static ProblemSolution greedyConstructiveForMOEAD(Double alphaD, Double alphaP, Double alphaV, Double alphaT,
+            List<List<Integer>> transformationList, List<Double> parameters,
+            int reducedDimension, List<Request> requests, Map<Integer, List<Request>> requestsWichBoardsInNode,
+            Map<Integer, List<Request>> requestsWichLeavesInNode, Integer numberOfNodes, Integer vehicleCapacity,
+            Set<Integer> setOfVehicles, List<Request> listOfNonAttendedRequests, List<Request> requestList,
+            List<Integer> loadIndex, List<List<Long>> timeBetweenNodes, List<List<Long>> distanceBetweenNodes,
+            Long timeWindows, Long currentTime, Integer lastNode) {
+
+        requestList.clear();
+        listOfNonAttendedRequests.clear();
+        requestList.addAll(requests);
+
+        //Step 1
+        ProblemSolution solution = new ProblemSolution(reducedDimension);
+        String log = "";
+
+        int currentVehicle;
+        Map<Integer, Double> costRankList = new HashMap<>(numberOfNodes);
+        Map<Integer, Double> numberOfPassengersRankList = new HashMap<>(numberOfNodes);
+        Map<Integer, Double> deliveryTimeWindowRankList = new HashMap<>(numberOfNodes);
+        Map<Integer, Double> timeWindowRankList = new HashMap<>(numberOfNodes);
+        Map<Integer, Double> nodeRankingFunction = new HashMap<>(numberOfNodes);
+
+        Iterator<Integer> vehicleIterator = setOfVehicles.iterator();
+        listOfNonAttendedRequests.clear();
+        while (!requestList.isEmpty() && vehicleIterator.hasNext()) {
+
+            separateOriginFromDestination(listOfNonAttendedRequests, requestsWichBoardsInNode, requestsWichLeavesInNode,
+                    numberOfNodes, requestList);
+
+            //Step 2
+            Route route = new Route();
+            currentVehicle = vehicleIterator.next();
+            log += "\tGROute " + (currentVehicle + 1) + " ";
+
+            //Step 3
+            route.addVisitedNodes(0);
+
+            currentTime = (long) 0;
+            //-------------------------------------------------------------------
+            double max, min;
+            //Integer  lastNode = R.getLastNode();
+            lastNode = route.getLastNode();
+
+            boolean feasibleNodeIsFound;
+
+            while (!requestList.isEmpty()) {
+                feasibleNodeIsFound = false;
+                loadIndex.clear();
+                for (int i = 0; i < numberOfNodes; i++) {
+                    loadIndex.add(requestsWichBoardsInNode.get(i).size() - requestsWichLeavesInNode.get(i).size());
+                }
+
+                //Step 4
+                Set<Integer> feasibleNode = new HashSet<>();
+                List<Long> earliestTime = new ArrayList<>();
+
+                findFeasibleNodes(numberOfNodes, lastNode, feasibleNodeIsFound, vehicleCapacity, route,
+                        requestsWichBoardsInNode, requestsWichLeavesInNode, feasibleNode, timeBetweenNodes,
+                        currentTime, timeWindows);
+
+                //System.out.println("FEASIBLE NODES = "+ FeasibleNode);			
+                if (feasibleNode.size() > 1) {
+                    //Step 4.1
+                    CalculaCRL(feasibleNode, costRankList, distanceBetweenNodes, lastNode);
+                    //Step 4.2
+                    CalculaNRL(feasibleNode, numberOfPassengersRankList, loadIndex, lastNode);
+                    //Step 4.3
+                    CalculaDRL(feasibleNode, deliveryTimeWindowRankList, requestsWichLeavesInNode, lastNode,
+                            timeBetweenNodes, earliestTime);
+                    //Step 4.4
+                    CalculaTRL(feasibleNode, timeWindowRankList, requestsWichBoardsInNode, lastNode, timeBetweenNodes,
+                            earliestTime);
+                } else {
+                    //Step 4.1
+                    CalculaListaSemNosViaveis(costRankList, feasibleNode);
+                    //Step 4.2
+                    CalculaListaSemNosViaveis(numberOfPassengersRankList, feasibleNode);
+                    //Step 4.3
+                    CalculaListaSemNosViaveis(deliveryTimeWindowRankList, feasibleNode);
+                    //Step 4.4
+                    CalculaListaSemNosViaveis(timeWindowRankList, feasibleNode);
+                }
+
+                //Step 5
+                CalculaNRF(nodeRankingFunction, costRankList, numberOfPassengersRankList, deliveryTimeWindowRankList,
+                        timeWindowRankList, alphaD, alphaP, alphaV, alphaT, feasibleNode);
+
+                //Step 6              
+                //System.out.println("Tamanho da NRF = " + NRF.size());              
+                max = Collections.max(nodeRankingFunction.values());
+
+                currentTime = AdicionaNo(nodeRankingFunction, costRankList, numberOfPassengersRankList,
+                        deliveryTimeWindowRankList, timeWindowRankList, max, lastNode, requestsWichBoardsInNode,
+                        timeBetweenNodes, earliestTime, currentTime, route);
+
+                lastNode = route.getLastNode();
+
+                //Step 7
+                //RETIRAR A LINHA DE BAIXO DEPOIS - inicialização de listRequestAux
+                List<Request> listRequestAux = new LinkedList<>();
+                //Desembarca as solicitações no nó 
+                Desembarca(requestsWichBoardsInNode, requestsWichLeavesInNode, lastNode, currentTime, requestList,
+                        listRequestAux, route, log);
+                //Embarca as solicitações sem tempo de espera
+                Embarca(requestsWichBoardsInNode, lastNode, currentTime, requestList, listRequestAux, route, log, vehicleCapacity);
+                //Embarca agora as solicitações onde o veículo precisar esperar e guarda atualiza o tempo (currentTime)                               
+                currentTime = EmbarcaRelaxacao(requestsWichBoardsInNode, lastNode, currentTime, requestList,
+                        listRequestAux, route, log, vehicleCapacity, timeWindows);
+
+                //---------- Trata as solicitações inviáveis -----------
+                RetiraSolicitacoesInviaveis(requestsWichBoardsInNode, requestsWichLeavesInNode, listRequestAux,
+                        currentTime, requestList, listOfNonAttendedRequests);
+                feasibleNodeIsFound = ProcuraSolicitacaoParaAtender(route, vehicleCapacity, requestsWichBoardsInNode,
+                        requestsWichLeavesInNode, currentTime, numberOfNodes, timeBetweenNodes, lastNode, timeWindows,
+                        feasibleNodeIsFound);
+                RetiraSolicitacaoNaoSeraAtendida(feasibleNodeIsFound, requestsWichBoardsInNode, requestsWichLeavesInNode,
+                        listRequestAux, currentTime, requestList, listOfNonAttendedRequests);
+
+                //Step 8
+                currentTime = FinalizaRota(requestList, route, currentTime, lastNode, timeBetweenNodes, solution);
+            }
+
+            //Step 9
+            AnaliseSolicitacoesViaveisEmU(listOfNonAttendedRequests, requestList, vehicleIterator, timeBetweenNodes);
+        }
+
+        solution.setNonAttendedRequestsList(listOfNonAttendedRequests);
+        evaluateSolution(solution, distanceBetweenNodes, vehicleCapacity, requests);
+        evaluateAggregatedObjectiveFunctionsForMOEAD(transformationList, parameters, solution);
+
         solution.setLogger(log);
         solution.linkTheRoutes();
 
@@ -977,7 +1114,7 @@ public class Algorithms {
             return newSolution;
         }
     }
-    
+
     public static ProblemSolution rebuildSolutionForOfflineAlgorithms(int reducedDimension, List<List<Integer>> transformationList,
             List<Double> parameters, List<Integer> vizinho, List<Request> listRequests, List<Request> P,
             Set<Integer> K, List<Request> U, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout,
@@ -1252,7 +1389,7 @@ public class Algorithms {
         ProblemSolution greedySolution = new ProblemSolution(reducedDimension);
         if (!U.isEmpty()) {
             List<Integer> loadIndex = generateLoadIndex(n, Pin, Pout);
-            greedySolution = greedyConstructive(0.25, 0.25, 0.25, 0.25,
+            greedySolution = greedyConstructiveForMOEAD(0.25, 0.25, 0.25, 0.25, transformationList, parameters,
                     reducedDimension, U, Pin, Pout, n, Qmax,
                     K, requestListForSecondFase, P,
                     loadIndex, d, c,
@@ -1560,7 +1697,7 @@ public class Algorithms {
         ProblemSolution greedySolution = new ProblemSolution(reducedDimension);
         if (!U.isEmpty()) {
             List<Integer> loadIndex = generateLoadIndex(n, Pin, Pout);
-            greedySolution = greedyConstructive(0.25, 0.25, 0.25, 0.25,
+            greedySolution = greedyConstructiveForMOEAD(0.25, 0.25, 0.25, 0.25, transfomationList, parameters,
                     reducedDimension, U, Pin, Pout, n, Qmax,
                     K, requestListForSecondFase, P,
                     loadIndex, d, c,
@@ -2028,6 +2165,33 @@ public class Algorithms {
 
         ProblemSolution S = new ProblemSolution(reducedDimension);
         List<List<Integer>> transformationList = createTransformationList(reducedDimension, s.getObjectives().size());
+        S.setSolution(rebuildSolutionForOnlineAlgorithms(reducedDimension, transformationList,
+                parameters, original, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
+        s.setSolution(S);
+
+        return s;
+    }
+
+    public static ProblemSolution randomPerturbationWithSeedForMOEAD(int i, int reducedDimension, List<List<Integer>> transformationList,
+            List<Double> parameters, ProblemSolution s, List<Request> listRequests, Map<Integer, List<Request>> Pin,
+            Map<Integer, List<Request>> Pout, Integer n, Integer Qmax, Set<Integer> K, List<Request> U, List<Request> P,
+            List<Integer> m, List<List<Long>> d, List<List<Long>> c, Long TimeWindows) {
+        Random rnd = new Random(i + 1);
+        Random p1 = new Random(i + 2234234);
+        Random p2 = new Random(86554 * i);
+        int posicao1, posicao2;
+        int NUMPERT = rnd.nextInt();
+
+        List<Integer> original = new ArrayList<>(s.getLinkedRouteList());
+        posicao1 = p1.nextInt(original.size());
+
+        do {
+            posicao2 = p2.nextInt(original.size());
+        } while (Objects.equals(original.get(posicao1), original.get(posicao2)));
+
+        original.add(posicao1, original.remove(posicao2));
+
+        ProblemSolution S = new ProblemSolution(reducedDimension);
         S.setSolution(rebuildSolutionForOnlineAlgorithms(reducedDimension, transformationList,
                 parameters, original, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
         s.setSolution(S);

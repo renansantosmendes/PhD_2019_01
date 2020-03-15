@@ -70,11 +70,11 @@ public class VRPDRT_Main {
         double probabilityOfCrossover = 0.7;
         double neighborhoodSelectionProbability = 0.8;
 
-        int numberOfEvaluations = 300;
-        int neighborSize = 4;
+        int numberOfEvaluations = 10000;
+        int neighborSize = 10;
         int maximumNumberOfReplacedSolutions = 10;
         int fileSize = populationSize;
-        FunctionType functionType = FunctionType.TCHE;
+        FunctionType functionType = FunctionType.AGG;
 
         List<Double> parameters = new ArrayList<>();
         List<Double> nadirPoint = new ArrayList<>();

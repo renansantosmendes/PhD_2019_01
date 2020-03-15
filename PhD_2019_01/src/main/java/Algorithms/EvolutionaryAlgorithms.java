@@ -264,7 +264,7 @@ public class EvolutionaryAlgorithms {
             Set<Integer> setOfVehicles, List<Request> listOfNonAttendedRequests, List<Request> requestList,
             List<Integer> loadIndexList, List<List<Long>> timeBetweenNodes, List<List<Long>> distanceBetweenNodes,
             Long timeWindows, Long currentTime, Integer lastNode) throws IOException {
-        
+
         System.out.println("Algorithms.EvolutionaryAlgorithms.MOEAD()");
         instanceNameVariable = instanceName;
         vehicleCapacityVariable = vehicleCapacity;
@@ -274,9 +274,25 @@ public class EvolutionaryAlgorithms {
             initializeCurrentExecutionStreams();
 
             List<ProblemSolution> population = new ArrayList<>();
-            inicializeRandomPopulation(parameters, reducedDimension, population, populationSize, requests,
+            List<ProblemSolution> initialPopulation = new ArrayList<>();
+            List<ProblemSolution> externalPopulation = new ArrayList<>();
+
+            initializeRandomPopulation(parameters, reducedDimension, initialPopulation, populationSize, requests,
                     requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                     requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
+
+            int numberOfClusters = reducedDimension;
+            HierarchicalCluster hc = new HierarchicalCluster(getMatrixOfObjetives(initialPopulation, parameters),
+                    numberOfClusters, CorrelationType.KENDALL);
+            hc.reduce();
+            transformationList = hc.getTransfomationList();
+            transformationList.forEach(System.out::println);
+
+            initializeRandomPopulationForMOEAD(transformationList, parameters, reducedDimension, population, populationSize, requests,
+                    requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
+                    requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
+
+            population.forEach(u -> System.out.println(u));
 
             int numberOfObjectives = reducedDimension;
             int[][] neighborhood = new int[populationSize][neighborSize];
@@ -289,14 +305,10 @@ public class EvolutionaryAlgorithms {
             do {
                 int[] permutation = new int[populationSize];
                 MOEADUtils.randomPermutation(permutation, populationSize);
-                
-                int numberOfClusters = reducedDimension;
-                HierarchicalCluster hc = new HierarchicalCluster(getMatrixOfObjetives(population, parameters), numberOfClusters, CorrelationType.KENDALL);
-                hc.reduce();
-//                hc.getTransfomationList().forEach(System.out::println);
+
                 transformationList = hc.getTransfomationList();
                 transformationList.forEach(System.out::println);
-                
+
                 for (int i = 0; i < population.size(); i++) {
                     int subProblemId = permutation[i];
                     NeighborType neighborType = chooseNeighborType(0.7);
@@ -323,9 +335,16 @@ public class EvolutionaryAlgorithms {
                             idealPoint, maximumNumberOfReplacedSolutions, numberOfObjectives, functionType);
                 }
 
+                List<ProblemSolution> intermediatePopulation = new ArrayList<>();
+                intermediatePopulation.addAll(population);
+                intermediatePopulation.addAll(externalPopulation);
+                genericDominanceAlgorithm(intermediatePopulation, externalPopulation);
+
                 if (evaluations % populationSize == 0) {
+
                     System.out.println("Current evaluation: " + evaluations);
                     saveNonDominatedSolutionsFromCurrentExecution(population);
+
                 }
             } while (evaluations < maxEvaluations);
 
@@ -333,6 +352,8 @@ public class EvolutionaryAlgorithms {
             combinedPareto.addAll(population);
             System.out.println("Final Population");
             population.forEach(u -> System.out.println(u));
+            System.out.println("External Population");
+            externalPopulation.forEach(u -> System.out.println(u));
         }
 
         saveCombinedPareto();
@@ -356,7 +377,7 @@ public class EvolutionaryAlgorithms {
             initializeCurrentExecutionStreams();
 
             List<ProblemSolution> population = new ArrayList<>();
-            inicializeRandomPopulation(parameters, reducedDimension, population, populationSize, requests,
+            initializeRandomPopulation(parameters, reducedDimension, population, populationSize, requests,
                     requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                     requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
 
@@ -536,7 +557,7 @@ public class EvolutionaryAlgorithms {
 //                inicializePopulation(population, populationSize, requests,
 //                        requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
 //                        requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
-                inicializeRandomPopulation(parameters, reducedDimension, population, populationSize, requests,
+                initializeRandomPopulation(parameters, reducedDimension, population, populationSize, requests,
                         requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                         requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
                 if (executionCounter == 0) {
@@ -730,7 +751,7 @@ public class EvolutionaryAlgorithms {
 //                inicializePopulation(population, populationSize, requests,
 //                        requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
 //                        requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
-                inicializeRandomPopulation(parameters, reducedDimension, population, populationSize, requests,
+                initializeRandomPopulation(parameters, reducedDimension, population, populationSize, requests,
                         requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                         requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
 
@@ -1066,7 +1087,7 @@ public class EvolutionaryAlgorithms {
 //                inicializePopulation(population, populationSize, requests,
 //                        requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
 //                        requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
-                inicializeRandomPopulation(parameters, reducedDimension, population, populationSize, requests,
+                initializeRandomPopulation(parameters, reducedDimension, population, populationSize, requests,
                         requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                         requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
 
@@ -1660,8 +1681,6 @@ public class EvolutionaryAlgorithms {
 
     //alterar essa função aqui para uma dominancia genérica
     public static void genericDominanceAlgorithm(List<ProblemSolution> population, List<ProblemSolution> nonDominated) {
-        //--------------------------------------------------------------------------------------------------------------
-        //List<Solucao> naoDominados = new ArrayList<>();
         nonDominated.clear();
         for (int i = 0; i < population.size(); i++) {
             population.get(i).setNumberOfSolutionsWichDomineThisSolution(0);
@@ -1688,14 +1707,9 @@ public class EvolutionaryAlgorithms {
 
                     if (sum_greater_equal == p_vector.length) {
                         if (sum_equal != p_vector.length) {//se entrar, q domina p
-//                            System.out.println("Found a domination");
-//                            System.out.println(population.get(p));
-//                            System.out.println(population.get(q));
-
                             population.get(q).addnDom();
                             population.get(p).addeDom();
-                            population.get(q).addL(p);//adiciona a p
-//                            population.get(q).setR(population.get(q).getR() + population.get(p).getNumberOfDominatedSolutionsByThisSolution());
+                            population.get(q).addL(p);
                         }
                     }
                 }
@@ -1737,7 +1751,7 @@ public class EvolutionaryAlgorithms {
                 nonDominated.add(population.get(i));
             }
         }
-//        removeEqualSolutions(nonDominated);
+        removeEqualSolutions(nonDominated);
     }
 
     public static void normalizeObjectiveFunctionsValues2(List<ProblemSolution> Pop) {
