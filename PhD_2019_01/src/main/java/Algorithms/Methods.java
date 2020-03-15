@@ -523,7 +523,7 @@ public class Methods {
 
         for (int i = 0; i < TamPop; i++) {
             ProblemSolution S = new ProblemSolution();
-            S.setSolution(GeraSolucaoAleatoria(reducedDimension, Pop, TamPop, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode));
+            S.setSolution(generateRandomSolution(reducedDimension, Pop, TamPop, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode));
             //S.setSolution(PerturbacaoSemente(parameters, S, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows));
             Pop.add(S);
         }
@@ -535,18 +535,34 @@ public class Methods {
         Inicializa(Pop, reducedDimension, TamPop, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode);
     }
 
-    public static void inicializeRandomPopulation(List<Double> parameters, int reducedDimension, List<ProblemSolution> Pop, Integer TamPop, List<Request> listRequests,
+    public static void initializeRandomPopulation(List<Double> parameters, int reducedDimension, List<ProblemSolution> Pop, Integer TamPop, List<Request> listRequests,
             Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout, Integer n, Integer Qmax, Set<Integer> K,
             List<Request> U, List<Request> P, List<Integer> m, List<List<Long>> d, List<List<Long>> c,
             Long TimeWindows, Long currentTime, Integer lastNode) {
 
-        ProblemSolution S = new ProblemSolution(reducedDimension);
-        S.setSolution(GeraSolucaoAleatoria(reducedDimension, Pop, TamPop, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode));
+        ProblemSolution solution = new ProblemSolution(reducedDimension);
+        solution.setSolution(generateRandomSolution(reducedDimension, Pop, TamPop, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode));
         for (int i = 0; i < TamPop; i++) {
-            ProblemSolution S2 = new ProblemSolution(reducedDimension);
-            S2.setSolution(randomPerturbationWithSeedForOnlineAlgorithm(i, reducedDimension, parameters, S, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows));
-            Pop.add(S2);
-            System.out.println(S2);
+            ProblemSolution randomSolution = new ProblemSolution(reducedDimension);
+            randomSolution.setSolution(randomPerturbationWithSeedForOnlineAlgorithm(i, reducedDimension, parameters, solution, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows));
+            Pop.add(randomSolution);
+        }
+    }
+    
+    public static void initializeRandomPopulationForMOEAD(List<List<Integer>> transformationList, List<Double> parameters,
+            int reducedDimension, List<ProblemSolution> population, Integer TamPop, List<Request> listRequests,
+            Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout, Integer n, Integer Qmax, Set<Integer> K,
+            List<Request> U, List<Request> P, List<Integer> m, List<List<Long>> d, List<List<Long>> c,
+            Long TimeWindows, Long currentTime, Integer lastNode) {
+
+        ProblemSolution solution = new ProblemSolution(reducedDimension);
+        solution.setSolution(generateRandomSolution(reducedDimension, population, TamPop, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c,
+                TimeWindows, currentTime, lastNode));
+        for (int i = 0; i < TamPop; i++) {
+            ProblemSolution randomSolution = new ProblemSolution(reducedDimension);
+            randomSolution.setSolution(randomPerturbationWithSeedForMOEAD(i, reducedDimension, transformationList, parameters, solution, listRequests,
+                    Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows));
+            population.add(randomSolution);
         }
     }
     
@@ -555,13 +571,13 @@ public class Methods {
             List<Request> U, List<Request> P, List<Integer> m, List<List<Long>> d, List<List<Long>> c,
             Long TimeWindows, Long currentTime, Integer lastNode) {
 
-        ProblemSolution S = new ProblemSolution(reducedDimension);
-        S.setSolution(GeraSolucaoAleatoria(reducedDimension, Pop, TamPop, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode));
+        ProblemSolution solution = new ProblemSolution(reducedDimension);
+        solution.setSolution(generateRandomSolution(reducedDimension, Pop, TamPop, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode));
         for (int i = 0; i < TamPop; i++) {
-            ProblemSolution S2 = new ProblemSolution(reducedDimension);
-            S2.setSolution(randomPerturbationWithSeed(i, reducedDimension, parameters, S, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows));
-            Pop.add(S2);
-            System.out.println(S2);
+            ProblemSolution randomSolution = new ProblemSolution(reducedDimension);
+            randomSolution.setSolution(randomPerturbationWithSeed(i, reducedDimension, parameters, solution, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows));
+            Pop.add(randomSolution);
+            System.out.println(randomSolution);
         }
     }
 
@@ -583,7 +599,7 @@ public class Methods {
         for (int i = 0; i < TamPop; i++) {
             ProblemSolution S = new ProblemSolution();
             ProblemSolution S_linha = new ProblemSolution();
-            S.setSolution(GeraSolucaoAleatoria(reducedDimension, Pop, TamPop, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode));
+            S.setSolution(generateRandomSolution(reducedDimension, Pop, TamPop, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode));
             //S_linha.setSolution(perturbation(S, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows));
             S_linha.setSolution(randomPerturbationWithSeed(i, reducedDimension, parameters, S, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows));
             Pop.add(S_linha);
@@ -616,7 +632,7 @@ public class Methods {
         //}
     }
 
-    public static ProblemSolution GeraSolucaoAleatoria(int reducedDimension, List<ProblemSolution> Pop, Integer TamPop, List<Request> listRequests, Map<Integer, List<Request>> Pin,
+    public static ProblemSolution generateRandomSolution(int reducedDimension, List<ProblemSolution> Pop, Integer TamPop, List<Request> listRequests, Map<Integer, List<Request>> Pin,
             Map<Integer, List<Request>> Pout, Integer n, Integer Qmax, Set<Integer> K, List<Request> U,
             List<Request> P, List<Integer> m, List<List<Long>> d, List<List<Long>> c,
             Long TimeWindows, Long currentTime, Integer lastNode) {
@@ -931,6 +947,49 @@ public class Methods {
         }
     }
 
+    public static void mutation2ShuffleForOnlineMOEAD(int reducedDimension,List<List<Integer>> transformationList,
+            List<Double> parameters, ProblemSolution Pop, double Pm, List<Request> listRequests, Map<Integer, List<Request>> Pin,
+            Map<Integer, List<Request>> Pout, Integer n, Integer Qmax, Set<Integer> K, List<Request> U, List<Request> P,
+            List<Integer> m, List<List<Long>> d, List<List<Long>> c, Long TimeWindows, Long currentTime, Integer lastNode) {
+        Random rnd = new Random();
+        Random p1 = new Random();
+        Random p2 = new Random();
+        int posicao1, posicao2;
+        double prob;
+
+        prob = rnd.nextFloat();
+
+        if (prob < Pm) {
+            List<Integer> individuo = new ArrayList<>(Pop.getLinkedRouteList());
+
+            int index1, index2;
+
+            do {
+                index1 = rnd.nextInt(individuo.size());
+                index2 = rnd.nextInt(individuo.size());
+            } while (index1 == index2);
+
+            List<Integer> indices = new ArrayList<>();
+            indices.add(index1);
+            indices.add(index2);
+
+            int min = Collections.min(indices);
+            int max = Collections.max(indices);
+
+            List<Integer> aux = new ArrayList<>(individuo.subList(min, max));
+
+            Collections.shuffle(aux);
+
+            individuo.subList(min, max).clear();
+            individuo.addAll(min, aux);
+
+            ProblemSolution S = new ProblemSolution();
+            S.setSolution(rebuildSolutionForOnlineAlgorithms(reducedDimension, transformationList,  
+                            parameters, individuo, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
+            Pop.setSolution(S);            
+        }
+    }
+
     public static void MutacaoILS(int reducedDimension, List<Double> parameters, List<ProblemSolution> Pop, double Pm, List<Request> listRequests, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout,
             Integer n, Integer Qmax, Set<Integer> K, List<Request> U, List<Request> P, List<Integer> m, List<List<Long>> d, List<List<Long>> c,
             Long TimeWindows, Long currentTime, Integer lastNode) {
@@ -1241,10 +1300,10 @@ public class Methods {
         }
     }
     
-    public static void twoPointsCrossoverForMOEAD(int reducedDimension, List<Double> parameters, List<ProblemSolution> Pop_nova, List<ProblemSolution> Pop, Integer TamMax, double Pc,
-            List<ProblemSolution> pais, List<Request> listRequests,
-            List<Request> P, Set<Integer> K, List<Request> U, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout,
-            List<List<Long>> d, List<List<Long>> c, Integer n, Integer Qmax, Long TimeWindows) {
+    public static void twoPointsCrossoverForMOEAD(int reducedDimension, List<List<Integer>> transformationList, List<Double> parameters,
+            List<ProblemSolution> Pop_nova, List<ProblemSolution> Pop, Integer TamMax, double Pc, List<ProblemSolution> pais,
+            List<Request> listRequests, List<Request> P, Set<Integer> K, List<Request> U, Map<Integer, List<Request>> Pin,
+            Map<Integer, List<Request>> Pout, List<List<Long>> d, List<List<Long>> c, Integer n, Integer Qmax, Long TimeWindows) {
         ProblemSolution pai;
         ProblemSolution mae;
         int pontoCorte;
@@ -1293,8 +1352,10 @@ public class Methods {
                     filho1.addAll(min, parte2);
                     filho2.addAll(min, parte1);
 
-                    s1.setSolution(rebuildSolution(reducedDimension, parameters, filho1, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
-                    s2.setSolution(rebuildSolution(reducedDimension, parameters, filho2, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
+                    s1.setSolution(rebuildSolutionForOnlineAlgorithms(reducedDimension, transformationList, parameters, filho1, listRequests,
+                            P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
+                    s2.setSolution(rebuildSolutionForOnlineAlgorithms(reducedDimension, transformationList, parameters, filho2, listRequests,
+                            P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
 
                 } else {
                     s1.setSolution(mae);
