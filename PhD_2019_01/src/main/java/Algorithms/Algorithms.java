@@ -2164,7 +2164,7 @@ public class Algorithms {
         original.add(posicao1, original.remove(posicao2));
 
         ProblemSolution S = new ProblemSolution(reducedDimension);
-        List<List<Integer>> transformationList = createTransformationList(reducedDimension, s.getObjectives().size());
+        List<List<Integer>> transformationList = createTransformationList(reducedDimension, s.getOriginalObjectives().size());
         S.setSolution(rebuildSolutionForOnlineAlgorithms(reducedDimension, transformationList,
                 parameters, original, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
         s.setSolution(S);
@@ -3104,7 +3104,7 @@ public class Algorithms {
                     distanceBetweenNodes, timeWindows));
             //System.out.println(solution1.getStringWithObjectives());
             System.out.println(solution1);
-            printStreamForObjectives.print(solution1.getStringWithObjectives() + "\n");
+//            printStreamForObjectives.print(solution1.getStringWithObjectives() + "\n");
             printStreamForSolutions.print(solution1 + "\n");
         }
     }
@@ -3129,8 +3129,8 @@ public class Algorithms {
             solution1.setSolution(geraPesos(reducedDimension, i, listOfRequests, requestsWichBoardsInNode, requestsWichLeavesInNode, numberOfNodes,
                     vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes,
                     distanceBetweenNodes, timeWindows, currentTime, lastNode));
-            System.out.println(solution1.getStringWithObjectives());
-            printStreamForObjectives.print(solution1.getStringWithObjectives() + "\n");
+//            System.out.println(solution1.getStringWithObjectives());
+//            printStreamForObjectives.print(solution1.getStringWithObjectives() + "\n");
             printStreamForSolutions.print(solution1 + "\n");
         }
     }

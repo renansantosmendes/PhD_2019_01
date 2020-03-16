@@ -94,9 +94,9 @@ public class DataOutput {
 
     public void saveBestSolutionFoundInTxtFile(ProblemSolution solution) {
         this.streamForCombinedPareto.print(solution + "\n");
-        this.streamForCombinedParetoObjectivesInCsv.print(solution.getStringWithAllNonReducedObjectivesForCsvFile() + "\n");
-        this.streamForCombinedParetoObjectivesInTxt.print(solution.getStringWithAllNonReducedObjectives() + "\n");
-        this.streamForCombinedParetoReducedObjectives.print(solution.getObjectives() + "\n");
+        this.streamForCombinedParetoObjectivesInCsv.print(solution.getStringWithOriginalObjectivesForCsvFile() + "\n");
+        this.streamForCombinedParetoObjectivesInTxt.print(solution.getStringWithOriginalObjectives() + "\n");
+        this.streamForCombinedParetoReducedObjectives.print(solution.getOriginalObjectives() + "\n");
     }
 
 //    public void saveBestSolutionFoundInTxtFile(Solution solution) {
@@ -133,7 +133,7 @@ public class DataOutput {
 //            for (Solution solution : population) {
 //                streamForCombinedParetoObjectivesInExecution
 //                        .print(convertSolution(solution)
-//                                .getStringWithAllNonReducedObjectivesForCsvFile() + "\n");
+//                                .getStringWithOriginalObjectivesForCsvFile() + "\n");
 //            }
 //            executionNumber++;
 //        }
