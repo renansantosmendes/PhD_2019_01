@@ -339,7 +339,7 @@ public class EvolutionaryAlgorithms {
 
                     ProblemSolution child = children.get(0);
 
-                    mutation2ShuffleForMOEAD(reducedDimension, parameters, child, probabilityOfMutation, requests, requestsWhichBoardsInNode,
+                    mutation2ShuffleForMOEAD(reducedDimension, transformationList, parameters, child, probabilityOfMutation, requests, requestsWhichBoardsInNode,
                             requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                             requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
 
@@ -371,9 +371,115 @@ public class EvolutionaryAlgorithms {
 
         saveCombinedPareto();
     }
-
+    
     public static void onMOEAD(String instanceName, int neighborSize, int maxEvaluations, int maximumNumberOfReplacedSolutions,
-            int reducedDimension, List<Double> parameters, List<Double> nadirPoint, Integer populationSize,
+            int reducedDimension, List<List<Integer>> transformationList, List<Double> parameters, List<Double> nadirPoint, Integer populationSize,
+            Integer maximumNumberOfGenerations, EvolutionaryAlgorithms.FunctionType functionType,
+            Integer maximumNumberOfExecutions, double neighborhoodSelectionProbability, double probabilityOfMutation,
+            double probabilityOfCrossover, List<Request> requests, Map<Integer, List<Request>> requestsWhichBoardsInNode,
+            Map<Integer, List<Request>> requestsWhichLeavesInNode, Integer numberOfNodes, Integer vehicleCapacity,
+            Set<Integer> setOfVehicles, List<Request> listOfNonAttendedRequests, List<Request> requestList,
+            List<Integer> loadIndexList, List<List<Long>> timeBetweenNodes, List<List<Long>> distanceBetweenNodes,
+            Long timeWindows, Long currentTime, Integer lastNode) throws IOException {
+
+        System.out.println("Algorithms.EvolutionaryAlgorithms.onMOEAD()");
+        instanceNameVariable = instanceName;
+        vehicleCapacityVariable = vehicleCapacity;
+        initializeStreams("ONMOEAD");
+
+        for (currentExecutionNumber = 0; currentExecutionNumber < maximumNumberOfExecutions; currentExecutionNumber++) {
+            initializeCurrentExecutionStreams();
+
+            List<ProblemSolution> population = new ArrayList<>();
+            List<ProblemSolution> initialPopulation = new ArrayList<>();
+            List<ProblemSolution> externalPopulation = new ArrayList<>();
+
+            initializeRandomPopulation(parameters, reducedDimension, initialPopulation, populationSize, requests,
+                    requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
+                    requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
+
+            int numberOfClusters = reducedDimension;
+            HierarchicalCluster hc = new HierarchicalCluster(getMatrixOfObjetives(initialPopulation, parameters),
+                    numberOfClusters, CorrelationType.KENDALL);
+            hc.reduce();
+            transformationList = hc.getTransfomationList();
+            transformationList.forEach(System.out::println);
+
+            initializeRandomPopulationForMOEAD(transformationList, parameters, reducedDimension, population, populationSize, requests,
+                    requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
+                    requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
+            saveInitialPopulation(population);
+            population.forEach(u -> System.out.println(u));
+
+            int numberOfObjectives = reducedDimension;
+            int[][] neighborhood = new int[populationSize][neighborSize];
+            double[][] lambda = initializeUniformWeight(numberOfObjectives, populationSize);
+            initializeNeighborhood(populationSize, neighborSize, lambda, neighborhood);
+            double[] idealPoint = new double[numberOfObjectives];
+            initializeIdealPoint(idealPoint, numberOfObjectives, populationSize, population);
+            int evaluations = population.size();
+
+            do {
+                int[] permutation = new int[populationSize];
+                MOEADUtils.randomPermutation(permutation, populationSize);
+                hc = new HierarchicalCluster(getMatrixOfObjetives(population, parameters),
+                    numberOfClusters, CorrelationType.KENDALL);
+                hc.reduce();
+                
+                transformationList = hc.getTransfomationList();
+                transformationList.forEach(System.out::println);
+
+                for (int i = 0; i < population.size(); i++) {
+                    int subProblemId = permutation[i];
+                    NeighborType neighborType = chooseNeighborType(0.7);
+                    List<ProblemSolution> parents = parentSelection(population, neighborhood, subProblemId, neighborType);
+                    List<ProblemSolution> children = new ArrayList<>();
+
+                    int maximumSize = parents.size();
+
+                    twoPointsCrossoverForMOEAD(reducedDimension, transformationList, parameters, children, population,
+                            maximumSize, probabilityOfCrossover, parents, requests, requestList, setOfVehicles, listOfNonAttendedRequests,
+                            requestsWhichBoardsInNode, requestsWhichLeavesInNode, timeBetweenNodes, distanceBetweenNodes, numberOfNodes,
+                            vehicleCapacity, timeWindows);
+
+                    ProblemSolution child = children.get(0);
+
+                    mutation2ShuffleForMOEAD(reducedDimension, transformationList, parameters, child, probabilityOfMutation, requests,
+                            requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
+                            listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows,
+                            currentTime, lastNode);
+
+                    evaluations++;
+
+                    updateIdealPoint(idealPoint, child, numberOfObjectives);
+                    updateNeighborhood(child, neighborhood, population, subProblemId, neighborType, lambda,
+                            idealPoint, maximumNumberOfReplacedSolutions, numberOfObjectives, functionType);
+                }
+
+                List<ProblemSolution> intermediatePopulation = new ArrayList<>();
+                intermediatePopulation.addAll(population);
+                intermediatePopulation.addAll(externalPopulation);
+                genericDominanceAlgorithm(intermediatePopulation, externalPopulation);
+
+                if (evaluations % populationSize == 0) {
+                    System.out.println("Current evaluation: " + evaluations);
+                    saveNonDominatedSolutionsFromCurrentExecution(population);
+                }
+            } while (evaluations < maxEvaluations);
+
+            saveNonDominatedSolutionsFromCurrentExecution(population);
+            combinedPareto.addAll(externalPopulation);
+            System.out.println("Final Population");
+            population.forEach(u -> System.out.println(u));
+            System.out.println("External Population");
+            externalPopulation.forEach(u -> System.out.println(u));
+        }
+
+        saveCombinedPareto();
+    }
+
+    public static void onMOEAD_testing(String instanceName, int neighborSize, int maxEvaluations, int maximumNumberOfReplacedSolutions,
+            int reducedDimension,List<List<Integer>> transformationList, List<Double> parameters, List<Double> nadirPoint, Integer populationSize,
             Integer maximumNumberOfGenerations, EvolutionaryAlgorithms.FunctionType functionType,
             Integer maximumNumberOfExecutions, double neighborhoodSelectionProbability, double probabilityOfMutation,
             double probabilityOfCrossover, List<Request> requests, Map<Integer, List<Request>> requestsWhichBoardsInNode,

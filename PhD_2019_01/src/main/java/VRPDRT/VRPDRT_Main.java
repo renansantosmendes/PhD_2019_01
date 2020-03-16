@@ -65,12 +65,12 @@ public class VRPDRT_Main {
 
         Integer populationSize = 100;
         Integer maximumNumberOfGenerations = 1000;
-        Integer maximumNumberOfExecutions = 30;
+        Integer maximumNumberOfExecutions = 10;
         double probabilityOfMutation = 0.02;
         double probabilityOfCrossover = 0.7;
         double neighborhoodSelectionProbability = 0.8;
 
-        int numberOfEvaluations = 5000;
+        int numberOfEvaluations = 4000;
         int neighborSize = 10;
         int maximumNumberOfReplacedSolutions = 10;
         int fileSize = populationSize;
@@ -90,7 +90,6 @@ public class VRPDRT_Main {
                 numberOfNodes, loadIndexList);
 
         Algorithms.printProblemInformations(requests, numberOfVehicles, vehicleCapacity, instanceName, adjacenciesData, nodesData);
-
         Methods.initializeFleetOfVehicles(setOfVehicles, numberOfVehicles);
 
         parameters.add(0.10);//1
@@ -110,7 +109,7 @@ public class VRPDRT_Main {
 
         int reducedDimension = 3;
 
-        MOEAD(instanceName, neighborSize, numberOfEvaluations, maximumNumberOfReplacedSolutions, reducedDimension, transformationList, parameters,
+        onMOEAD(instanceName, neighborSize, numberOfEvaluations, maximumNumberOfReplacedSolutions, reducedDimension, transformationList, parameters,
                 nadirPoint, populationSize, maximumNumberOfGenerations, functionType, maximumNumberOfExecutions,
                 neighborhoodSelectionProbability, probabilityOfMutation, probabilityOfCrossover, requests,
                 requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,

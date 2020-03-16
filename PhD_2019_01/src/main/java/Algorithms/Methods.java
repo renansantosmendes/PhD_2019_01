@@ -905,19 +905,17 @@ public class Methods {
         }
     }
 
-    public static void mutation2ShuffleForMOEAD(int reducedDimension, List<Double> parameters, ProblemSolution Pop, double Pm, List<Request> listRequests, Map<Integer, List<Request>> Pin,
+    public static void mutation2ShuffleForMOEAD(int reducedDimension, List<List<Integer>> transformationList, List<Double> parameters,
+            ProblemSolution population, double Pm, List<Request> listRequests, Map<Integer, List<Request>> Pin,
             Map<Integer, List<Request>> Pout, Integer n, Integer Qmax, Set<Integer> K, List<Request> U, List<Request> P,
             List<Integer> m, List<List<Long>> d, List<List<Long>> c, Long TimeWindows, Long currentTime, Integer lastNode) {
         Random rnd = new Random();
-        Random p1 = new Random();
-        Random p2 = new Random();
-        int posicao1, posicao2;
-        double prob;
+        double probability;
 
-        prob = rnd.nextFloat();
+        probability = rnd.nextFloat();
 
-        if (prob < Pm) {
-            List<Integer> individuo = new ArrayList<>(Pop.getLinkedRouteList());
+        if (probability < Pm) {
+            List<Integer> individuo = new ArrayList<>(population.getLinkedRouteList());
 
             int index1, index2;
 
@@ -933,16 +931,17 @@ public class Methods {
             int min = Collections.min(indices);
             int max = Collections.max(indices);
 
-            List<Integer> aux = new ArrayList<>(individuo.subList(min, max));
+            List<Integer> shuffledVertices = new ArrayList<>(individuo.subList(min, max));
 
-            Collections.shuffle(aux);
+            Collections.shuffle(shuffledVertices);
 
             individuo.subList(min, max).clear();
-            individuo.addAll(min, aux);
+            individuo.addAll(min, shuffledVertices);
 
-            ProblemSolution S = new ProblemSolution();
-            S.setSolution(rebuildSolution(reducedDimension, parameters, individuo, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
-            Pop.setSolution(S);
+            ProblemSolution solution = new ProblemSolution();
+            solution.setSolution(rebuildSolutionForOnlineAlgorithms(reducedDimension, transformationList, parameters, individuo, listRequests,
+                            P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
+            population.setSolution(solution);
 
         }
     }
