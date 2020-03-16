@@ -13,7 +13,6 @@ import ProblemRepresentation.*;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Comparator;
-//import AlgorithmsResults.ResultsGraphicsForConvergence;
 import RandomNumberGenerator.UniformRandomGenerator;
 import ReductionTechniques.CorrelationType;
 import ReductionTechniques.HierarchicalCluster;
@@ -24,19 +23,13 @@ import ReductionTechniques.HierarchicalCluster;
  */
 public class EvolutionaryAlgorithms {
 
-    private static PrintStream executionStream;
-    private static PrintStream executionReducedStream;
-    private static PrintStream fileSizeStream;
-    private static PrintStream testStream;
+    private static PrintStream currentExecutionOriginalParetoStream;
+    private static PrintStream currentExecutionReducedParetoStream;
     private static PrintStream initialPopulationStream;
     private static PrintStream initialPopulationReducedStream;
-    private static PrintStream currentExecutionPareto;
     private static PrintStream combinedParetoStream;
-    private static PrintStream currentCombinedParetoStream;
     private static PrintStream combinedParetoReducedStream;
     private static PrintStream fullCombinedParetoStream;
-    private static PrintStream combinedParetoForHVStream;
-    private static PrintStream combinedParetoReducedForHVStream;
     private static String folderName;
     private static String fileName;
     private static String instanceNameVariable;
@@ -135,7 +128,7 @@ public class EvolutionaryAlgorithms {
             f2 = fitnessFunction(individual, lambda[k], idealPoint, numberOfObjectives, functionType);
 
             if (f2 < f1) {
-                population.set(k, (ProblemSolution) individual);//retirei o .copy() dessa parte aqui do código
+                population.set(k, (ProblemSolution) individual);
                 time++;
             }
 
@@ -153,8 +146,7 @@ public class EvolutionaryAlgorithms {
             double maxFun = -1.0e+30;
 
             for (int n = 0; n < numberOfObjectives; n++) {
-                double diff = Math.abs(individual.getObjective(n) - idealPoint[n]);//alterar idealPoint e nadirPoint fazer eles
-                //na dimensão original e depois reduzir ou olhar para o atributo problem e ver o que é melhor
+                double diff = Math.abs(individual.getObjective(n) - idealPoint[n]);
 
                 double feval;
                 if (lambda[n] == 0) {
@@ -201,14 +193,10 @@ public class EvolutionaryAlgorithms {
 
     private static void initializeCurrentExecutionStreams() {
         try {
-            executionStream = new PrintStream(folderName + "/" + fileName.toLowerCase()
+            currentExecutionOriginalParetoStream = new PrintStream(folderName + "/" + fileName.toLowerCase()
                     + "-original-pareto-execution-" + currentExecutionNumber + ".txt");
-            executionReducedStream = new PrintStream(folderName + "/" + fileName.toLowerCase()
+            currentExecutionReducedParetoStream = new PrintStream(folderName + "/" + fileName.toLowerCase()
                     + "-reduced-pareto-execution-" + currentExecutionNumber + ".txt");
-//            testStream = new PrintStream(folderName + "/" + fileName.toLowerCase() 
-//                    + "-test-" + currentExecutionNumber + ".csv");
-//            currentExecutionPareto = new PrintStream(folderName + "/" + fileName.toLowerCase() 
-//                    + "-pareto-" + currentExecutionNumber + ".csv");
         } catch (FileNotFoundException ex) {
             ex.printStackTrace();
         }
@@ -217,9 +205,7 @@ public class EvolutionaryAlgorithms {
 
     private static void initializeStreams(String algorithmName) {
         LocalDateTime time = LocalDateTime.now();
-
         fileName = algorithmName;
-
         folderName = "Results_2020//" + fileName.toUpperCase() + "//" + instanceNameVariable + "k"
                 + vehicleCapacityVariable + "_" + time.getYear() + "_" + time.getMonthValue()
                 + "_" + time.getDayOfMonth();
@@ -237,10 +223,6 @@ public class EvolutionaryAlgorithms {
                     + fileName.toLowerCase() + "-combined_pareto_reduced.csv");
             combinedParetoStream = new PrintStream(folderName + "/"
                     + fileName.toLowerCase() + "-combined_pareto.csv");
-//            combinedParetoReducedForHVStream = new PrintStream(folderName + "/"
-//                    + fileName.toLowerCase() + "_pareto_reduced_hv.txt");
-//            combinedParetoForHVStream = new PrintStream(folderName + "/"
-//                    + fileName.toLowerCase() + "_pareto_hv.txt");
             fullCombinedParetoStream = new PrintStream(folderName + "/"
                     + fileName.toLowerCase() + "-full_combined_pareto.csv");
         } catch (FileNotFoundException ex) {
@@ -256,11 +238,11 @@ public class EvolutionaryAlgorithms {
     public static void saveNonDominatedSolutionsFromCurrentExecution(List<ProblemSolution> solutions) {
         List<ProblemSolution> nonDominatedSolutions = new ArrayList<>();
         genericDominanceAlgorithm(solutions, nonDominatedSolutions);
-        executionStream.print("#\n");
-        executionReducedStream.print("#\n");
+        currentExecutionOriginalParetoStream.print("#\n");
+        currentExecutionReducedParetoStream.print("#\n");
         for (ProblemSolution solution : nonDominatedSolutions) {
-            executionStream.print(solution.getStringWithOriginalObjectivesForCsvFile() + "\n");
-            executionReducedStream.print(solution.getStringWithReducedObjectives() + "\n");
+            currentExecutionOriginalParetoStream.print(solution.getStringWithOriginalObjectivesForCsvFile() + "\n");
+            currentExecutionReducedParetoStream.print(solution.getStringWithReducedObjectives() + "\n");
         }
     }
 
@@ -272,7 +254,6 @@ public class EvolutionaryAlgorithms {
             combinedParetoStream.print(solution.getStringWithOriginalObjectivesForCsvFile() + "\n");
             fullCombinedParetoStream.print(solution + "\n");
         }
-        //combinedParetoReducedForHVStream.print("#\n");
     }
 
     public static void MOEAD(String instanceName, int neighborSize, int maxEvaluations, int maximumNumberOfReplacedSolutions,
