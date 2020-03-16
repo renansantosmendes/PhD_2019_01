@@ -27,8 +27,11 @@ public class EvolutionaryAlgorithms {
     private static PrintStream executionStream;
     private static PrintStream fileSizeStream;
     private static PrintStream testStream;
+    private static PrintStream initialPopulationStream;
+    private static PrintStream initialPopulationReducedStream;
     private static PrintStream currentExecutionPareto;
     private static PrintStream combinedParetoStream;
+    private static PrintStream combinedParetoReducedStream;
     private static PrintStream fullCombinedParetoStream;
     private static PrintStream combinedParetoForHVStream;
     private static String folderName;
@@ -223,6 +226,12 @@ public class EvolutionaryAlgorithms {
             System.out.println("Folder already exists!");
         }
         try {
+            initialPopulationStream = new PrintStream(folderName + "/"
+                    + fileName.toLowerCase() + "-initial_population.csv");;
+            initialPopulationReducedStream = new PrintStream(folderName + "/"
+                    + fileName.toLowerCase() + "-initial_population_reduced.csv");;
+            combinedParetoReducedStream = new PrintStream(folderName + "/"
+                    + fileName.toLowerCase() + "-combined_pareto_reduced.csv");
             combinedParetoStream = new PrintStream(folderName + "/"
                     + fileName.toLowerCase() + "-combined_pareto.csv");
             combinedParetoForHVStream = new PrintStream(folderName + "/"
@@ -232,6 +241,11 @@ public class EvolutionaryAlgorithms {
         } catch (FileNotFoundException ex) {
             ex.printStackTrace();
         }
+    }
+    
+    public static void saveInitialPopulation(List<ProblemSolution> solutions){
+        solutions.forEach(u -> initialPopulationStream.print(u + "\n"));
+        solutions.forEach(u -> initialPopulationReducedStream.print(u.getListOfAggregatedObjectives() + "\n"));
     }
 
     public static void saveNonDominatedSolutionsFromCurrentExecution(List<ProblemSolution> solutions) {
@@ -248,9 +262,10 @@ public class EvolutionaryAlgorithms {
     public static void saveCombinedPareto() {
         List<ProblemSolution> nonDominatedSolutions = new ArrayList<>();
         genericDominanceAlgorithm(combinedPareto, nonDominatedSolutions);
-        for (ProblemSolution s : nonDominatedSolutions) {
-            combinedParetoStream.print(s.getStringWithAllNonReducedObjectivesForCsvFile() + "\n");
-            fullCombinedParetoStream.print(s + "\n");
+        for (ProblemSolution solution : nonDominatedSolutions) {
+            combinedParetoReducedStream.print(solution.getListOfAggregatedObjectives() + "\n");
+            combinedParetoStream.print(solution.getStringWithAllNonReducedObjectivesForCsvFile() + "\n");
+            fullCombinedParetoStream.print(solution + "\n");
         }
         combinedParetoForHVStream.print("#\n");
     }
@@ -291,7 +306,7 @@ public class EvolutionaryAlgorithms {
             initializeRandomPopulationForMOEAD(transformationList, parameters, reducedDimension, population, populationSize, requests,
                     requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                     requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
-
+            saveInitialPopulation(population);
             population.forEach(u -> System.out.println(u));
 
             int numberOfObjectives = reducedDimension;
@@ -341,15 +356,13 @@ public class EvolutionaryAlgorithms {
                 genericDominanceAlgorithm(intermediatePopulation, externalPopulation);
 
                 if (evaluations % populationSize == 0) {
-
                     System.out.println("Current evaluation: " + evaluations);
                     saveNonDominatedSolutionsFromCurrentExecution(population);
-
                 }
             } while (evaluations < maxEvaluations);
 
             saveNonDominatedSolutionsFromCurrentExecution(population);
-            combinedPareto.addAll(population);
+            combinedPareto.addAll(externalPopulation);
             System.out.println("Final Population");
             population.forEach(u -> System.out.println(u));
             System.out.println("External Population");
