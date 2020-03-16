@@ -65,12 +65,12 @@ public class VRPDRT_Main {
 
         Integer populationSize = 100;
         Integer maximumNumberOfGenerations = 1000;
-        Integer maximumNumberOfExecutions = 10;
+        Integer maximumNumberOfExecutions = 3;
         double probabilityOfMutation = 0.02;
         double probabilityOfCrossover = 0.7;
         double neighborhoodSelectionProbability = 0.8;
 
-        int numberOfEvaluations = 4000;
+        int numberOfEvaluations = 400;
         int neighborSize = 10;
         int maximumNumberOfReplacedSolutions = 10;
         int fileSize = populationSize;

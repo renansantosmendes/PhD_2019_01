@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 public class ProblemSolution implements Comparable<ProblemSolution> {
 
-    private List<Double> objectives;
+    private List<Double> originalObjectives;
     private Set<Route> setOfRoutes;
     private double objectiveFunction;
     private long totalDistance;//f1
@@ -34,7 +34,7 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
 
     private double aggregatedObjective1;
     private double aggregatedObjective2;
-    private double aggregatedObjectives[];
+    private double[] reducedObjectives;
     private int numberOfAggregatedObjectives;
     private double aggregatedObjective1Normalized;
     private double aggregatedObjective2Normalized;
@@ -65,7 +65,7 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
         deliveryTimeWindowAntecipation = -1;
         totalRouteTimeChargeBanlance = -1;
         totalOccupationRate = -1;
-        objectives = new ArrayList<>();
+        originalObjectives = new ArrayList<>();
 
         totalDistanceNormalized = -1;
         totalDeliveryDelayNormalized = -1;
@@ -79,7 +79,7 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
 
         aggregatedObjective1 = -1;
         aggregatedObjective2 = -1;
-        aggregatedObjectives = new double[11];
+        reducedObjectives = new double[11];
         aggregatedObjective1Normalized = 0;
         aggregatedObjective2Normalized = 0;
 
@@ -108,7 +108,7 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
         deliveryTimeWindowAntecipation = -1;
         totalRouteTimeChargeBanlance = -1;
         totalOccupationRate = -1;
-        objectives = new ArrayList<>();
+        originalObjectives = new ArrayList<>();
 
         totalDistanceNormalized = -1;
         totalDeliveryDelayNormalized = -1;
@@ -122,7 +122,7 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
 
         aggregatedObjective1 = -1;
         aggregatedObjective2 = -1;
-        aggregatedObjectives = new double[reducedDimension];
+        reducedObjectives = new double[reducedDimension];
         aggregatedObjective1Normalized = 0;
         aggregatedObjective2Normalized = 0;
 
@@ -151,8 +151,8 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
             int R, List<Request> nonAttendedRequestsList, List<Integer> linkedRouteList, String logger, int tempoExtraTotal) {
 
         this();
-        this.objectives.clear();
-        this.objectives.addAll(objectives);
+        this.originalObjectives.clear();
+        this.originalObjectives.addAll(objectives);
         this.setOfRoutes.clear();
         this.setOfRoutes.addAll(setOfRoutes);
         this.objectiveFunction = objectiveFunction;
@@ -176,7 +176,7 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
         this.totalOccupationRateNormalized = totalOccupationRateNormalized;
 
         this.numberOfAggregatedObjectives = numberOfAggregatedObjectives;
-        this.aggregatedObjectives = new double[this.numberOfAggregatedObjectives];
+        this.reducedObjectives = new double[this.numberOfAggregatedObjectives];
         this.aggregatedObjective1 = aggregatedObjective1;
         this.aggregatedObjective2 = aggregatedObjective2;
         this.aggregatedObjective1Normalized = aggregatedObjective1Normalized;
@@ -214,7 +214,7 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
         deliveryTimeWindowAntecipation = solution.getDeliveryTimeWindowAntecipation();
         totalRouteTimeChargeBanlance = solution.getTotalRouteTimeChargeBanlance();
         totalOccupationRate = solution.getTotalOccupationRate();
-        objectives.addAll(solution.getObjectives());
+        originalObjectives.addAll(solution.getOriginalObjectives());
 
         totalDistanceNormalized = solution.getTotalDistanceNormalized();
         totalDeliveryDelayNormalized = solution.getTotalDeliveryDelayNormalized();
@@ -226,7 +226,7 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
         totalRouteTimeChargeBanlanceNormalized = solution.getTotalRouteTimeChargeBanlanceNormalized();
         totalOccupationRateNormalized = solution.getTotalOccupationRateNormalized();
 
-        aggregatedObjectives = solution.getAggregatedObjectives();
+        reducedObjectives = solution.getAggregatedObjectives();
         numberOfAggregatedObjectives = solution.getNumberOfAggregatedObjectives();
 
         aggregatedObjective1 = solution.getAggregatedObjective1();
@@ -260,7 +260,7 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
         setTotalWaintingTime(solution.getTotalWaintingTime());
         setDeliveryTimeWindowAntecipation(solution.getDeliveryTimeWindowAntecipation());
         setTotalOccupationRate(solution.getTotalOccupationRate());
-        setObjectives(solution.getObjectives());
+        setOriginalObjectives(solution.getOriginalObjectives());
 
         setTotalDistanceNormalized(solution.getTotalDistanceNormalized());
         setTotalDeliveryDelayNormalized(solution.getTotalDeliveryDelayNormalized());
@@ -316,31 +316,31 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
 
     public void setObjectivesList() {
         //alterei esse método aqui pra ver se estava com problema
-        this.objectives.clear();
-        this.objectives.add((double) this.totalDistance);//f1
-        this.objectives.add((double) this.totalDeliveryDelay);//f2
-        this.objectives.add((double) this.totalRouteTimeChargeBanlance);//f3
-        //this.objectives.add((double) this.numberOfNonAttendedRequests);//f4
-        this.objectives.add((double) this.numberOfVehicles);//f5
-        this.objectives.add((double) this.totalTravelTime);//f6
-        this.objectives.add((double) this.totalWaintingTime);//f7
-        this.objectives.add((double) this.deliveryTimeWindowAntecipation);//f8
-        this.objectives.add((double) this.totalOccupationRate);//f9
+        this.originalObjectives.clear();
+        this.originalObjectives.add((double) this.totalDistance);//f1
+        this.originalObjectives.add((double) this.totalDeliveryDelay);//f2
+        this.originalObjectives.add((double) this.totalRouteTimeChargeBanlance);//f3
+        //this.originalObjectives.add((double) this.numberOfNonAttendedRequests);//f4
+        this.originalObjectives.add((double) this.numberOfVehicles);//f5
+        this.originalObjectives.add((double) this.totalTravelTime);//f6
+        this.originalObjectives.add((double) this.totalWaintingTime);//f7
+        this.originalObjectives.add((double) this.deliveryTimeWindowAntecipation);//f8
+        this.originalObjectives.add((double) this.totalOccupationRate);//f9
 
     }
 
     public void setObjectivesList(Parameters parameters) {
         //alterei esse método aqui pra ver se estava com problema
-        this.objectives.clear();
-        this.objectives.add((double) this.totalDistance);//f1
-        this.objectives.add((double) this.totalDeliveryDelay);//f2
-        this.objectives.add((double) this.totalRouteTimeChargeBanlance);//f3
-        //this.objectives.add((double) this.numberOfNonAttendedRequests);//f4
-        this.objectives.add((double) this.numberOfVehicles);//f5
-        this.objectives.add((double) this.totalTravelTime);//f6
-        this.objectives.add((double) this.totalWaintingTime);//f7
-        this.objectives.add((double) this.deliveryTimeWindowAntecipation);//f8
-        this.objectives.add((double) this.totalOccupationRate);//f9
+        this.originalObjectives.clear();
+        this.originalObjectives.add((double) this.totalDistance);//f1
+        this.originalObjectives.add((double) this.totalDeliveryDelay);//f2
+        this.originalObjectives.add((double) this.totalRouteTimeChargeBanlance);//f3
+        //this.originalObjectives.add((double) this.numberOfNonAttendedRequests);//f4
+        this.originalObjectives.add((double) this.numberOfVehicles);//f5
+        this.originalObjectives.add((double) this.totalTravelTime);//f6
+        this.originalObjectives.add((double) this.totalWaintingTime);//f7
+        this.originalObjectives.add((double) this.deliveryTimeWindowAntecipation);//f8
+        this.originalObjectives.add((double) this.totalOccupationRate);//f9
 
     }
 
@@ -362,11 +362,11 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
     }
 
     public double getObjective(int n) {
-        return this.aggregatedObjectives[n];
+        return this.reducedObjectives[n];
     }
 
     public double[] getAggregatedObjectives() {
-        return this.aggregatedObjectives.clone();
+        return this.reducedObjectives.clone();
     }
 
     public int getNumberOfAggregatedObjectives() {
@@ -380,8 +380,8 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
     public List<Double> getListOfAggregatedObjectives() {
         List<Double> list = new ArrayList<>();
 
-        for (int i = 0; i < this.aggregatedObjectives.length; i++) {
-            list.add(this.aggregatedObjectives[i]);
+        for (int i = 0; i < this.reducedObjectives.length; i++) {
+            list.add(this.reducedObjectives[i]);
         }
         return list;
     }
@@ -441,7 +441,7 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
     }
 
     public void setAggregatedObjectives(double[] objectives) {
-        this.aggregatedObjectives = objectives;
+        this.reducedObjectives = objectives;
     }
 
     public void setSetOfRoutes(Set<Route> conjRotas) {
@@ -590,8 +590,8 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
         return crowdDistance;
     }
 
-    public List<Double> getObjectives() {
-        return objectives;
+    public List<Double> getOriginalObjectives() {
+        return originalObjectives;
     }
 
     public void setTempoExtraTotal(int tempo) {
@@ -667,8 +667,8 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
         this.nonAttendedRequestsList.addAll(new LinkedList<Request>(listaNaoAtendimento));
     }
 
-    public void setObjectives(List<Double> objectives) {
-        this.objectives = objectives;
+    public void setOriginalObjectives(List<Double> originalObjectives) {
+        this.originalObjectives = originalObjectives;
     }
 
     public List<Integer> getLinkedRouteList() {
@@ -793,59 +793,39 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
                 / (maxOccupationRate - minOccupationRate));
     }
 
-    public String getStringWithObjectives() {
-//        String stringWithObjectives = totalDistance + "\t" + totalDeliveryDelay + "\t" + totalRouteTimeChargeBanlance
-//                + "\t" + numberOfNonAttendedRequests + "\t" + numberOfVehicles + "\t" + totalTravelTime + "\t"
-//                + totalWaintingTime + "\t" + deliveryTimeWindowAntecipation + "\t" + totalOccupationRate + "\t";
-        String stringWithObjectives = aggregatedObjective1 + "\t" + aggregatedObjective2 + "\t" + totalDistance + "\t"
-                + totalDeliveryDelay + "\t" + totalRouteTimeChargeBanlance + "\t" + numberOfNonAttendedRequests + "\t"
-                + numberOfVehicles;
-        // + "\t" + totalTravelTime + "\t"  + totalWaintingTime + "\t" + deliveryTimeWindowAntecipation + "\t" + totalOccupationRate + "\t";
-
-        return stringWithObjectives;
-    }
-
-    public String getStringWithAllNonReducedObjectives() {
-
+    public String getStringWithOriginalObjectives() {
         String stringWithObjectives = totalDistance + "\t"
                 + totalDeliveryDelay + "\t" + totalRouteTimeChargeBanlance + "\t" + numberOfNonAttendedRequests + "\t"
                 + numberOfVehicles + "\t" + totalTravelTime + "\t" + totalWaintingTime + "\t"
                 + deliveryTimeWindowAntecipation + "\t" + totalOccupationRate + "\t";
-
         return stringWithObjectives;
     }
 
-    public String getStringWithAllObjectives() {
-
+    public String getStringWithReducedObjectives() {
         String string = "";
-
-        for (int i = 0; i < this.aggregatedObjectives.length; i++) {
-            if (i != this.aggregatedObjectives.length - 1) {
-                string += this.aggregatedObjectives[i] + " ";
+        for (int i = 0; i < this.reducedObjectives.length; i++) {
+            if (i != this.reducedObjectives.length - 1) {
+                string += this.reducedObjectives[i] + ",";
             } else {
-                string += this.aggregatedObjectives[i];
+                string += this.reducedObjectives[i];
             }
         }
-
-        string += "\n";
         return string;
     }
 
-    public String getStringWithAllNonReducedObjectivesForCsvFile() {
-
+    public String getStringWithOriginalObjectivesForCsvFile() {
         String stringWithObjectives = totalDistance + ","
-                + totalDeliveryDelay + "," + totalRouteTimeChargeBanlance + "," 
+                + totalDeliveryDelay + "," + totalRouteTimeChargeBanlance + ","
                 + numberOfVehicles + "," + totalTravelTime + "," + totalWaintingTime + ","
                 + deliveryTimeWindowAntecipation + "," + totalOccupationRate + "\t";
-
         return stringWithObjectives;
     }
 
-    public double[] getObjectivesArray() {
-        int size = objectives.size();
+    public double[] getOriginalObjectivesArray() {
+        int size = originalObjectives.size();
         double[] array = new double[size];
         for (int i = 0; i < size; i++) {
-            array[i] = objectives.get(i);
+            array[i] = originalObjectives.get(i);
         }
         return array;
     }
@@ -853,14 +833,12 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
     @Override
     public String toString() {
         DecimalFormat df = new DecimalFormat("0.0000");
-        //"\t" + numberOfNonAttendedRequests +
-        String s = this.objectives + "\t" + getListOfAggregatedObjectives() + "\t" + totalDistance + "\t"
+        String s = this.originalObjectives + "\t" + getListOfAggregatedObjectives() + "\t" + totalDistance + "\t"
                 + totalDeliveryDelay + "\t" + totalRouteTimeChargeBanlance + "\t"
                 + numberOfVehicles + "\t" + totalWaintingTime + "\t" + totalTravelTime + "\t" + deliveryTimeWindowAntecipation
                 + "\t" + totalOccupationRate + "\t";
 
-        s = getListOfAggregatedObjectives() + "\t" + getStringWithAllNonReducedObjectivesForCsvFile() + " " + this.getAttendanceRequestSize() + " ";
-//        s =  getListOfAggregatedObjectives() + "\t";
+        s = getListOfAggregatedObjectives() + "\t" + getStringWithOriginalObjectivesForCsvFile() + " " + this.getAttendanceRequestSize() + " ";
         int indice = 1;
         String listaAtendimento = " ";
         for (Route r : setOfRoutes) {
@@ -870,17 +848,7 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
                 listaAtendimento += req + " ";
             }
         }
-//        s =  getListOfAggregatedObjectives() + "\t";
-//        s += "\t";
-        //for(Request req : r.listaAtendimento)
-//        s += listaAtendimento;// + " ";
-//        s += "\t";
-//		for(Request req : listaNaoAtendimento)
-//			s += req + " ";
-//
-//		s += "\t"+rotaConcatenada+logger;
         return s;
-        //}	
     }
 
     @Override
@@ -945,7 +913,7 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
             routesClone.add((Route) route.clone());
         }
 
-        return new ProblemSolution(numberOfAggregatedObjectives, objectives, routesClone, objectiveFunction, totalDistance,
+        return new ProblemSolution(numberOfAggregatedObjectives, originalObjectives, routesClone, objectiveFunction, totalDistance,
                 totalDeliveryDelay, numberOfNonAttendedRequests, numberOfVehicles, totalTravelTime,
                 totalWaintingTime, deliveryTimeWindowAntecipation, totalRouteTimeChargeBanlance,
                 totalOccupationRate, totalDistanceNormalized, totalDeliveryDelayNormalized,
