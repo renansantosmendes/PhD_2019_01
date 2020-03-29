@@ -14,6 +14,7 @@ import com.google.maps.errors.ApiException;
 import Algorithms.EvolutionaryAlgorithms.*;
 import static Algorithms.EvolutionaryAlgorithms.MOEAD;
 import static Algorithms.EvolutionaryAlgorithms.onMOEAD;
+import static Algorithms.Methods.readProblemData;
 import static Algorithms.Methods.readProblemUsingExcelData;
 import InstanceReader.ScriptGenerator;
 import java.io.IOException;
@@ -65,12 +66,12 @@ public class VRPDRT_Main {
 
         Integer populationSize = 100;
         Integer maximumNumberOfGenerations = 1000;
-        Integer maximumNumberOfExecutions = 3;
+        Integer maximumNumberOfExecutions = 1;
         double probabilityOfMutation = 0.02;
         double probabilityOfCrossover = 0.7;
         double neighborhoodSelectionProbability = 0.8;
 
-        int numberOfEvaluations = 400;
+        int numberOfEvaluations = 10000;
         int neighborSize = 10;
         int maximumNumberOfReplacedSolutions = 10;
         int fileSize = populationSize;
@@ -109,7 +110,7 @@ public class VRPDRT_Main {
 
         int reducedDimension = 3;
 
-        onMOEAD(instanceName, neighborSize, numberOfEvaluations, maximumNumberOfReplacedSolutions, reducedDimension, transformationList, parameters,
+        MOEAD(instanceName, neighborSize, numberOfEvaluations, maximumNumberOfReplacedSolutions, reducedDimension, transformationList, parameters,
                 nadirPoint, populationSize, maximumNumberOfGenerations, functionType, maximumNumberOfExecutions,
                 neighborhoodSelectionProbability, probabilityOfMutation, probabilityOfCrossover, requests,
                 requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
