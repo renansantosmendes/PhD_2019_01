@@ -286,7 +286,7 @@ public class EvolutionaryAlgorithms {
             HierarchicalCluster hc = new HierarchicalCluster(getMatrixOfObjetives(initialPopulation, parameters),
                     numberOfClusters, CorrelationType.KENDALL);
             hc.reduce();
-            transformationList = hc.getTransfomationList();
+            transformationList = generateTransformationList();//hc.getTransfomationList();
             transformationList.forEach(System.out::println);
 
             initializeRandomPopulationForMOEAD(transformationList, parameters, reducedDimension, population, populationSize, requests,
@@ -307,7 +307,7 @@ public class EvolutionaryAlgorithms {
                 int[] permutation = new int[populationSize];
                 MOEADUtils.randomPermutation(permutation, populationSize);
 
-                transformationList = hc.getTransfomationList();
+                transformationList = generateTransformationList();//hc.getTransfomationList();
                 transformationList.forEach(System.out::println);
 
                 for (int i = 0; i < population.size(); i++) {
@@ -356,6 +356,46 @@ public class EvolutionaryAlgorithms {
         }
 
         saveCombinedPareto();
+    }
+    
+    public static List<List<Integer>> generateTransformationList(){
+        List<List<Integer>> transformationList = new ArrayList<>();
+        List<Integer> line1 = new ArrayList();
+        List<Integer> line2 = new ArrayList();
+        List<Integer> line3 = new ArrayList();
+        
+        line1.add(1);
+        line1.add(0);
+        line1.add(0);
+        line1.add(0);
+        line1.add(0);
+        line1.add(0);
+        line1.add(0);
+        line1.add(0);
+        
+        line2.add(0);
+        line2.add(0);
+        line2.add(0);
+        line2.add(0);
+        line2.add(1);
+        line2.add(0);
+        line2.add(0);
+        line2.add(0);
+        
+        line3.add(0);
+        line3.add(0);
+        line3.add(1);
+        line3.add(0);
+        line3.add(0);
+        line3.add(0);
+        line3.add(0);
+        line3.add(0);
+        
+        transformationList.add(line1);
+        transformationList.add(line2);
+        transformationList.add(line3);
+        
+        return transformationList;
     }
     
     public static void onMOEAD(String instanceName, int neighborSize, int maxEvaluations, int maximumNumberOfReplacedSolutions,
