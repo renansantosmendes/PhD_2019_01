@@ -272,6 +272,7 @@ public class EvolutionaryAlgorithms {
         initializeStreams("MOEAD");
 
         for (currentExecutionNumber = 0; currentExecutionNumber < maximumNumberOfExecutions; currentExecutionNumber++) {
+            System.out.println("Current Execution = " + currentExecutionNumber);
             initializeCurrentExecutionStreams();
 
             List<ProblemSolution> population = new ArrayList<>();
@@ -286,7 +287,7 @@ public class EvolutionaryAlgorithms {
             HierarchicalCluster hc = new HierarchicalCluster(getMatrixOfObjetives(initialPopulation, parameters),
                     numberOfClusters, CorrelationType.KENDALL);
             hc.reduce();
-            transformationList = generateTransformationList();//hc.getTransfomationList();
+            transformationList = hc.getTransfomationList();//generateTransformationList();//hc.getTransfomationList();
             transformationList.forEach(System.out::println);
 
             initializeRandomPopulationForMOEAD(transformationList, parameters, reducedDimension, population, populationSize, requests,
@@ -307,7 +308,7 @@ public class EvolutionaryAlgorithms {
                 int[] permutation = new int[populationSize];
                 MOEADUtils.randomPermutation(permutation, populationSize);
 
-                transformationList = generateTransformationList();//hc.getTransfomationList();
+                transformationList = hc.getTransfomationList();//generateTransformationList();//hc.getTransfomationList();
                 transformationList.forEach(System.out::println);
 
                 for (int i = 0; i < population.size(); i++) {
@@ -364,17 +365,44 @@ public class EvolutionaryAlgorithms {
         List<Integer> line2 = new ArrayList();
         List<Integer> line3 = new ArrayList();
         
+//        line1.add(1);
+//        line1.add(0);
+//        line1.add(0);
+//        line1.add(0);
+//        line1.add(0);
+//        line1.add(0);
+//        line1.add(0);
+//        line1.add(0);
+//        
+//        line2.add(0);
+//        line2.add(0);
+//        line2.add(0);
+//        line2.add(0);
+//        line2.add(1);
+//        line2.add(0);
+//        line2.add(0);
+//        line2.add(0);
+//        
+//        line3.add(0);
+//        line3.add(0);
+//        line3.add(1);
+//        line3.add(0);
+//        line3.add(0);
+//        line3.add(0);
+//        line3.add(0);
+//        line3.add(0);
+        
         line1.add(1);
         line1.add(0);
         line1.add(0);
+        line1.add(1);
         line1.add(0);
         line1.add(0);
-        line1.add(0);
-        line1.add(0);
-        line1.add(0);
+        line1.add(1);
+        line1.add(1);
         
         line2.add(0);
-        line2.add(0);
+        line2.add(1);
         line2.add(0);
         line2.add(0);
         line2.add(1);
@@ -387,7 +415,7 @@ public class EvolutionaryAlgorithms {
         line3.add(1);
         line3.add(0);
         line3.add(0);
-        line3.add(0);
+        line3.add(1);
         line3.add(0);
         line3.add(0);
         
