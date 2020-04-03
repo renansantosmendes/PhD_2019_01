@@ -996,6 +996,205 @@ public class EvolutionaryAlgorithms {
         }
         return hypervolume;
     }
+    
+    public static double genericNSGAII(String instanceName, int reducedDimension, List<Double> parameters, List<Double> nadirPoint, Integer populationSize, Integer maximumNumberOfGenerations,
+            Integer maximumNumberOfExecutions, double probabilityOfMutation, double probabilityOfCrossover,
+            List<Request> requests, Map<Integer, List<Request>> requestsWhichBoardsInNode,
+            Map<Integer, List<Request>> requestsWhichLeavesInNode, Integer numberOfNodes, Integer vehicleCapacity,
+            Set<Integer> setOfVehicles, List<Request> listOfNonAttendedRequests, List<Request> requestList,
+            List<Integer> loadIndexList, List<List<Long>> timeBetweenNodes, List<List<Long>> distanceBetweenNodes,
+            Long timeWindows, Long currentTime, Integer lastNode) throws IOException {
+
+        List<ProblemSolution> offspring = new ArrayList<>();
+        List<ProblemSolution> population = new ArrayList<>();
+        List<ProblemSolution> finalPareto = new ArrayList<>();
+        List<ProblemSolution> nonDominatedSolutions = new ArrayList();
+        List<ProblemSolution> fileWithSolutions = new ArrayList();
+        List<Integer> parents = new ArrayList<>();
+        List<ProblemSolution> parentsAndOffspring = new ArrayList();
+        List<List<ProblemSolution>> nonDominatedFronts = new ArrayList<>();
+        List<List<Double>> hypervolumes = new ArrayList<>();
+        double hypervolume = 0;
+        String folderName, fileName;
+
+        LocalDateTime time = LocalDateTime.now();
+        folderName = "AlgorithmsResults//9FO//CL_NSGA-II//" + instanceName + "k" + vehicleCapacity + "_" + time.getYear() + "_" + time.getMonthValue() + "_" + time.getDayOfMonth();
+        fileName = "NSGAII";
+
+        boolean success = (new File(folderName)).mkdirs();
+        if (!success) {
+            System.out.println("Folder already exists!");
+        }
+        try {
+            List<ProblemSolution> combinedPareto = new ArrayList<>();
+            PrintStream printStreamForCombinedPareto = new PrintStream(folderName + "/" + fileName + "-Pareto_Combinado.txt");
+            PrintStream printStreamForObjectiveFunctionOfCombinedPareto = new PrintStream(folderName + "/" + fileName + "-Pareto_Combinado_Funcoes_Objetivo.txt");
+            PrintStream printStreamForAllObjectives = new PrintStream(folderName + "/nsga_pareto_9fo.csv");
+            PrintStream printStreamForAllObjectives2 = new PrintStream(folderName + "/nsga_pareto_reduced.txt");
+            for (int executionCounter = 0; executionCounter < maximumNumberOfExecutions; executionCounter++) {
+                String executionNumber;
+                List<Double> listOfHypervolumes = new ArrayList<>();
+                executionNumber = Integer.toString(executionCounter);
+                PrintStream saida1 = new PrintStream(folderName + "/" + fileName + "-Execucao-" + executionNumber + ".txt");
+                PrintStream saida2 = new PrintStream(folderName + "/" + fileName + "-tamanho_arquivo-" + executionNumber + ".txt");
+                PrintStream saida3 = new PrintStream(folderName + "/" + fileName + "-teste-" + executionNumber + ".csv");
+                PrintStream saida4 = new PrintStream(folderName + "/" + fileName + "-Pareto-" + executionNumber + ".csv");
+
+                int maximumSize;
+
+//                inicializePopulation(population, populationSize, requests,
+//                        requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
+//                        requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
+                initializeRandomPopulation(parameters, reducedDimension, population, populationSize, requests,
+                        requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
+                        requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
+
+                int numberOfClusters = 2;
+                HierarchicalCluster hc = new HierarchicalCluster(getMatrixOfObjetives(population, parameters), numberOfClusters, CorrelationType.KENDALL);
+                hc.reduce();
+                hc.getTransfomationList().forEach(System.out::println);
+                hc.setTransformationList(createTransformationList());
+                hc.getTransfomationList().forEach(System.out::println);
+                //normalizeObjectiveFunctionsValues(population);
+                //normalizeObjectiveFunctions(population);
+                normalizeObjectiveFunctionsForSolutions(population);
+                evaluateAggregatedObjectiveFunctions(parameters, hc.getTransfomationList(), population);
+
+                //printPopulation(population);
+                dominanceAlgorithm(population, nonDominatedSolutions);
+                maximumSize = population.size();
+                offspring.addAll(population);
+                nonDominatedFrontiersSortingAlgorithm(offspring, nonDominatedFronts);
+                fitnessEvaluationForMultiObjectiveOptimization(offspring);
+
+                rouletteWheelSelectionAlgorithm(parents, offspring, maximumSize);
+
+                twoPointsCrossover(reducedDimension, parameters, offspring, population, maximumSize, probabilityOfCrossover, parents, requests,
+                        requestList, setOfVehicles, listOfNonAttendedRequests, requestsWhichBoardsInNode,
+                        requestsWhichLeavesInNode, timeBetweenNodes, distanceBetweenNodes, numberOfNodes,
+                        vehicleCapacity, timeWindows);
+
+                mutation2Shuffle(reducedDimension, parameters, offspring, probabilityOfMutation, requests, requestsWhichBoardsInNode,
+                        requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
+                        requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
+
+                //normalizeObjectiveFunctionsValues(fileWithSolutions);
+                normalizeObjectiveFunctionsForSolutions(fileWithSolutions);
+                evaluateAggregatedObjectiveFunctions(parameters, hc.getTransfomationList(), fileWithSolutions);
+
+                normalizeObjectiveFunctionsForSolutions(offspring);
+                evaluateAggregatedObjectiveFunctions(parameters, hc.getTransfomationList(), offspring);
+                //normalizeObjectiveFunctions(fileWithSolutions);
+                //normalizeObjectiveFunctions(fileWithSolutions);
+                for (ProblemSolution s : fileWithSolutions) {
+                    saida1.print("\t" + s.getAggregatedObjective1() + "\t" + s.getAggregatedObjective2() + "\n");
+                    saida3.print("\t" + s.getAggregatedObjective1Normalized() + "\t" + s.getAggregatedObjective2Normalized() + "\n");
+                }
+                saida1.print("\n\n");
+                saida2.print(fileWithSolutions.size() + "\n");
+                saida3.print("\n\n");
+
+                //dominanceAlgorithm(offspring, nonDominatedSolutions);
+                //fileWithSolutions.addAll(nonDominatedSolutions);
+                System.out.println("Execution = " + executionCounter);
+                int actualGeneration = 0;
+                while (actualGeneration < maximumNumberOfGenerations) {
+                    //saveCurrentPopulation(population, actualGeneration, folderName, fileName);
+                    dominanceAlgorithm(offspring, nonDominatedSolutions);
+                    fileWithSolutions.addAll(nonDominatedSolutions);
+
+//                    if (actualGeneration % 10 == 0) {
+                    hc = new HierarchicalCluster(getMatrixOfObjetives(population, parameters), numberOfClusters, CorrelationType.KENDALL);
+                    hc.reduce();
+                    hc.getTransfomationList().forEach(System.out::println);
+//                    }
+
+                    nonDominatedFrontiersSortingAlgorithm(offspring, nonDominatedFronts);
+                    fitnessEvaluationForMultiObjectiveOptimization(offspring);
+                    parentsAndOffspring.clear();
+
+                    parentsAndOffspring.addAll(population);
+                    parentsAndOffspring.addAll(offspring);
+
+                    nonDominatedFrontiersSortingAlgorithm(parentsAndOffspring, nonDominatedFronts);
+                    fitnessEvaluationForMultiObjectiveOptimization(parentsAndOffspring);
+                    dominanceAlgorithm(parentsAndOffspring, nonDominatedSolutions);
+
+                    updateNSGASolutionsFileTest(parentsAndOffspring, fileWithSolutions, maximumSize);
+                    //normalizeObjectiveFunctionsValues(fileWithSolutions);
+                    normalizeObjectiveFunctionsForSolutions(fileWithSolutions);
+                    evaluateAggregatedObjectiveFunctions(parameters, hc.getTransfomationList(), fileWithSolutions);
+                    //normalizeObjectiveFunctions(fileWithSolutions);
+                    reducePopulation(population, nonDominatedFronts, maximumSize);
+                    offspring.clear();
+
+                    offspring.addAll(population);
+                    rouletteWheelSelectionAlgorithm(parents, offspring, maximumSize);
+
+                    twoPointsCrossover(reducedDimension, parameters, offspring, population, maximumSize, probabilityOfCrossover, parents, requests, requestList, setOfVehicles, listOfNonAttendedRequests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, timeBetweenNodes, distanceBetweenNodes, numberOfNodes, vehicleCapacity, timeWindows);
+                    mutation2Shuffle(reducedDimension, parameters, offspring, probabilityOfMutation, requests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
+                    //normalizeObjectiveFunctionsValues(offspring);
+                    normalizeAggregatedObjectiveFunctions(offspring);
+
+                    normalizeObjectiveFunctionsForSolutions(offspring);
+                    evaluateAggregatedObjectiveFunctions(parameters, hc.getTransfomationList(), offspring);
+
+                    System.out.println("Generation = " + actualGeneration + "\t" + fileWithSolutions.size() + "\t" + population.size());
+
+                    listOfHypervolumes.add(smetric(fileWithSolutions, nadirPoint));
+
+                    for (ProblemSolution s : fileWithSolutions) {
+                        saida1.print("\t" + s.getAggregatedObjective1() + "\t" + s.getAggregatedObjective2() + "\n");
+                        saida3.print("\t" + s.getStringWithOriginalObjectivesForCsvFile() + "\n");
+                    }
+                    saida1.print("\n\n");
+                    saida2.print(fileWithSolutions.size() + "\n");
+                    saida3.print("\n\n");
+                    actualGeneration++;
+                }
+
+                for (ProblemSolution s : fileWithSolutions) {
+                    saida4.print(s.getStringWithOriginalObjectivesForCsvFile() + "\n");
+                }
+
+                offspring.clear();
+                parentsAndOffspring.clear();
+                combinedPareto.addAll(fileWithSolutions);
+                fileWithSolutions.clear();
+                population.clear();
+                nonDominatedFronts.clear();
+                hypervolumes.add(listOfHypervolumes);
+            }
+
+            dominanceAlgorithm(combinedPareto, finalPareto);
+            printPopulation(finalPareto);
+            for (ProblemSolution individual : finalPareto) {
+                printStreamForCombinedPareto.print(individual + "\n");
+//                printStreamForObjectiveFunctionOfCombinedPareto.print(individual.getStringWithObjectives() + "\n");
+                printStreamForAllObjectives.print(individual.getStringWithOriginalObjectivesForCsvFile() + "\n");
+                printStreamForAllObjectives2.print(individual.getAggregatedObjective1() + "\t" + individual.getAggregatedObjective2() + "\n");
+            }
+
+            //new ResultsGraphicsForParetoCombinedSet(finalPareto, "ResultGraphics", "CombinedParetoSet");
+            hypervolume = smetric(finalPareto, nadirPoint);
+            //hypervolume = smetric(finalPareto);
+            System.out.println("S-Metric = " + hypervolume);
+//            System.out.println("Final Pareto");
+//            DecimalFormat formatator = new DecimalFormat("0.0000");
+//            finalPareto.forEach(u -> System.out.println(
+//                    formatator.format(u.getAggregatedObjective1()).replace(",", ".")
+//                    + "\t" + formatator.format(u.getAggregatedObjective2()).replace(",", "."))
+//            );
+
+            //System.out.println("List of Lists = " + hypervolumes);
+            saveHypervolumesDatas(hypervolumes, maximumNumberOfGenerations, maximumNumberOfExecutions, folderName, fileName);
+//            finalPareto.get(0).getStaticMapForEveryRoute(new NodeDAO("bh_nodes_little").getListOfNodes(),
+//                    "adjacencies_bh_nodes_little_test", "bh_nodes_little");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return hypervolume;
+    }
 
     public static List<List<Integer>> createTransformationList() {
         List<List<Integer>> transformationList = new ArrayList<>();
