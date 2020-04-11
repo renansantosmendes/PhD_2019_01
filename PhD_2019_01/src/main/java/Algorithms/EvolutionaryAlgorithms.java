@@ -287,14 +287,14 @@ public class EvolutionaryAlgorithms {
             HierarchicalCluster hc = new HierarchicalCluster(getMatrixOfObjetives(initialPopulation, parameters),
                     numberOfClusters, CorrelationType.KENDALL);
             hc.reduce();
-            transformationList = hc.getTransfomationList();//generateTransformationList();//hc.getTransfomationList();
+            transformationList = hc.getTransfomationList();//generateTransformationList();
             transformationList.forEach(System.out::println);
 
             initializeRandomPopulationForMOEAD(transformationList, parameters, reducedDimension, population, populationSize, requests,
                     requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                     requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
             saveInitialPopulation(population);
-            population.forEach(u -> System.out.println(u));
+            //population.forEach(u -> System.out.println(u));
 
             int numberOfObjectives = reducedDimension;
             int[][] neighborhood = new int[populationSize][neighborSize];
@@ -308,7 +308,7 @@ public class EvolutionaryAlgorithms {
                 int[] permutation = new int[populationSize];
                 MOEADUtils.randomPermutation(permutation, populationSize);
 
-                transformationList = hc.getTransfomationList();//generateTransformationList();//hc.getTransfomationList();
+                transformationList = hc.getTransfomationList();//generateTransformationList();
                 transformationList.forEach(System.out::println);
 
                 for (int i = 0; i < population.size(); i++) {
@@ -393,35 +393,35 @@ public class EvolutionaryAlgorithms {
 //        line3.add(0);
         
         line1.add(1);
-        line1.add(0);
-        line1.add(0);
         line1.add(1);
         line1.add(0);
-        line1.add(0);
+        line1.add(1);
+        line1.add(1);
+        line1.add(1);
         line1.add(1);
         line1.add(1);
         
         line2.add(0);
+        line2.add(0);
         line2.add(1);
         line2.add(0);
         line2.add(0);
-        line2.add(1);
         line2.add(0);
         line2.add(0);
         line2.add(0);
         
-        line3.add(0);
-        line3.add(0);
-        line3.add(1);
-        line3.add(0);
-        line3.add(0);
-        line3.add(1);
-        line3.add(0);
-        line3.add(0);
+//        line3.add(0);
+//        line3.add(0);
+//        line3.add(1);
+//        line3.add(0);
+//        line3.add(0);
+//        line3.add(1);
+//        line3.add(0);
+//        line3.add(0);
         
         transformationList.add(line1);
         transformationList.add(line2);
-        transformationList.add(line3);
+//        transformationList.add(line3);
         
         return transformationList;
     }
@@ -454,7 +454,7 @@ public class EvolutionaryAlgorithms {
 
             int numberOfClusters = reducedDimension;
             HierarchicalCluster hc = new HierarchicalCluster(getMatrixOfObjetives(initialPopulation, parameters),
-                    numberOfClusters, CorrelationType.KENDALL);
+                    numberOfClusters, CorrelationType.PEARSON);
             hc.reduce();
             transformationList = hc.getTransfomationList();
             transformationList.forEach(System.out::println);
@@ -477,7 +477,7 @@ public class EvolutionaryAlgorithms {
                 int[] permutation = new int[populationSize];
                 MOEADUtils.randomPermutation(permutation, populationSize);
                 hc = new HierarchicalCluster(getMatrixOfObjetives(population, parameters),
-                    numberOfClusters, CorrelationType.KENDALL);
+                    numberOfClusters, CorrelationType.PEARSON);
                 hc.reduce();
                 
                 transformationList = hc.getTransfomationList();

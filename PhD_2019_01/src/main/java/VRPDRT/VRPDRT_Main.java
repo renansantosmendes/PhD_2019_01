@@ -50,11 +50,11 @@ public class VRPDRT_Main {
     public static void main(String[] args) throws ApiException, Exception, IOException, BiffException {
         String directionsApiKey = "AIzaSyD9W0em7H723uVOMD6QFe_1Mns71XAi5JU";
         String filePath = "/home/renansantos/Área de Trabalho/Excel Instances/";
-        //filePath = "/home/rmendes/VRPDRT/";
+        filePath = "/home/rmendes/VRPDRT/";
 
-        int numberOfRequests = 50;
+        int numberOfRequests = 200;
         int requestTimeWindows = 10;
-        final Integer vehicleCapacity = 11;
+        final Integer vehicleCapacity = 4;
         String instanceSize = "s";
 
         int numberOfNodes = 12;
@@ -66,12 +66,12 @@ public class VRPDRT_Main {
 
         Integer populationSize = 100;
         Integer maximumNumberOfGenerations = 1000;
-        Integer maximumNumberOfExecutions = 10;
+        Integer maximumNumberOfExecutions = 30;
         double probabilityOfMutation = 0.02;
         double probabilityOfCrossover = 0.7;
         double neighborhoodSelectionProbability = 0.8;
 
-        int numberOfEvaluations = 30000;
+        int numberOfEvaluations = 50000;
         int neighborSize = 10;
         int maximumNumberOfReplacedSolutions = 10;
         int fileSize = populationSize;
@@ -108,9 +108,9 @@ public class VRPDRT_Main {
         System.out.println("Nadir Point = " + nadirPoint);
         System.out.println("Instance Name = " + instanceName);
 
-        int reducedDimension = 3;
+        int reducedDimension = 8;
 
-        onMOEAD(instanceName, neighborSize, numberOfEvaluations, maximumNumberOfReplacedSolutions, reducedDimension, transformationList, parameters,
+        MOEAD(instanceName, neighborSize, numberOfEvaluations, maximumNumberOfReplacedSolutions, reducedDimension, transformationList, parameters,
                 nadirPoint, populationSize, maximumNumberOfGenerations, functionType, maximumNumberOfExecutions,
                 neighborhoodSelectionProbability, probabilityOfMutation, probabilityOfCrossover, requests,
                 requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
