@@ -5,12 +5,13 @@ InstanceReader/NodeDAO.class
 ProblemRepresentation/Node.class
 InstanceReader/InsertionInDataBase.class
 ReductionTechniques/HierarchicalCluster.class
+Algorithms/RandomSolutionGenerator.class
 InstanceReader/ProblemData.class
 ReductionTechniques/CorrelationType.class
-Algorithms/SolutionGeneratorForAggregationTree.class
 Algorithms/CorrelationType.class
 Algorithms/MOEADUtils.class
 InstanceReader/ScriptGenerator.class
+VRPDRT/TimeExperiment.class
 Algorithms/Algorithms.class
 ProblemRepresentation/RankedList.class
 ProblemRepresentation/Route.class

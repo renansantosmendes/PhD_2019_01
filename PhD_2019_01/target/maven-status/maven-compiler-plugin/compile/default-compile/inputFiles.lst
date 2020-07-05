@@ -12,6 +12,7 @@
 /home/renansantos/Área de Trabalho/Doutorado/PhD_2019_01/PhD_2019_01/src/main/java/InstanceReader/DataOutput.java
 /home/renansantos/Área de Trabalho/Doutorado/PhD_2019_01/PhD_2019_01/src/main/java/InstanceReader/InsertionInDataBase.java
 /home/renansantos/Área de Trabalho/Doutorado/PhD_2019_01/PhD_2019_01/src/main/java/ReductionTechniques/CorrelationType.java
+/home/renansantos/Área de Trabalho/Doutorado/PhD_2019_01/PhD_2019_01/src/main/java/Algorithms/RandomSolutionGenerator.java
 /home/renansantos/Área de Trabalho/Doutorado/PhD_2019_01/PhD_2019_01/src/main/java/Algorithms/Methods.java
 /home/renansantos/Área de Trabalho/Doutorado/PhD_2019_01/PhD_2019_01/src/main/java/Algorithms/CorrelationType.java
 /home/renansantos/Área de Trabalho/Doutorado/PhD_2019_01/PhD_2019_01/src/main/java/Algorithms/MOEADUtils.java
@@ -22,11 +23,11 @@
 /home/renansantos/Área de Trabalho/Doutorado/PhD_2019_01/PhD_2019_01/src/main/java/ProblemRepresentation/Node.java
 /home/renansantos/Área de Trabalho/Doutorado/PhD_2019_01/PhD_2019_01/src/main/java/ProblemRepresentation/InstanceData.java
 /home/renansantos/Área de Trabalho/Doutorado/PhD_2019_01/PhD_2019_01/src/main/java/ReductionTechniques/HierarchicalCluster.java
+/home/renansantos/Área de Trabalho/Doutorado/PhD_2019_01/PhD_2019_01/src/main/java/VRPDRT/TimeExperiment.java
 /home/renansantos/Área de Trabalho/Doutorado/PhD_2019_01/PhD_2019_01/src/main/java/InstanceReader/Instance.java
 /home/renansantos/Área de Trabalho/Doutorado/PhD_2019_01/PhD_2019_01/src/main/java/ProblemRepresentation/RankedList.java
 /home/renansantos/Área de Trabalho/Doutorado/PhD_2019_01/PhD_2019_01/src/main/java/InstanceReader/NodeDAO.java
 /home/renansantos/Área de Trabalho/Doutorado/PhD_2019_01/PhD_2019_01/src/main/java/VRPDRT/VRPDRT_Main.java
-/home/renansantos/Área de Trabalho/Doutorado/PhD_2019_01/PhD_2019_01/src/main/java/Algorithms/SolutionGeneratorForAggregationTree.java
 /home/renansantos/Área de Trabalho/Doutorado/PhD_2019_01/PhD_2019_01/src/main/java/GoogleMapsApi/ColorGenerator.java
 /home/renansantos/Área de Trabalho/Doutorado/PhD_2019_01/PhD_2019_01/src/main/java/package-info.java
 /home/renansantos/Área de Trabalho/Doutorado/PhD_2019_01/PhD_2019_01/src/main/java/GoogleMapsApi/GoogleStaticMap.java

@@ -245,6 +245,7 @@ public class Algorithms {
         double totalOccupationRate = routesOccupationRate.stream().mapToDouble(Double::valueOf).average().getAsDouble();
 
         return 1 - totalOccupationRate;
+
     }
 
     public static void normalizeObjectiveFunctionsForSolutions(List<ProblemSolution> solutions) {
@@ -431,7 +432,213 @@ public class Algorithms {
                 }
                 objectives[i] = objectives_sum;
             }
-            //gerar uma matriz de agregação arbitrária para o caso da inicialização
+//
+//            int i;
+//            for (i = 0; i < objectives.length; i++) {
+//                objectives[i] = 1.0D;
+//            }
+//            for (i = 0; i < objectives.length; i++) {
+//                float objectives_sum = 0.0F;
+//                for (int j = 0; j < parameters.size(); j++) {
+//                    objectives_sum = (float) (objectives_sum + ((Double) parameters.get(j)).doubleValue() * ((Integer) ((List<Integer>) transformationList.get(i)).get(j)).intValue() * single_objectives[j]);
+//                }
+//                objectives[i] = objectives_sum;
+//            }
+
+//            List<List<Double>> components = new ArrayList<>();
+//            List<Double> component1 = new ArrayList<>();
+//            List<Double> component2 = new ArrayList<>();
+//            List<Double> component3 = new ArrayList<>();
+
+            //componentes from pca
+//            component1.add(9.99884457e-01);
+//            component1.add(2.71305804e-03);
+//            component1.add(6.76315663e-05);
+//            component1.add(3.12994238e-05);
+//            component1.add(1.16130949e-02);
+//            component1.add(1.70944768e-03);
+//            component1.add(9.26934998e-03);
+//            component1.add(-5.63628912e-07);
+//            
+//            component2.add(-1.40271041e-02);
+//            component2.add(2.74740273e-01);
+//            component2.add(-9.75781719e-03);
+//            component2.add(-2.20087086e-03);
+//            component2.add(4.57857727e-01);
+//            component2.add(1.26445155e-01);
+//            component2.add(8.35822283e-01);
+//            component2.add(-1.54032315e-05);
+//            
+//            component3.add(-4.93447395e-03);
+//            component3.add(3.40093113e-01);
+//            component3.add(-5.42449829e-03);
+//            component3.add(-3.96805705e-03);
+//            component3.add(7.72045311e-01);
+//            component3.add(1.22117569e-02);
+//            component3.add(-5.36715993e-01);
+//            component3.add(-8.91595519e-05);
+//          
+            //autoencoder sem restrição
+//            component1.add(0.0875);
+//            component1.add(-0.2553);
+//            component1.add(0.0331);
+//            component1.add(-0.1751);
+//            component1.add(-0.4955);
+//            component1.add(-0.3338);
+//            component1.add(0.2295);
+//            component1.add(-0.5305);
+//            
+//            component2.add(0.3425);
+//            component2.add(0.4720);
+//            component2.add(0.1298);
+//            component2.add(0.3429);
+//            component2.add(0.2780);
+//            component2.add(-0.5711);
+//            component2.add(-0.2348);
+//            component2.add(-0.0573);
+//            
+//            component3.add(0.1235);
+//            component3.add(-0.0525);
+//            component3.add(0.0356);
+//            component3.add(0.3644);
+//            component3.add(-0.6971);
+//            component3.add(-0.0948);
+//            component3.add(0.1377);
+//            component3.add(0.4308);
+            //first autoencoder
+//            component1.add(0.0000e+00);
+//            component1.add(0.0000e+00);
+//            component1.add(0.0000e+00);
+//            component1.add(0.0000e+00);
+//            component1.add(0.0000e+00);
+//            component1.add(2.8753e-05);
+//            component1.add(1.1018e+00);
+//            component1.add(0.0000e+00);
+//            
+//            component2.add(0.0000e+00);
+//            component2.add(1.1225e+00);
+//            component2.add(0.0000e+00);
+//            component2.add(0.0000e+00);
+//            component2.add(1.1042e-03);
+//            component2.add(0.0000e+00);
+//            component2.add(0.0000e+00);
+//            component2.add(0.0000e+00);
+//            
+//            component3.add(4.7598e-04);
+//            component3.add(0.0000e+00);
+//            component3.add(0.0000e+00);
+//            component3.add(1.0144e+00);
+//            component3.add(0.0000e+00);
+//            component3.add(0.0000e+00);
+//            component3.add(0.0000e+00);
+//            component3.add(2.6928e-04);
+//            component1.add(0.6586);
+//            component1.add(0.5205);
+//            component1.add(0.5837);
+//            component1.add(0.7597);
+//            component1.add(0.8175);
+//            component1.add(0.4942);
+//            component1.add(0.4950);
+//            component1.add(0.6937);
+//            
+//            component2.add(0.5300);
+//            component2.add(0.5216);
+//            component2.add(0.5294);
+//            component2.add(0.7576);
+//            component2.add(0.6935);
+//            component2.add(0.8102);
+//            component2.add(0.5297);
+//            component2.add(0.8678);
+//            
+//            component3.add(0.4104);
+//            component3.add(0.4041);
+//            component3.add(0.6692);
+//            component3.add(0.4152);
+//            component3.add(0.6541);
+//            component3.add(0.4459);
+//            component3.add(0.4102);
+//            component3.add(0.4105);
+//            
+//            components.add(component1);
+//            components.add(component2);
+//            components.add(component3);
+//            
+//            List<Double> bias = new ArrayList<>();
+//            bias.add(0.4950);
+//            bias.add(0.6244);
+//            bias.add(0.4150);
+            //Teste autoencoder para 2500 soluções na instancia de 50 requisições
+//            component1.add(0.0000);
+//            component1.add(0.5830);
+//            component1.add(0.0098);
+//            component1.add(0.0000);
+//            component1.add(0.4543);
+//            component1.add(0.7472);
+//            component1.add(0.0289);
+//            component1.add(0.0000);
+//            
+//            component2.add(0.0000);
+//            component2.add(0.0000);
+//            component2.add(0.1214);
+//            component2.add(0.0000);
+//            component2.add(0.6345);
+//            component2.add(0.6488);
+//            component2.add(0.0000);
+//            component2.add(0.0000);
+//            
+//            component3.add(0.7445);
+//            component3.add(0.0070);
+//            component3.add(0.4450);
+//            component3.add(0.9380);
+//            component3.add(0.0000);
+//            component3.add(0.0000);
+//            component3.add(0.4507);
+//            component3.add(0.8173);
+//            
+//            component1.add(1.2495);
+//            component1.add(0.8855);
+//            component1.add(0.7052);
+//            component1.add(1.1043);
+//            component1.add(0.6948);
+//            component1.add(1.1448);
+//            component1.add(1.2016);
+//            component1.add(0.2353);
+//
+//            component2.add(0.2377);
+//            component2.add(0.1848);
+//            component2.add(0.7310);
+//            component2.add(0.0000);
+//            component2.add(0.5655);
+//            component2.add(0.3559);
+//            component2.add(0.0719);
+//            component2.add(0.1911);
+//
+//            component3.add(0.1177);
+//            component3.add(0.1775);
+//            component3.add(0.0000);
+//            component3.add(0.2977);
+//            component3.add(0.0924);
+//            component3.add(0.1552);
+//            component3.add(0.1898);
+//            component3.add(2.5260);
+//
+//            components.add(component1);
+//            components.add(component2);
+//            components.add(component3);
+//
+//            List<Double> bias = new ArrayList<>();
+//            bias.add(0.0000);
+//            bias.add(2.0237);
+//            bias.add(0.9257);
+//
+//            for (int i = 0; i < objectives.length; i++) {
+//                float objectives_sum = 0;
+//                for (int j = 0; j < components.get(0).size(); j++) {
+//                    objectives_sum += parameters.get(j) * components.get(i).get(j) * single_objectives[j];
+//
+//                }
+//                objectives[i] = objectives_sum + bias.get(i);
+//            }
 
         }
         S.setAggregatedObjectives(objectives);

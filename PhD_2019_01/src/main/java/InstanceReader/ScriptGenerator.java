@@ -50,9 +50,26 @@ public class ScriptGenerator {
             ex.printStackTrace();
         }
         printStream.print("#!/bin/bash \n");
-        printStream.print("#SBATCH --qos=part" + timeOfExecution + "\n");
+        printStream.print("#SBATCH --qos=qos-" + timeOfExecution + "\n");
         printStream.print("#SBATCH --partition=" + partition + "\n");
         printStream.print("module load jdk8_32" + "\n");
-        printStream.print("java -jar " + this.instanceFullName + ".jar");
+        printStream.print("java -jar " + this.instanceFullName + ".jar\n");
+    }
+    
+    public void generate(String timeOfExecution, String partition, String algorithmFolder, String originFolder, String destinationFolder) {
+        PrintStream printStream = null;
+        try {
+            printStream = new PrintStream(folder + "/" + fileName);
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+        }
+        printStream.print("#!/bin/bash \n");
+        printStream.print("#SBATCH --qos=qos-" + timeOfExecution + "\n");
+        printStream.print("#SBATCH --partition=" + partition + "\n");
+        printStream.print("module load jdk8_32" + "\n");
+        printStream.print("java -jar " + this.instanceFullName + ".jar\n");
+        String instanceFolder = this.instanceFullName.replace("s","").replace("m","").replace("l","");
+        printStream.print("cp " + originFolder + "/" + algorithmFolder + "/" + instanceFolder
+                + " " + destinationFolder + "/" + algorithmFolder + "/" + instanceFolder);
     }
 }
