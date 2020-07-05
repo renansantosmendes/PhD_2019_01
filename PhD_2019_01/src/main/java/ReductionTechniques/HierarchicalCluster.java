@@ -58,10 +58,8 @@ public class HierarchicalCluster {
     }
 
     public HierarchicalCluster() {
-        
+
     }
-    
-    
 
     public HierarchicalCluster(double[][] data, int numberOfClusters, CorrelationType corr) {
         this.data = data;
@@ -74,7 +72,7 @@ public class HierarchicalCluster {
         calculateSilimarity();
         calculateDissilimarity();
     }
-    
+
     public HierarchicalCluster(double[][] data, int numberOfClusters) {
         this.data = data;
         this.numberOfClusters = numberOfClusters;
@@ -129,8 +127,8 @@ public class HierarchicalCluster {
         this.correlationType = correlationType;
         return this;
     }
-    
-    public void setTransformationList(List<List<Integer>>  list){
+
+    public void setTransformationList(List<List<Integer>> list) {
         this.transformationList = new ArrayList<>();
         this.transformationList = list;
     }
@@ -265,9 +263,9 @@ public class HierarchicalCluster {
         dissimilarity = new double[similarity.length][similarity.length];
         for (int j = 0; j < similarity.length; j++) {
             for (int i = 0; i < similarity.length; i++) {
-                if(!Double.isNaN(similarity[j][i])){
+                if (!Double.isNaN(similarity[j][i])) {
                     dissimilarity[j][i] = 1 - similarity[j][i];
-                }else{
+                } else {
                     dissimilarity[j][i] = 20;
                 }
             }
@@ -289,18 +287,47 @@ public class HierarchicalCluster {
         int row = 0;
         for (int i = 0; i < columns; i++) {
             for (int j = 0; j < columns; j++) {
+//                System.out.println("current dissimilarity " + dissimilarity[i][j]);
                 if (minDissimilarity > dissimilarity[i][j] && dissimilarity[i][j] != 0) {
                     minDissimilarity = dissimilarity[i][j];
                     column = i;
                     row = j;
+//                    System.out.println("current dissimilarity " + dissimilarity[i][j] + " columns " + columns);
                 }
             }
         }
-        if(column == 0 && row == 0){
-            System.out.println("problem with dissimilarity = " + minDissimilarity);
-            this.printMatrixData();
-            this.printDissimilarity();
-        }
+
+//        if (column == row) {
+//            System.out.println("problem with dissimilarity = " + minDissimilarity);
+//            this.printMatrixData();
+//            this.printDissimilarity();
+//            Random r1 = new Random(System.currentTimeMillis());
+//            Random r2 = new Random(System.currentTimeMillis() + 100000);
+//            column = r1.nextInt(columns);
+//            row = r2.nextInt(columns);
+//            System.out.println("random values " + row + " " + column);
+//        }
+
+//        printSimilarity();
+//        System.out.println("");
+//        printDissimilarity();
+//        if (column == row) {
+////            this.printMatrixData();
+////            this.printDissimilarity();
+//            Random r1 = new Random(System.currentTimeMillis());
+//            Random r2 = new Random(System.currentTimeMillis());
+//            column = r1.nextInt(columns);
+//            do {
+//                row = r2.nextInt(columns);
+//            } while (row == column);
+//            
+//            System.out.println("dimension with error " + columns);
+//            System.out.println("column an row " + column + " " + row);
+//            this.printMatrixData();
+//            System.out.println("");
+//            this.printDissimilarity();
+////          
+//        }
         list.add(row);
         list.add(column);
         list.sort(Comparator.naturalOrder());
@@ -326,18 +353,13 @@ public class HierarchicalCluster {
         int numberOfObjectives = this.numberOfColumns;
 
         reducedData = null;
-
-//        System.out.println("column1 " + column1 + " column2 " + column2);
-//        try {
-            reducedData = new Matrix(m.getRowDimension(), m.getColumnDimension() - 1);
-            reducedData.setMatrix(0, m.getRowDimension() - 1, 0, column1 - 1, m.getMatrix(0, m.getRowDimension() - 1, 0, column1 - 1));
-            reducedData.setMatrix(0, m.getRowDimension() - 1, column1, column1, m.getMatrix(0, m.getRowDimension() - 1, column1, column1)
-                    .plus(m.getMatrix(0, m.getRowDimension() - 1, column2, column2)));
-            reducedData.setMatrix(0, m.getRowDimension() - 1, column1 + 1, column2 - 1, m.getMatrix(0, m.getRowDimension() - 1, column1 + 1, column2 - 1));
-            reducedData.setMatrix(0, m.getRowDimension() - 1, column2, m.getColumnDimension() - 2, m.getMatrix(0, m.getRowDimension() - 1, column2 + 1, m.getColumnDimension() - 1));
-//        } catch (NegativeArraySizeException e) {
-//            e.printStackTrace();
-//        }
+//        System.out.println("columns " + column1 + " "+ column2);
+        reducedData = new Matrix(m.getRowDimension(), m.getColumnDimension() - 1);
+        reducedData.setMatrix(0, m.getRowDimension() - 1, 0, column1 - 1, m.getMatrix(0, m.getRowDimension() - 1, 0, column1 - 1));
+        reducedData.setMatrix(0, m.getRowDimension() - 1, column1, column1, m.getMatrix(0, m.getRowDimension() - 1, column1, column1)
+                .plus(m.getMatrix(0, m.getRowDimension() - 1, column2, column2)));
+        reducedData.setMatrix(0, m.getRowDimension() - 1, column1 + 1, column2 - 1, m.getMatrix(0, m.getRowDimension() - 1, column1 + 1, column2 - 1));
+        reducedData.setMatrix(0, m.getRowDimension() - 1, column2, m.getColumnDimension() - 2, m.getMatrix(0, m.getRowDimension() - 1, column2 + 1, m.getColumnDimension() - 1));
         return reducedData;
     }
 
@@ -377,6 +399,39 @@ public class HierarchicalCluster {
         }
         columns.forEach(list -> list.sort(Comparator.naturalOrder()));
         this.transformationList = generateClusterMatrix(columns);
+        return this;
+    }
+
+    public HierarchicalCluster reduce(List<List<Integer>> transformationList) {
+        try {
+            Matrix m = new Matrix(this.data);
+            int numberOfColumns = this.numberOfColumns;
+            List<List<Integer>> columns = new ArrayList<>();
+            initializeColumnsForCluster(columns);
+
+            while (numberOfColumns > this.numberOfClusters) {
+                List<Integer> indexes = new ArrayList<>();
+                indexes.addAll(findMinDissimilarity(m.getRowDimension(), numberOfColumns));
+                m = reduceMatrix(m, indexes.get(0), indexes.get(1));
+
+                copySquareMatrix(this.similarity, calculateSilimarity(m.getArray()), numberOfColumns);
+                calculateDissilimarity();
+                Cluster cluster = new Cluster();
+                cluster.addPointPositions(indexes);
+                this.clusters.add(cluster);
+                numberOfColumns--;
+                columns.get(indexes.get(0)).addAll(columns.get(indexes.get(1)));
+                columns.get(indexes.get(1)).clear();
+                int index = indexes.get(1);
+                columns.remove(index);
+
+            }
+            columns.forEach(list -> list.sort(Comparator.naturalOrder()));
+            this.transformationList = generateClusterMatrix(columns);
+        } catch (Exception e) {
+//            System.out.println("error while reducing matrix, using last cluster...");
+            this.transformationList = transformationList;
+        }
         return this;
     }
 

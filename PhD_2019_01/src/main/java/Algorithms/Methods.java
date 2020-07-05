@@ -915,6 +915,7 @@ public class Methods {
         probability = rnd.nextFloat();
 
         if (probability < Pm) {
+//            System.out.println("entrou");
             List<Integer> individuo = new ArrayList<>(population.getLinkedRouteList());
 
             int index1, index2;

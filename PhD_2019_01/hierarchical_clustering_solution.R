@@ -2,10 +2,10 @@
 library(lavaan)
 
 # set file path
-setwd("/home/renansantos/Área de Trabalho/Doutorado/PhD_2019_01/PhD_2019_01/")
+setwd("/home/renansantos/Área de Trabalho/Doutorado/PhD_2019_01/PhD_2019_01/RandomSolutions")
 
 # loading the data
-dados <- read.table("random_solution_objectives.csv", header=TRUE, sep=',')
+dados <- read.table("random_solutions.txt", header=TRUE, sep=',')
 library("ggplot2")
 library("ggdendro")
 attach(dados)
@@ -21,14 +21,14 @@ for(i in 1:length(obj)){
   obj$f4 <- (obj$f4 - mean(obj$f4))/(sd(obj$f4) )
   obj$f5 <- (obj$f5 - mean(obj$f5))/(sd(obj$f5) )
   obj$f6 <- (obj$f6 - mean(obj$f6))/(sd(obj$f6) )
-  obj$f7 <- (obj$f7 - mean(obj$f7))/(sd(obj$f7) )
+  obj$f7 <- (obj$f7 - meakendalln(obj$f7))/(sd(obj$f7) )
   obj$f8 <- (obj$f8 - mean(obj$f8))/(sd(obj$f8) )
 }
 
 # Cálculo da correlação para formulação do problema com 5 funções objetivo
 FO <- cbind(obj$f1,obj$f2,obj$f3,obj$f4,obj$f5,obj$f6,obj$f7,obj$f8)
 
-d <- cor(FO, method='kendall')
+d <- cor(FO, method='pearson')
 # Determinando a similaridade
 I <- diag(rep(1,dim(d)[1]))
 #D <- d - I
@@ -62,6 +62,24 @@ plot(hclust(distance_kendall, method = 'single'),
      lwd = 1.5)
 
 plot(hclust(distance_pearson, method = 'single'),
+     main="",
+     xlab="",
+     ylab="",
+     sub = "",
+     hang = -1,
+     cex = 1.5,
+     lwd = 1.5)
+
+a <- cbind(f1,f2,f3,f4,f5,f6,f7,f8)
+a <- head(a)
+dissimilarity_kendall <- 1 - abs(cor(a, method='kendall'))
+
+b <- cbind(a[f1])
+
+dissimilarity_kendall
+distance_kendall <- as.dist(dissimilarity_kendall)
+
+plot(hclust(distance_kendall, method = 'single'),
      main="",
      xlab="",
      ylab="",

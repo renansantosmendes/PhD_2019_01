@@ -28,7 +28,11 @@ def plot_hypervolume_convergence(folder, file, dimension):
             pop = [[float(j) for j in i] for i in converted]
             hv = hypervolume(pop)
             if dimension == 3:
-                hv_pareto.append(hv.compute([150000,150000,150000])) 
+                hv_pareto.append(hv.compute([150000,150000,150000]))
+            elif dimension == 6:
+            	hv_pareto.append(hv.compute([150000,150000,150000,150000,150000,150000]))
+            elif dimension == 7:
+            	hv_pareto.append(hv.compute([150000,150000,150000,150000,150000,150000,150000]))
             elif dimension == 8:
                 hv_pareto.append(hv.compute([200000,150000,150000,150000,150000,150000,150000,1])) 
             indexes.append(100*k)
