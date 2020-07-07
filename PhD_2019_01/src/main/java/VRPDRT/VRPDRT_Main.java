@@ -53,9 +53,9 @@ public class VRPDRT_Main {
     public static void main(String[] args) throws ApiException, Exception, IOException, BiffException {
         String directionsApiKey = "AIzaSyD9W0em7H723uVOMD6QFe_1Mns71XAi5JU";
         String filePath = "/home/renansantos/Área de Trabalho/Excel Instances/";
-        filePath = "/home/rmendes/VRPDRT/";
+//        filePath = "/home/rmendes/VRPDRT/";
 
-        int numberOfRequests = 250;
+        int numberOfRequests = 50;
         int requestTimeWindows = 10;
         final Integer vehicleCapacity = 4;
         String instanceSize = "s";
@@ -74,9 +74,9 @@ public class VRPDRT_Main {
         double probabilityOfCrossover = 0.7;
         double neighborhoodSelectionProbability = 0.02;//0.02
 
-        int numberOfEvaluations = 60000;
+        int numberOfEvaluations = 600;
         int neighborSize = 10;//10//3
-        int maximumNumberOfReplacedSolutions = 1;
+        int maximumNumberOfReplacedSolutions = 3;
         int fileSize = populationSize;
         FunctionType functionType = FunctionType.PBI;//PBI
 
@@ -109,34 +109,51 @@ public class VRPDRT_Main {
         parameters.add(1.0);//1
         parameters.add((double) numberOfRequests * numberOfNodes * requestTimeWindows);//
 
-        nadirPoint.add(10000000.0);
-        nadirPoint.add(10000000.0);
+        parameters.clear();
+        
+        parameters.add(1.0);
+        parameters.add(1.0);
+        parameters.add(1.0);
+        parameters.add(1.0);
+        parameters.add(1.0);
+        parameters.add(1.0);
+        parameters.add(1.0);
+        parameters.add(1.0);
+        
+        nadirPoint.add(200000.0);
+        nadirPoint.add(1500.0);
+        nadirPoint.add(1500.0);
+        nadirPoint.add(1500.0);
+        nadirPoint.add(1500.0);
+        nadirPoint.add(1500.0);
+        nadirPoint.add(1500.0);
+        nadirPoint.add(1500.0);
         
         System.out.println("Nadir Point = " + nadirPoint);
         System.out.println("Instance Name = " + instanceName);
         int reducedDimension;
                    
-        reducedDimension = 8;
+//        reducedDimension = 8;
        
 //        RandomSolutionGenerator solutionGenerator = new RandomSolutionGenerator();
 //        solutionGenerator.generateSolutions(reducedDimension, filePath, parameters);
 //        long start = System.currentTimeMillis();
 
-//        reducedDimension = 2;
+        reducedDimension = 2;
         
-        MOEAD(instanceName, neighborSize, numberOfEvaluations, maximumNumberOfReplacedSolutions, reducedDimension, transformationList, parameters,
-        nadirPoint, populationSize, maximumNumberOfGenerations, functionType, maximumNumberOfExecutions,
-        neighborhoodSelectionProbability, probabilityOfMutation, probabilityOfCrossover, requests,
-        requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
-        listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows,
-        currentTime, lastNode);
-
-//        onMOEAD(instanceName, neighborSize, numberOfEvaluations, maximumNumberOfReplacedSolutions, reducedDimension, CorrelationType.KENDALL,
-//        transformationList, parameters, nadirPoint, populationSize, maximumNumberOfGenerations, functionType, maximumNumberOfExecutions,
+//        MOEAD(instanceName, neighborSize, numberOfEvaluations, maximumNumberOfReplacedSolutions, reducedDimension, transformationList, parameters,
+//        nadirPoint, populationSize, maximumNumberOfGenerations, functionType, maximumNumberOfExecutions,
 //        neighborhoodSelectionProbability, probabilityOfMutation, probabilityOfCrossover, requests,
 //        requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
 //        listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows,
 //        currentTime, lastNode);
+
+        onMOEAD(instanceName, neighborSize, numberOfEvaluations, maximumNumberOfReplacedSolutions, reducedDimension, CorrelationType.KENDALL,
+        transformationList, parameters, nadirPoint, populationSize, maximumNumberOfGenerations, functionType, maximumNumberOfExecutions,
+        neighborhoodSelectionProbability, probabilityOfMutation, probabilityOfCrossover, requests,
+        requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
+        listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows,
+        currentTime, lastNode);
         
 //        
 //        onMOEAD(instanceName, neighborSize, numberOfEvaluations, maximumNumberOfReplacedSolutions, reducedDimension, CorrelationType.PEARSON,

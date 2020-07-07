@@ -383,6 +383,7 @@ public class HierarchicalCluster {
         while (numberOfColumns > this.numberOfClusters) {
             List<Integer> indexes = new ArrayList<>();
             indexes.addAll(findMinDissimilarity(m.getRowDimension(), numberOfColumns));
+//            System.out.println("indexes " + indexes);
             m = reduceMatrix(m, indexes.get(0), indexes.get(1));
 
             copySquareMatrix(this.similarity, calculateSilimarity(m.getArray()), numberOfColumns);

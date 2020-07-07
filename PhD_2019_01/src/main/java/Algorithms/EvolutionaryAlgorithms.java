@@ -291,7 +291,7 @@ public class EvolutionaryAlgorithms {
             List<ProblemSolution> initialPopulation = new ArrayList<>();
             List<ProblemSolution> externalPopulation = new ArrayList<>();
 
-            initializeRandomPopulation(parameters, reducedDimension, initialPopulation, populationSize, requests,
+            initializeRandomPopulation(nadirPoint, parameters, reducedDimension, initialPopulation, populationSize, requests,
                     requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                     requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
 
@@ -301,7 +301,7 @@ public class EvolutionaryAlgorithms {
             hc.reduce();
             transformationList = generateTransformationList();//hc.getTransfomationList();//
 
-            initializeRandomPopulationForMOEAD(transformationList, parameters, reducedDimension, population, populationSize, requests,
+            initializeRandomPopulationForMOEAD(nadirPoint, transformationList, parameters, reducedDimension, population, populationSize, requests,
                     requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                     requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
             saveInitialPopulation(population);
@@ -328,14 +328,14 @@ public class EvolutionaryAlgorithms {
 
                     int maximumSize = parents.size();
 
-                    twoPointsCrossoverForMOEAD(reducedDimension, transformationList, parameters, children, population, maximumSize, probabilityOfCrossover, parents, requests,
+                    twoPointsCrossoverForMOEAD(reducedDimension, nadirPoint, transformationList, parameters, children, population, maximumSize, probabilityOfCrossover, parents, requests,
                             requestList, setOfVehicles, listOfNonAttendedRequests, requestsWhichBoardsInNode,
                             requestsWhichLeavesInNode, timeBetweenNodes, distanceBetweenNodes, numberOfNodes,
                             vehicleCapacity, timeWindows);
 
                     ProblemSolution child = children.get(0);
 
-                    mutation2ShuffleForMOEAD(reducedDimension, transformationList, parameters, child, probabilityOfMutation, requests, requestsWhichBoardsInNode,
+                    mutation2ShuffleForMOEAD(reducedDimension, nadirPoint, transformationList, parameters, child, probabilityOfMutation, requests, requestsWhichBoardsInNode,
                             requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                             requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
 
@@ -519,21 +519,23 @@ public class EvolutionaryAlgorithms {
             List<ProblemSolution> initialPopulation = new ArrayList<>();
             List<ProblemSolution> externalPopulation = new ArrayList<>();
 
-            initializeRandomPopulation(parameters, reducedDimension, initialPopulation, populationSize, requests,
+            initializeRandomPopulation(nadirPoint, parameters, reducedDimension, initialPopulation, populationSize, requests,
                     requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                     requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
-
+            population.forEach(u -> System.out.println(u));
             int numberOfClusters = reducedDimension;
             HierarchicalCluster hc = new HierarchicalCluster(getMatrixOfObjetives(initialPopulation, parameters),
                     numberOfClusters, correlation);
             hc.reduce();
             transformationList = hc.getTransfomationList();
 
-            initializeRandomPopulationForMOEAD(transformationList, parameters, reducedDimension, population, populationSize, requests,
+            initializeRandomPopulationForMOEAD(nadirPoint, transformationList, parameters, reducedDimension, population, populationSize, requests,
                     requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                     requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
             saveInitialPopulation(population);
-
+//            population.forEach(u -> System.out.println(u));
+            
+            
             int numberOfObjectives = reducedDimension;
             int[][] neighborhood = new int[populationSize][neighborSize];
             double[][] lambda = initializeUniformWeight(numberOfObjectives, populationSize);
@@ -561,14 +563,14 @@ public class EvolutionaryAlgorithms {
 
                     int maximumSize = parents.size();
 
-                    twoPointsCrossoverForMOEAD(reducedDimension, transformationList, parameters, children, population,
+                    twoPointsCrossoverForMOEAD(reducedDimension, nadirPoint, transformationList, parameters, children, population,
                             maximumSize, probabilityOfCrossover, parents, requests, requestList, setOfVehicles, listOfNonAttendedRequests,
                             requestsWhichBoardsInNode, requestsWhichLeavesInNode, timeBetweenNodes, distanceBetweenNodes, numberOfNodes,
                             vehicleCapacity, timeWindows);
 
                     ProblemSolution child = children.get(0);
 
-                    mutation2ShuffleForMOEAD(reducedDimension, transformationList, parameters, child, probabilityOfMutation, requests,
+                    mutation2ShuffleForMOEAD(reducedDimension, nadirPoint, transformationList, parameters, child, probabilityOfMutation, requests,
                             requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
                             listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows,
                             currentTime, lastNode);
@@ -593,7 +595,7 @@ public class EvolutionaryAlgorithms {
             } while (evaluations < maxEvaluations);
             combinedPareto.addAll(externalPopulation);
             long elapsed = System.currentTimeMillis() - start;
-//            externalPopulation.forEach(u -> System.out.println(u));
+            externalPopulation.forEach(u -> System.out.println(u));
             saveExecutionTime(elapsed - elapsedSaveTime);
             saveNonDominatedSolutionsFromCurrentExecution(population);
 
@@ -722,7 +724,7 @@ public class EvolutionaryAlgorithms {
 //                inicializePopulation(population, populationSize, requests,
 //                        requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
 //                        requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
-                initializeRandomPopulation(parameters, reducedDimension, population, populationSize, requests,
+                initializeRandomPopulation(nadirPoint, parameters, reducedDimension, population, populationSize, requests,
                         requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                         requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
                 if (executionCounter == 0) {
@@ -746,12 +748,12 @@ public class EvolutionaryAlgorithms {
 
                 rouletteWheelSelectionAlgorithm(parents, offspring, maximumSize);
 
-                twoPointsCrossover(reducedDimension, parameters, offspring, population, maximumSize, probabilityOfCrossover, parents, requests,
+                twoPointsCrossover(reducedDimension, nadirPoint, parameters, offspring, population, maximumSize, probabilityOfCrossover, parents, requests,
                         requestList, setOfVehicles, listOfNonAttendedRequests, requestsWhichBoardsInNode,
                         requestsWhichLeavesInNode, timeBetweenNodes, distanceBetweenNodes, numberOfNodes,
                         vehicleCapacity, timeWindows);
 
-                mutation2Shuffle(reducedDimension, parameters, offspring, probabilityOfMutation, requests, requestsWhichBoardsInNode,
+                mutation2Shuffle(reducedDimension, nadirPoint, parameters, offspring, probabilityOfMutation, requests, requestsWhichBoardsInNode,
                         requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                         requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
 
@@ -801,8 +803,8 @@ public class EvolutionaryAlgorithms {
                     offspring.addAll(population);
                     rouletteWheelSelectionAlgorithm(parents, offspring, maximumSize);
 
-                    twoPointsCrossover(reducedDimension, parameters, offspring, population, maximumSize, probabilityOfCrossover, parents, requests, requestList, setOfVehicles, listOfNonAttendedRequests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, timeBetweenNodes, distanceBetweenNodes, numberOfNodes, vehicleCapacity, timeWindows);
-                    mutation2Shuffle(reducedDimension, parameters, offspring, probabilityOfMutation, requests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
+                    twoPointsCrossover(reducedDimension, nadirPoint, parameters, offspring, population, maximumSize, probabilityOfCrossover, parents, requests, requestList, setOfVehicles, listOfNonAttendedRequests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, timeBetweenNodes, distanceBetweenNodes, numberOfNodes, vehicleCapacity, timeWindows);
+                    mutation2Shuffle(reducedDimension,nadirPoint, parameters, offspring, probabilityOfMutation, requests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
                     //normalizeObjectiveFunctionsValues(offspring);
                     normalizeAggregatedObjectiveFunctions(offspring);
 
@@ -916,7 +918,7 @@ public class EvolutionaryAlgorithms {
 //                inicializePopulation(population, populationSize, requests,
 //                        requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
 //                        requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
-                initializeRandomPopulation(parameters, reducedDimension, population, populationSize, requests,
+                initializeRandomPopulation(nadirPoint, parameters, reducedDimension, population, populationSize, requests,
                         requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                         requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
 
@@ -940,12 +942,12 @@ public class EvolutionaryAlgorithms {
 
                 rouletteWheelSelectionAlgorithm(parents, offspring, maximumSize);
 
-                twoPointsCrossover(reducedDimension, parameters, offspring, population, maximumSize, probabilityOfCrossover, parents, requests,
+                twoPointsCrossover(reducedDimension, nadirPoint, parameters, offspring, population, maximumSize, probabilityOfCrossover, parents, requests,
                         requestList, setOfVehicles, listOfNonAttendedRequests, requestsWhichBoardsInNode,
                         requestsWhichLeavesInNode, timeBetweenNodes, distanceBetweenNodes, numberOfNodes,
                         vehicleCapacity, timeWindows);
 
-                mutation2Shuffle(reducedDimension, parameters, offspring, probabilityOfMutation, requests, requestsWhichBoardsInNode,
+                mutation2Shuffle(reducedDimension, nadirPoint, parameters, offspring, probabilityOfMutation, requests, requestsWhichBoardsInNode,
                         requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                         requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
 
@@ -1002,8 +1004,8 @@ public class EvolutionaryAlgorithms {
                     offspring.addAll(population);
                     rouletteWheelSelectionAlgorithm(parents, offspring, maximumSize);
 
-                    twoPointsCrossover(reducedDimension, parameters, offspring, population, maximumSize, probabilityOfCrossover, parents, requests, requestList, setOfVehicles, listOfNonAttendedRequests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, timeBetweenNodes, distanceBetweenNodes, numberOfNodes, vehicleCapacity, timeWindows);
-                    mutation2Shuffle(reducedDimension, parameters, offspring, probabilityOfMutation, requests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
+                    twoPointsCrossover(reducedDimension, nadirPoint, parameters, offspring, population, maximumSize, probabilityOfCrossover, parents, requests, requestList, setOfVehicles, listOfNonAttendedRequests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, timeBetweenNodes, distanceBetweenNodes, numberOfNodes, vehicleCapacity, timeWindows);
+                    mutation2Shuffle(reducedDimension, nadirPoint, parameters, offspring, probabilityOfMutation, requests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
                     //normalizeObjectiveFunctionsValues(offspring);
                     normalizeAggregatedObjectiveFunctions(offspring);
 
@@ -1115,7 +1117,7 @@ public class EvolutionaryAlgorithms {
 //                inicializePopulation(population, populationSize, requests,
 //                        requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
 //                        requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
-                initializeRandomPopulation(parameters, reducedDimension, population, populationSize, requests,
+                initializeRandomPopulation(nadirPoint, parameters, reducedDimension, population, populationSize, requests,
                         requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                         requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
 
@@ -1139,12 +1141,12 @@ public class EvolutionaryAlgorithms {
 
                 rouletteWheelSelectionAlgorithm(parents, offspring, maximumSize);
 
-                twoPointsCrossover(reducedDimension, parameters, offspring, population, maximumSize, probabilityOfCrossover, parents, requests,
+                twoPointsCrossover(reducedDimension, nadirPoint, parameters, offspring, population, maximumSize, probabilityOfCrossover, parents, requests,
                         requestList, setOfVehicles, listOfNonAttendedRequests, requestsWhichBoardsInNode,
                         requestsWhichLeavesInNode, timeBetweenNodes, distanceBetweenNodes, numberOfNodes,
                         vehicleCapacity, timeWindows);
 
-                mutation2Shuffle(reducedDimension, parameters, offspring, probabilityOfMutation, requests, requestsWhichBoardsInNode,
+                mutation2Shuffle(reducedDimension, nadirPoint, parameters, offspring, probabilityOfMutation, requests, requestsWhichBoardsInNode,
                         requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                         requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
 
@@ -1201,8 +1203,8 @@ public class EvolutionaryAlgorithms {
                     offspring.addAll(population);
                     rouletteWheelSelectionAlgorithm(parents, offspring, maximumSize);
 
-                    twoPointsCrossover(reducedDimension, parameters, offspring, population, maximumSize, probabilityOfCrossover, parents, requests, requestList, setOfVehicles, listOfNonAttendedRequests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, timeBetweenNodes, distanceBetweenNodes, numberOfNodes, vehicleCapacity, timeWindows);
-                    mutation2Shuffle(reducedDimension, parameters, offspring, probabilityOfMutation, requests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
+                    twoPointsCrossover(reducedDimension, nadirPoint, parameters, offspring, population, maximumSize, probabilityOfCrossover, parents, requests, requestList, setOfVehicles, listOfNonAttendedRequests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, timeBetweenNodes, distanceBetweenNodes, numberOfNodes, vehicleCapacity, timeWindows);
+                    mutation2Shuffle(reducedDimension, nadirPoint, parameters, offspring, probabilityOfMutation, requests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
                     //normalizeObjectiveFunctionsValues(offspring);
                     normalizeAggregatedObjectiveFunctions(offspring);
 
@@ -1451,7 +1453,7 @@ public class EvolutionaryAlgorithms {
 //                inicializePopulation(population, populationSize, requests,
 //                        requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
 //                        requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
-                initializeRandomPopulation(parameters, reducedDimension, population, populationSize, requests,
+                initializeRandomPopulation(nadirPoint, parameters, reducedDimension, population, populationSize, requests,
                         requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                         requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
 
@@ -1479,12 +1481,12 @@ public class EvolutionaryAlgorithms {
                     genericDominanceAlgorithm(file, nonDominated);
                     rouletteWheelSelectionAlgorithm(parents, file, tamMax);
 
-                    onePointCrossover(reducedDimension, parameters, population, file, fileSize, probabilityOfCrossover, parents, requests,
+                    onePointCrossover(reducedDimension, nadirPoint, parameters, population, file, fileSize, probabilityOfCrossover, parents, requests,
                             requestList, setOfVehicles, listOfNonAttendedRequests, requestsWhichBoardsInNode,
                             requestsWhichLeavesInNode, timeBetweenNodes, distanceBetweenNodes, numberOfNodes,
                             vehicleCapacity, timeWindows);
 
-                    mutation2Opt(reducedDimension, parameters, population, probabilityOfMutation, requests, requestsWhichBoardsInNode,
+                    mutation2Opt(reducedDimension, nadirPoint, parameters, population, probabilityOfMutation, requests, requestsWhichBoardsInNode,
                             requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                             requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
 
@@ -2217,12 +2219,12 @@ public class EvolutionaryAlgorithms {
         }
     }
 
-    public static void initializePopulation(List<ProblemSolution> Pop, int reducedDimension, int TamPop, List<Request> listRequests, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout,
+    public static void initializePopulation(List<ProblemSolution> Pop, List<Double> nadirPoint, int reducedDimension, int TamPop, List<Request> listRequests, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout,
             Integer n, Integer Qmax, Set<Integer> K, List<Request> U, List<Request> P, List<Integer> m, List<List<Long>> d,
             List<List<Long>> c, Long TimeWindows, Long currentTime, Integer lastNode) {
         ProblemSolution s0 = new ProblemSolution();
         for (int i = 0; i < TamPop; i++) {
-            s0.setSolution(geraPesos(reducedDimension, i, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode));
+            s0.setSolution(geraPesos(reducedDimension, nadirPoint, i, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode));
             //Pop.add(s0);
             Pop.get(i).setSolution(s0);
             //System.out.println("s0 = " + s0);
