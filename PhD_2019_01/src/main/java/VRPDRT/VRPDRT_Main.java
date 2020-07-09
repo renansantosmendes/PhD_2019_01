@@ -12,8 +12,7 @@ import java.util.*;
 import ProblemRepresentation.*;
 import com.google.maps.errors.ApiException;
 import Algorithms.EvolutionaryAlgorithms.*;
-import static Algorithms.EvolutionaryAlgorithms.MOEAD;
-import static Algorithms.EvolutionaryAlgorithms.onMOEAD;
+import static Algorithms.EvolutionaryAlgorithms.*;
 import static Algorithms.Methods.readProblemData;
 import static Algorithms.Methods.readProblemUsingExcelData;
 import InstanceReader.ScriptGenerator;
@@ -69,29 +68,27 @@ public class VRPDRT_Main {
 
         Integer populationSize = 100;
         Integer maximumNumberOfGenerations = 1000;
-        Integer maximumNumberOfExecutions = 21;
-        double probabilityOfMutation = 0.8;//0.9
+        Integer maximumNumberOfExecutions = 3;//21
+        double probabilityOfMutation = 0.02;//0.9
         double probabilityOfCrossover = 0.7;
-        double neighborhoodSelectionProbability = 0.02;//0.02
+        double neighborhoodSelectionProbability = 0.5;//0.02
 
-        int numberOfEvaluations = 600;
+        int numberOfEvaluations = 6000;
         int neighborSize = 10;//10//3
-        int maximumNumberOfReplacedSolutions = 3;
+        int maximumNumberOfReplacedSolutions = 3;//3//1
         int fileSize = populationSize;
         FunctionType functionType = FunctionType.PBI;//PBI
 
         List<Double> parameters = new ArrayList<>();
-        List<Double> nadirPoint = new ArrayList<>();
+        List<List<Double>> nadirPoint = new ArrayList<>();
         List<List<Integer>> transformationList = new ArrayList<>();
-        if (numberOfRequests == 250){
+        if (numberOfRequests == 250) {
             new ScriptGenerator(instanceName, instanceSize, vehicleCapacity)
-                .generate("30d", "lamho-1");
-        }else{
+                    .generate("30d", "lamho-1");
+        } else {
             new ScriptGenerator(instanceName, instanceSize, vehicleCapacity)
-                .generate("7d", "lamho-1");
+                    .generate("7d", "lamho-1");
         }
-        
-//                .generate("30d", "lamho-1","MOEAD_R2", "/tmp/rmendes/Results/", "/home/rmendes/experiment_tmp");
 
         numberOfNodes = readProblemUsingExcelData(filePath, instanceName, nodesData, adjacenciesData, requests, distanceBetweenNodes,
                 timeBetweenNodes, Pmais, Pmenos, requestsWhichBoardsInNode, requestsWhichLeavesInNode, setOfNodes,
@@ -110,7 +107,7 @@ public class VRPDRT_Main {
         parameters.add((double) numberOfRequests * numberOfNodes * requestTimeWindows);//
 
         parameters.clear();
-        
+
         parameters.add(1.0);
         parameters.add(1.0);
         parameters.add(1.0);
@@ -119,27 +116,35 @@ public class VRPDRT_Main {
         parameters.add(1.0);
         parameters.add(1.0);
         parameters.add(1.0);
-        
-        nadirPoint.add(200000.0);
-        nadirPoint.add(1500.0);
-        nadirPoint.add(1500.0);
-        nadirPoint.add(1500.0);
-        nadirPoint.add(1500.0);
-        nadirPoint.add(1500.0);
-        nadirPoint.add(1500.0);
-        nadirPoint.add(1500.0);
-        
+
+        List<Double> mins = initializeMinValues();
+        List<Double> maxs = initializeMaxValues();
+        nadirPoint.add(mins);
+        nadirPoint.add(maxs);
+
         System.out.println("Nadir Point = " + nadirPoint);
         System.out.println("Instance Name = " + instanceName);
         int reducedDimension;
-                   
-//        reducedDimension = 8;
-       
-//        RandomSolutionGenerator solutionGenerator = new RandomSolutionGenerator();
-//        solutionGenerator.generateSolutions(reducedDimension, filePath, parameters);
-//        long start = System.currentTimeMillis();
 
+//        reducedDimension = 8;
         reducedDimension = 2;
+        System.out.println("Generating random solutions to get min and max values...");
+        List<ProblemSolution> solutions = populationGeneratorForWeights(instanceName, neighborSize, numberOfEvaluations, maximumNumberOfReplacedSolutions, reducedDimension, CorrelationType.KENDALL,
+                transformationList, parameters, nadirPoint, populationSize, maximumNumberOfGenerations, functionType, maximumNumberOfExecutions,
+                neighborhoodSelectionProbability, probabilityOfMutation, probabilityOfCrossover, requests,
+                requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
+                listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows,
+                currentTime, lastNode);
+
+        nadirPoint = getMinMaxForObjectives(solutions);
+        System.out.println("Min max founds " + nadirPoint);
+//        solutions = populationGeneratorForWeights(instanceName, neighborSize, numberOfEvaluations, maximumNumberOfReplacedSolutions, reducedDimension, CorrelationType.KENDALL,
+//                transformationList, parameters, nadirPoint, populationSize, maximumNumberOfGenerations, functionType, maximumNumberOfExecutions,
+//                neighborhoodSelectionProbability, probabilityOfMutation, probabilityOfCrossover, requests,
+//                requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
+//                listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows,
+//                currentTime, lastNode);
+        
         
 //        MOEAD(instanceName, neighborSize, numberOfEvaluations, maximumNumberOfReplacedSolutions, reducedDimension, transformationList, parameters,
 //        nadirPoint, populationSize, maximumNumberOfGenerations, functionType, maximumNumberOfExecutions,
@@ -154,8 +159,10 @@ public class VRPDRT_Main {
         requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
         listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows,
         currentTime, lastNode);
+
         
-//        
+        
+//        solutions.forEach(u -> System.out.println(u));
 //        onMOEAD(instanceName, neighborSize, numberOfEvaluations, maximumNumberOfReplacedSolutions, reducedDimension, CorrelationType.PEARSON,
 //        transformationList, parameters, nadirPoint, populationSize, maximumNumberOfGenerations, functionType, maximumNumberOfExecutions,
 //        neighborhoodSelectionProbability, probabilityOfMutation, probabilityOfCrossover, requests,

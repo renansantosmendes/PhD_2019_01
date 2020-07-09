@@ -430,7 +430,7 @@ public class HierarchicalCluster {
             columns.forEach(list -> list.sort(Comparator.naturalOrder()));
             this.transformationList = generateClusterMatrix(columns);
         } catch (Exception e) {
-//            System.out.println("error while reducing matrix, using last cluster...");
+            System.out.println("error while reducing matrix, using last cluster...");
             this.transformationList = transformationList;
         }
         return this;

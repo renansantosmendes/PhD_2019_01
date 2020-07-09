@@ -516,7 +516,7 @@ public class Methods {
         }
     }
 
-    public static void inicializePopulation(List<Double> nadirPoint, int reducedDimension, List<ProblemSolution> Pop, Integer TamPop, List<Request> listRequests,
+    public static void inicializePopulation(List<List<Double>> nadirPoint, int reducedDimension, List<ProblemSolution> Pop, Integer TamPop, List<Request> listRequests,
             Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout, Integer n, Integer Qmax, Set<Integer> K,
             List<Request> U, List<Request> P, List<Integer> m, List<List<Long>> d, List<List<Long>> c,
             Long TimeWindows, Long currentTime, Integer lastNode) {
@@ -535,7 +535,7 @@ public class Methods {
         Inicializa(Pop, nadirPoint, reducedDimension, TamPop, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode);
     }
 
-    public static void initializeRandomPopulation(List<Double> nadirPoint, List<Double> parameters, int reducedDimension, List<ProblemSolution> Pop, Integer TamPop, List<Request> listRequests,
+    public static void initializeRandomPopulation(List<List<Double>> nadirPoint, List<Double> parameters, int reducedDimension, List<ProblemSolution> Pop, Integer TamPop, List<Request> listRequests,
             Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout, Integer n, Integer Qmax, Set<Integer> K,
             List<Request> U, List<Request> P, List<Integer> m, List<List<Long>> d, List<List<Long>> c,
             Long TimeWindows, Long currentTime, Integer lastNode) {
@@ -549,7 +549,7 @@ public class Methods {
         }
     }
     
-    public static void initializeRandomPopulationForMOEAD(List<Double> nadirPoint, List<List<Integer>> transformationList, List<Double> parameters,
+    public static void initializeRandomPopulationForMOEAD(List<List<Double>> nadirPoint, List<List<Integer>> transformationList, List<Double> parameters,
             int reducedDimension, List<ProblemSolution> population, Integer TamPop, List<Request> listRequests,
             Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout, Integer n, Integer Qmax, Set<Integer> K,
             List<Request> U, List<Request> P, List<Integer> m, List<List<Long>> d, List<List<Long>> c,
@@ -566,7 +566,24 @@ public class Methods {
         }
     }
     
-    public static void inicializeRandomPopulationForOnlineAlgorithm(List<Double> nadirPoint, List<Double> parameters, int reducedDimension, List<ProblemSolution> Pop, Integer TamPop, List<Request> listRequests,
+    public static void initializeRandomPopulationForMaxMin(int currentExecution, List<List<Double>> nadirPoint, List<List<Integer>> transformationList, List<Double> parameters,
+            int reducedDimension, List<ProblemSolution> population, Integer TamPop, List<Request> listRequests,
+            Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout, Integer n, Integer Qmax, Set<Integer> K,
+            List<Request> U, List<Request> P, List<Integer> m, List<List<Long>> d, List<List<Long>> c,
+            Long TimeWindows, Long currentTime, Integer lastNode) {
+
+        ProblemSolution solution = new ProblemSolution(reducedDimension);
+        solution.setSolution(generateRandomSolution(reducedDimension, population, TamPop, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c,
+                TimeWindows, currentTime, lastNode));
+        for (int i = 0; i < TamPop; i++) {
+            ProblemSolution randomSolution = new ProblemSolution(reducedDimension);
+            randomSolution.setSolution(randomPerturbationWithSeedForMOEAD(i + currentExecution, reducedDimension, nadirPoint, transformationList, parameters, solution, listRequests,
+                    Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows));
+            population.add(randomSolution);
+        }
+    }
+    
+    public static void inicializeRandomPopulationForOnlineAlgorithm(List<List<Double>> nadirPoint, List<Double> parameters, int reducedDimension, List<ProblemSolution> Pop, Integer TamPop, List<Request> listRequests,
             Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout, Integer n, Integer Qmax, Set<Integer> K,
             List<Request> U, List<Request> P, List<Integer> m, List<List<Long>> d, List<List<Long>> c,
             Long TimeWindows, Long currentTime, Integer lastNode) {
@@ -581,7 +598,7 @@ public class Methods {
         }
     }
 
-    public static void Inicializa(List<ProblemSolution> Pop, List<Double> nadirPoint, int reducedDimension, int TamPop, List<Request> listRequests, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout,
+    public static void Inicializa(List<ProblemSolution> Pop, List<List<Double>> nadirPoint, int reducedDimension, int TamPop, List<Request> listRequests, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout,
             Integer n, Integer Qmax, Set<Integer> K, List<Request> U, List<Request> P, List<Integer> m, List<List<Long>> d,
             List<List<Long>> c, Long TimeWindows, Long currentTime, Integer lastNode) {
         ProblemSolution s0 = new ProblemSolution();
@@ -591,7 +608,7 @@ public class Methods {
         }
     }
 
-    public static void InicializaPopulacaoPerturbacao(int reducedDimension, List<Double> nadirPoint, List<Double> parameters, List<ProblemSolution> Pop, Integer TamPop, List<Request> listRequests, Map<Integer, List<Request>> Pin,
+    public static void InicializaPopulacaoPerturbacao(int reducedDimension, List<List<Double>> nadirPoint, List<Double> parameters, List<ProblemSolution> Pop, Integer TamPop, List<Request> listRequests, Map<Integer, List<Request>> Pin,
             Map<Integer, List<Request>> Pout, Integer n, Integer Qmax, Set<Integer> K, List<Request> U,
             List<Request> P, List<Integer> m, List<List<Long>> d, List<List<Long>> c,
             Long TimeWindows, Long currentTime, Integer lastNode) {
@@ -621,15 +638,7 @@ public class Methods {
                 z = rnd.nextDouble();
                 w = 1 - x - y - z;
             } while (x + y + z > 1);
-            //S.setSolution(greedyConstructive(x, y, z, w, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode));
-            //System.out.println("SolucaoGulosaAleatoria = "+ S);
-            //S.setSolution(GeraSolucaoAleatoria(Pop, TamPop, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode));
-            //Pop.add(S);
-
         }
-        //for (int i = 0; i < TamPop; i++) {
-        //  ProblemSolution solucao = new ProblemSolution(Pop.get(i));
-        //}
     }
 
     public static ProblemSolution generateRandomSolution(int reducedDimension, List<ProblemSolution> Pop, Integer TamPop, List<Request> listRequests, Map<Integer, List<Request>> Pin,
@@ -768,7 +777,7 @@ public class Methods {
         return solution;
     }
 
-    public static void mutationSwap(int reducedDimension,List<Double> nadirPoint, List<Double> parameters, List<ProblemSolution> Pop, double Pm, List<Request> listRequests, Map<Integer, List<Request>> Pin,
+    public static void mutationSwap(int reducedDimension,List<List<Double>> nadirPoint, List<Double> parameters, List<ProblemSolution> Pop, double Pm, List<Request> listRequests, Map<Integer, List<Request>> Pin,
             Map<Integer, List<Request>> Pout, Integer n, Integer Qmax, Set<Integer> K, List<Request> U, List<Request> P,
             List<Integer> m, List<List<Long>> d, List<List<Long>> c, Long TimeWindows, Long currentTime, Integer lastNode) {
         Random rnd = new Random();
@@ -798,7 +807,7 @@ public class Methods {
         }
     }
 
-    public static void mutacaoShuffle(int reducedDimension, List<Double> nadirPoint, List<Double> parameters, List<ProblemSolution> Pop, double Pm, List<Request> listRequests, Map<Integer, List<Request>> Pin,
+    public static void mutacaoShuffle(int reducedDimension, List<List<Double>> nadirPoint, List<Double> parameters, List<ProblemSolution> Pop, double Pm, List<Request> listRequests, Map<Integer, List<Request>> Pin,
             Map<Integer, List<Request>> Pout, Integer n, Integer Qmax, Set<Integer> K, List<Request> U, List<Request> P,
             List<Integer> m, List<List<Long>> d, List<List<Long>> c, Long TimeWindows, Long currentTime, Integer lastNode) {
         Random rnd = new Random();
@@ -821,7 +830,7 @@ public class Methods {
         }
     }
 
-    public static void mutation2Opt(int reducedDimension, List<Double> nadirPoint, List<Double> parameters, List<ProblemSolution> Pop, double Pm, List<Request> listRequests, Map<Integer, List<Request>> Pin,
+    public static void mutation2Opt(int reducedDimension, List<List<Double>> nadirPoint, List<Double> parameters, List<ProblemSolution> Pop, double Pm, List<Request> listRequests, Map<Integer, List<Request>> Pin,
             Map<Integer, List<Request>> Pout, Integer n, Integer Qmax, Set<Integer> K, List<Request> U, List<Request> P,
             List<Integer> m, List<List<Long>> d, List<List<Long>> c, Long TimeWindows, Long currentTime, Integer lastNode) {
         Random rnd = new Random();
@@ -865,7 +874,7 @@ public class Methods {
         }
     }
 
-    public static void mutation2Shuffle(int reducedDimension, List<Double> nadirPoint, List<Double> parameters, List<ProblemSolution> Pop, double Pm, List<Request> listRequests, Map<Integer, List<Request>> Pin,
+    public static void mutation2Shuffle(int reducedDimension, List<List<Double>> nadirPoint, List<Double> parameters, List<ProblemSolution> Pop, double Pm, List<Request> listRequests, Map<Integer, List<Request>> Pin,
             Map<Integer, List<Request>> Pout, Integer n, Integer Qmax, Set<Integer> K, List<Request> U, List<Request> P,
             List<Integer> m, List<List<Long>> d, List<List<Long>> c, Long TimeWindows, Long currentTime, Integer lastNode) {
         Random rnd = new Random();
@@ -909,7 +918,7 @@ public class Methods {
         }
     }
 
-    public static void mutation2ShuffleForMOEAD(int reducedDimension, List<Double> nadirPoint,
+    public static void mutation2ShuffleForMOEAD(int reducedDimension, List<List<Double>> nadirPoint,
             List<List<Integer>> transformationList, List<Double> parameters,
             ProblemSolution population, double Pm, List<Request> listRequests, Map<Integer, List<Request>> Pin,
             Map<Integer, List<Request>> Pout, Integer n, Integer Qmax, Set<Integer> K, List<Request> U, List<Request> P,
@@ -953,7 +962,7 @@ public class Methods {
         }
     }
 
-    public static void mutation2ShuffleForOnlineMOEAD(int reducedDimension, List<Double> nadirPoint, List<List<Integer>> transformationList,
+    public static void mutation2ShuffleForOnlineMOEAD(int reducedDimension, List<List<Double>> nadirPoint, List<List<Integer>> transformationList,
             List<Double> parameters, ProblemSolution Pop, double Pm, List<Request> listRequests, Map<Integer, List<Request>> Pin,
             Map<Integer, List<Request>> Pout, Integer n, Integer Qmax, Set<Integer> K, List<Request> U, List<Request> P,
             List<Integer> m, List<List<Long>> d, List<List<Long>> c, Long TimeWindows, Long currentTime, Integer lastNode) {
@@ -996,7 +1005,7 @@ public class Methods {
         }
     }
 
-    public static void MutacaoILS(int reducedDimension, List<Double> nadirPoint, List<Double> parameters, List<ProblemSolution> Pop, double Pm, List<Request> listRequests, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout,
+    public static void MutacaoILS(int reducedDimension, List<List<Double>> nadirPoint, List<Double> parameters, List<ProblemSolution> Pop, double Pm, List<Request> listRequests, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout,
             Integer n, Integer Qmax, Set<Integer> K, List<Request> U, List<Request> P, List<Integer> m, List<List<Long>> d, List<List<Long>> c,
             Long TimeWindows, Long currentTime, Integer lastNode) {
         Random rnd = new Random();
@@ -1087,7 +1096,7 @@ public class Methods {
         }
     }
 
-    public static void onePointCrossover(int reducedDimension, List<Double> nadirPoint, List<Double> parameters, List<ProblemSolution> Pop_nova, List<ProblemSolution> Pop, Integer TamMax, double Pc,
+    public static void onePointCrossover(int reducedDimension, List<List<Double>> nadirPoint, List<Double> parameters, List<ProblemSolution> Pop_nova, List<ProblemSolution> Pop, Integer TamMax, double Pc,
             List<Integer> pais, List<Request> listRequests, List<Request> P, Set<Integer> K, List<Request> U,
             Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout, List<List<Long>> d, List<List<Long>> c,
             Integer n, Integer Qmax, Long TimeWindows) {
@@ -1148,7 +1157,7 @@ public class Methods {
         populationSorting(Pop_nova);
     }
 
-    public static void twoPointsCrossover(int reducedDimension,List<Double> nadirPoint,  List<Double> parameters, List<ProblemSolution> Pop_nova, List<ProblemSolution> Pop, Integer TamMax, double Pc, List<Integer> pais, List<Request> listRequests,
+    public static void twoPointsCrossover(int reducedDimension, List<List<Double>> nadirPoint,  List<Double> parameters, List<ProblemSolution> Pop_nova, List<ProblemSolution> Pop, Integer TamMax, double Pc, List<Integer> pais, List<Request> listRequests,
             List<Request> P, Set<Integer> K, List<Request> U, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout,
             List<List<Long>> d, List<List<Long>> c, Integer n, Integer Qmax, Long TimeWindows) {
         int pai;
@@ -1231,7 +1240,7 @@ public class Methods {
         }
     }
 
-    public static void twoPointsCrossoverForOnlineMOEAD(int reducedDimension, List<Double> nadirPoint, List<List<Integer>> transformationList, List<Double> parameters, List<ProblemSolution> Pop_nova, List<ProblemSolution> Pop, Integer TamMax, double Pc,
+    public static void twoPointsCrossoverForOnlineMOEAD(int reducedDimension, List<List<Double>> nadirPoint, List<List<Integer>> transformationList, List<Double> parameters, List<ProblemSolution> Pop_nova, List<ProblemSolution> Pop, Integer TamMax, double Pc,
             List<ProblemSolution> pais, List<Request> listRequests,
             List<Request> P, Set<Integer> K, List<Request> U, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout,
             List<List<Long>> d, List<List<Long>> c, Integer n, Integer Qmax, Long TimeWindows) {
@@ -1308,7 +1317,7 @@ public class Methods {
         }
     }
     
-    public static void twoPointsCrossoverForMOEAD(int reducedDimension, List<Double> nadirPoint, List<List<Integer>> transformationList, List<Double> parameters,
+    public static void twoPointsCrossoverForMOEAD(int reducedDimension, List<List<Double>> nadirPoint, List<List<Integer>> transformationList, List<Double> parameters,
             List<ProblemSolution> Pop_nova, List<ProblemSolution> Pop, Integer TamMax, double Pc, List<ProblemSolution> pais,
             List<Request> listRequests, List<Request> P, Set<Integer> K, List<Request> U, Map<Integer, List<Request>> Pin,
             Map<Integer, List<Request>> Pout, List<List<Long>> d, List<List<Long>> c, Integer n, Integer Qmax, Long TimeWindows) {
@@ -1420,7 +1429,7 @@ public class Methods {
         }
     }
 
-    public static ProblemSolution firstImprovementAlgorithm(int reducedDimension, List<Double> nadirPoint, List<Double> parameters, ProblemSolution s, int movementType, List<Request> listRequests, List<Request> P, Set<Integer> K,
+    public static ProblemSolution firstImprovementAlgorithm(int reducedDimension, List<List<Double>> nadirPoint, List<Double> parameters, ProblemSolution s, int movementType, List<Request> listRequests, List<Request> P, Set<Integer> K,
             List<Request> U, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout,
             List<List<Long>> d, List<List<Long>> c, Integer n, Integer Qmax, Long TimeWindows) {
         ProblemSolution melhor = new ProblemSolution(s);
@@ -1633,7 +1642,7 @@ public class Methods {
         return melhor;
     }
 
-    public static ProblemSolution bestImprovementAlgorithm(int reducedDimension, List<Double> nadirPoint, List<Double> parameters, ProblemSolution s, int tipoMovimento, List<Request> listRequests, List<Request> P, Set<Integer> K,
+    public static ProblemSolution bestImprovementAlgorithm(int reducedDimension, List<List<Double>> nadirPoint, List<Double> parameters, ProblemSolution s, int tipoMovimento, List<Request> listRequests, List<Request> P, Set<Integer> K,
             List<Request> U, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout,
             List<List<Long>> d, List<List<Long>> c, Integer n, Integer Qmax, Long TimeWindows) {
         ProblemSolution melhor = new ProblemSolution(s);
@@ -1843,7 +1852,7 @@ public class Methods {
         return melhor;
     }
 
-    public static ProblemSolution primeiroMelhorVizinhoAleatorio(int reducedDimension, List<Double> nadirPoint, List<Double> parameters, ProblemSolution s, int tipoMovimento, List<Request> listRequests, List<Request> P, Set<Integer> K,
+    public static ProblemSolution primeiroMelhorVizinhoAleatorio(int reducedDimension, List<List<Double>> nadirPoint, List<Double> parameters, ProblemSolution s, int tipoMovimento, List<Request> listRequests, List<Request> P, Set<Integer> K,
             List<Request> U, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout,
             List<List<Long>> d, List<List<Long>> c, Integer n, Integer Qmax, Long TimeWindows) {
         ProblemSolution melhor = new ProblemSolution(s);
@@ -1947,7 +1956,7 @@ public class Methods {
         return melhor;
     }
 
-    public static ProblemSolution vizinhoAleatorio(int reducedDimension, List<Double> nadirPoint, List<Double> parameters, ProblemSolution s, int semente1, int semente2, int tipoMovimento, List<Request> listRequests, List<Request> P, Set<Integer> K,
+    public static ProblemSolution vizinhoAleatorio(int reducedDimension, List<List<Double>> nadirPoint, List<Double> parameters, ProblemSolution s, int semente1, int semente2, int tipoMovimento, List<Request> listRequests, List<Request> P, Set<Integer> K,
             List<Request> U, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout,
             List<List<Long>> d, List<List<Long>> c, Integer n, Integer Qmax, Long TimeWindows) {
         ProblemSolution melhor = new ProblemSolution(s);
@@ -2054,7 +2063,7 @@ public class Methods {
         return melhor;
     }
 
-    public static ProblemSolution buscaTabu(int reducedDimension, List<Double> nadirPoint, List<Double> parameters, ProblemSolution inicial, int tipoEstrategia, int tipoMovimento, List<Request> listRequests, List<Request> P, Set<Integer> K,
+    public static ProblemSolution buscaTabu(int reducedDimension, List<List<Double>> nadirPoint, List<Double> parameters, ProblemSolution inicial, int tipoEstrategia, int tipoMovimento, List<Request> listRequests, List<Request> P, Set<Integer> K,
             List<Request> U, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout, List<List<Long>> d,
             List<List<Long>> c, Integer n, Integer Qmax, Long TimeWindows) {
         ProblemSolution estrela = new ProblemSolution();
@@ -2110,7 +2119,7 @@ public class Methods {
         return estrela;
     }
 
-    public static ProblemSolution melhorVizinhoBT(int reducedDimension, List<Double> nadirPoint, List<Double> parameters, ProblemSolution s, ProblemSolution estrela, int tipoMovimento, int[][] listaTabuTroca, int[][] listaTabuSubstituicao,
+    public static ProblemSolution melhorVizinhoBT(int reducedDimension, List<List<Double>> nadirPoint, List<Double> parameters, ProblemSolution s, ProblemSolution estrela, int tipoMovimento, int[][] listaTabuTroca, int[][] listaTabuSubstituicao,
             int[][] listaTabuMovimento, int iteracao, List<Request> listRequests, List<Request> P, Set<Integer> K,
             List<Request> U, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout, List<List<Long>> d,
             List<List<Long>> c, Integer n, Integer Qmax, Long TimeWindows) {
