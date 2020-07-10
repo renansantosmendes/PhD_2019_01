@@ -68,12 +68,12 @@ public class VRPDRT_Main {
 
         Integer populationSize = 100;
         Integer maximumNumberOfGenerations = 1000;
-        Integer maximumNumberOfExecutions = 3;//21
-        double probabilityOfMutation = 0.02;//0.9
+        Integer maximumNumberOfExecutions = 6;//21
+        double probabilityOfMutation = 0.9;//0.9
         double probabilityOfCrossover = 0.7;
         double neighborhoodSelectionProbability = 0.5;//0.02
 
-        int numberOfEvaluations = 6000;
+        int numberOfEvaluations = 10000;
         int neighborSize = 10;//10//3
         int maximumNumberOfReplacedSolutions = 3;//3//1
         int fileSize = populationSize;
@@ -126,7 +126,6 @@ public class VRPDRT_Main {
         System.out.println("Instance Name = " + instanceName);
         int reducedDimension;
 
-//        reducedDimension = 8;
         reducedDimension = 2;
         System.out.println("Generating random solutions to get min and max values...");
         List<ProblemSolution> solutions = populationGeneratorForWeights(instanceName, neighborSize, numberOfEvaluations, maximumNumberOfReplacedSolutions, reducedDimension, CorrelationType.KENDALL,
@@ -138,13 +137,6 @@ public class VRPDRT_Main {
 
         nadirPoint = getMinMaxForObjectives(solutions);
         System.out.println("Min max founds " + nadirPoint);
-//        solutions = populationGeneratorForWeights(instanceName, neighborSize, numberOfEvaluations, maximumNumberOfReplacedSolutions, reducedDimension, CorrelationType.KENDALL,
-//                transformationList, parameters, nadirPoint, populationSize, maximumNumberOfGenerations, functionType, maximumNumberOfExecutions,
-//                neighborhoodSelectionProbability, probabilityOfMutation, probabilityOfCrossover, requests,
-//                requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
-//                listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows,
-//                currentTime, lastNode);
-        
         
 //        MOEAD(instanceName, neighborSize, numberOfEvaluations, maximumNumberOfReplacedSolutions, reducedDimension, transformationList, parameters,
 //        nadirPoint, populationSize, maximumNumberOfGenerations, functionType, maximumNumberOfExecutions,
@@ -159,7 +151,6 @@ public class VRPDRT_Main {
         requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
         listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows,
         currentTime, lastNode);
-
         
         
 //        solutions.forEach(u -> System.out.println(u));

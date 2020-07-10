@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 public class ProblemSolution implements Comparable<ProblemSolution> {
 
     private List<Double> originalObjectives;
+    private List<Double> originalObjectivesNormalized;
     private Set<Route> setOfRoutes;
     private double objectiveFunction;
     private double totalDistance;//f1
@@ -66,6 +67,7 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
         totalRouteTimeChargeBanlance = -1;
         totalOccupationRate = -1;
         originalObjectives = new ArrayList<>();
+        originalObjectivesNormalized = new ArrayList<>();
 
         totalDistanceNormalized = -1;
         totalDeliveryDelayNormalized = -1;
@@ -109,6 +111,7 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
         totalRouteTimeChargeBanlance = -1;
         totalOccupationRate = -1;
         originalObjectives = new ArrayList<>();
+        originalObjectivesNormalized = new ArrayList<>();
 
         totalDistanceNormalized = -1;
         totalDeliveryDelayNormalized = -1;
@@ -215,6 +218,7 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
         totalRouteTimeChargeBanlance =  solution.getTotalRouteTimeChargeBanlance();
         totalOccupationRate = solution.getTotalOccupationRate();
         originalObjectives.addAll(solution.getOriginalObjectives());
+        originalObjectivesNormalized.addAll(solution.getOriginalObjectivesNormalized());
 
         totalDistanceNormalized = solution.getTotalDistanceNormalized();
         totalDeliveryDelayNormalized = solution.getTotalDeliveryDelayNormalized();
@@ -261,6 +265,7 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
         setDeliveryTimeWindowAntecipation(solution.getDeliveryTimeWindowAntecipation());
         setTotalOccupationRate(solution.getTotalOccupationRate());
         setOriginalObjectives(solution.getOriginalObjectives());
+        setOriginalObjectivesNormalized(solution.getOriginalObjectivesNormalized());
 
         setTotalDistanceNormalized(solution.getTotalDistanceNormalized());
         setTotalDeliveryDelayNormalized(solution.getTotalDeliveryDelayNormalized());
@@ -328,7 +333,22 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
         this.originalObjectives.add((double) this.totalOccupationRate);//f9
 
     }
+    
+    public void setObjectivesNormalizedList() {
+        //alterei esse método aqui pra ver se estava com problema
+        this.originalObjectivesNormalized.clear();
+        this.originalObjectivesNormalized.add((double) this.totalDistanceNormalized);//f1
+        this.originalObjectivesNormalized.add((double) this.totalDeliveryDelayNormalized);//f2
+        this.originalObjectivesNormalized.add((double) this.totalRouteTimeChargeBanlanceNormalized);//f3
+        this.originalObjectivesNormalized.add((double) this.numberOfVehiclesNormalized);//f5
+        this.originalObjectivesNormalized.add((double) this.totalTravelTimeNormalized);//f6
+        this.originalObjectivesNormalized.add((double) this.totalWaintingTimeNormalized);//f7
+        this.originalObjectivesNormalized.add((double) this.deliveryTimeWindowAntecipationNormalized);//f8
+        this.originalObjectivesNormalized.add((double) this.totalOccupationRateNormalized);//f9
 
+    }
+
+    
     public void setObjectivesList(Parameters parameters) {
         //alterei esse método aqui pra ver se estava com problema
         this.originalObjectives.clear();
@@ -593,7 +613,11 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
     public List<Double> getOriginalObjectives() {
         return originalObjectives;
     }
-
+    
+    public List<Double> getOriginalObjectivesNormalized() {
+        return originalObjectivesNormalized;
+    }
+    
     public void setTempoExtraTotal(int tempo) {
         this.tempoExtraTotal = tempo;
     }
@@ -671,6 +695,10 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
         this.originalObjectives = originalObjectives;
     }
 
+    public void setOriginalObjectivesNormalized(List<Double> originalObjectivesNormalized) {
+        this.originalObjectivesNormalized = originalObjectivesNormalized;
+    }
+    
     public List<Integer> getLinkedRouteList() {
         return linkedRouteList;
     }

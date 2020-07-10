@@ -1009,7 +1009,7 @@ public class Algorithms {
         return solution;
     }
 
-    private static void evaluateSolution(ProblemSolution solution, List<List<Double>> nadirPoint, List<List<Long>> distanceBetweenNodes,
+    public static void evaluateSolution(ProblemSolution solution, List<List<Double>> nadirPoint, List<List<Long>> distanceBetweenNodes,
             Integer vehicleCapacity, List<Request> listOfRequests) {
         solution.setTotalDistance(FO1(solution, distanceBetweenNodes));
         solution.setTotalDeliveryDelay(FO2(solution));
@@ -1032,6 +1032,8 @@ public class Algorithms {
         solution.setTotalOccupationRateNormalized((double)(FO9(solution, vehicleCapacity)  - nadirPoint.get(0).get(7))/(nadirPoint.get(1).get(7) - nadirPoint.get(0).get(7)));
         
         solution.setObjectivesList();
+        solution.setObjectivesNormalizedList();
+        
         Algorithms.evaluateAggregatedObjectiveFunctions(solution, 1, 1, 1, 1, 1);
         solution.setObjectiveFunction(FuncaoDeAvaliacao(solution, listOfRequests, distanceBetweenNodes));
     }
@@ -2396,7 +2398,6 @@ public class Algorithms {
         S.setSolution(rebuildSolutionForOnlineAlgorithms(reducedDimension, nadirPoint, transformationList,
                 parameters, original, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
         s.setSolution(S);
-
         return s;
     }
 
