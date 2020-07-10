@@ -383,6 +383,7 @@ public class HierarchicalCluster {
         while (numberOfColumns > this.numberOfClusters) {
             List<Integer> indexes = new ArrayList<>();
             indexes.addAll(findMinDissimilarity(m.getRowDimension(), numberOfColumns));
+//            System.out.println("indexes " + indexes);
             m = reduceMatrix(m, indexes.get(0), indexes.get(1));
 
             copySquareMatrix(this.similarity, calculateSilimarity(m.getArray()), numberOfColumns);
@@ -429,7 +430,7 @@ public class HierarchicalCluster {
             columns.forEach(list -> list.sort(Comparator.naturalOrder()));
             this.transformationList = generateClusterMatrix(columns);
         } catch (Exception e) {
-//            System.out.println("error while reducing matrix, using last cluster...");
+            System.out.println("error while reducing matrix, using last cluster...");
             this.transformationList = transformationList;
         }
         return this;

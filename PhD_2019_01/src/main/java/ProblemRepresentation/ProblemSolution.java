@@ -12,14 +12,14 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
     private List<Double> originalObjectives;
     private Set<Route> setOfRoutes;
     private double objectiveFunction;
-    private long totalDistance;//f1
-    private long totalDeliveryDelay;//f2
-    private int numberOfNonAttendedRequests;//f4
-    private int numberOfVehicles;//f5
-    private long totalTravelTime;//f6
-    private long totalWaintingTime;//f7
-    private long deliveryTimeWindowAntecipation;//f8
-    private long totalRouteTimeChargeBanlance;//f3
+    private double totalDistance;//f1
+    private double totalDeliveryDelay;//f2
+    private double numberOfNonAttendedRequests;//f4
+    private double numberOfVehicles;//f5
+    private double totalTravelTime;//f6
+    private double totalWaintingTime;//f7
+    private double deliveryTimeWindowAntecipation;//f8
+    private double totalRouteTimeChargeBanlance;//f3
     private double totalOccupationRate;//f9
 
     private double totalDistanceNormalized;//f1
@@ -138,9 +138,9 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
         logger = "";
     }
 
-    public ProblemSolution(int numberOfAggregatedObjectives, List<Double> objectives, Set<Route> setOfRoutes, double objectiveFunction, long totalDistance,
-            long totalDeliveryDelay, int numberOfNonAttendedRequests, int numberOfVehicles, long totalTravelTime,
-            long totalWaintingTime, long deliveryTimeWindowAntecipation, long totalRouteTimeChargeBanlance,
+    public ProblemSolution(int numberOfAggregatedObjectives, List<Double> objectives, Set<Route> setOfRoutes, double objectiveFunction, double totalDistance,
+            double totalDeliveryDelay, double numberOfNonAttendedRequests, double numberOfVehicles, double totalTravelTime,
+            double totalWaintingTime, double deliveryTimeWindowAntecipation, double totalRouteTimeChargeBanlance,
             double totalOccupationRate, double totalDistanceNormalized, double totalDeliveryDelayNormalized,
             double numberOfNonAttendedRequestsNormalized, double numberOfVehiclesNormalized, double totalTravelTimeNormalized,
             double totalWaintingTimeNormalized, double deliveryTimeWindowAntecipationNormalized,
@@ -209,10 +209,10 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
         totalDeliveryDelay = solution.getTotalDeliveryDelay();
         numberOfNonAttendedRequests = solution.getNumberOfNonAttendedRequests();
         numberOfVehicles = solution.getNumberOfVehicles();
-        totalTravelTime = solution.getTotalTravelTime();
-        totalWaintingTime = solution.getTotalWaintingTime();
-        deliveryTimeWindowAntecipation = solution.getDeliveryTimeWindowAntecipation();
-        totalRouteTimeChargeBanlance = solution.getTotalRouteTimeChargeBanlance();
+        totalTravelTime =  solution.getTotalTravelTime();
+        totalWaintingTime =  solution.getTotalWaintingTime();
+        deliveryTimeWindowAntecipation =  solution.getDeliveryTimeWindowAntecipation();
+        totalRouteTimeChargeBanlance =  solution.getTotalRouteTimeChargeBanlance();
         totalOccupationRate = solution.getTotalOccupationRate();
         originalObjectives.addAll(solution.getOriginalObjectives());
 
@@ -482,35 +482,35 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
         return this.objectiveFunction;
     }
 
-    public long getTotalDistance() {
+    public double getTotalDistance() {
         return totalDistance;
     }
 
-    public long getTotalDeliveryDelay() {
+    public double getTotalDeliveryDelay() {
         return totalDeliveryDelay;
     }
 
-    public int getNumberOfNonAttendedRequests() {
+    public double getNumberOfNonAttendedRequests() {
         return numberOfNonAttendedRequests;
     }
 
-    public int getNumberOfVehicles() {
+    public double getNumberOfVehicles() {
         return numberOfVehicles;
     }
 
-    public long getTotalTravelTime() {
+    public double getTotalTravelTime() {
         return totalTravelTime;
     }
 
-    public long getTotalWaintingTime() {
+    public double getTotalWaintingTime() {
         return totalWaintingTime;
     }
 
-    public long getDeliveryTimeWindowAntecipation() {
+    public double getDeliveryTimeWindowAntecipation() {
         return deliveryTimeWindowAntecipation;
     }
 
-    public long getTotalRouteTimeChargeBanlance() {
+    public double getTotalRouteTimeChargeBanlance() {
         return totalRouteTimeChargeBanlance;
     }
 
@@ -602,35 +602,35 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
         this.objectiveFunction = objectiveFunction;
     }
 
-    public void setTotalDistance(long totalDistance) {
+    public void setTotalDistance(double totalDistance) {
         this.totalDistance = totalDistance;
     }
 
-    public void setTotalDeliveryDelay(long totalDeliveryDelay) {
+    public void setTotalDeliveryDelay(double totalDeliveryDelay) {
         this.totalDeliveryDelay = totalDeliveryDelay;
     }
 
-    public void setNumberOfNonAttendedRequests(int numberOfNonAttendedRequests) {
+    public void setNumberOfNonAttendedRequests(double numberOfNonAttendedRequests) {
         this.numberOfNonAttendedRequests = numberOfNonAttendedRequests;
     }
 
-    public void setNumberOfVehicles(int numberOfVehicles) {
+    public void setNumberOfVehicles(double numberOfVehicles) {
         this.numberOfVehicles = numberOfVehicles;
     }
 
-    public void setTotalTravelTime(long totalTravelTime) {
+    public void setTotalTravelTime(double totalTravelTime) {
         this.totalTravelTime = totalTravelTime;
     }
 
-    public void setTotalWaintingTime(long totalWaintingTime) {
+    public void setTotalWaintingTime(double totalWaintingTime) {
         this.totalWaintingTime = totalWaintingTime;
     }
 
-    public void setDeliveryTimeWindowAntecipation(long deliveryTimeWindowAntecipation) {
+    public void setDeliveryTimeWindowAntecipation(double deliveryTimeWindowAntecipation) {
         this.deliveryTimeWindowAntecipation = deliveryTimeWindowAntecipation;
     }
 
-    public void setTotalRouteTimeChargeBanlance(long totalRouteTimeChargeBanlance) {
+    public void setTotalRouteTimeChargeBanlance(double totalRouteTimeChargeBanlance) {
         this.totalRouteTimeChargeBanlance = totalRouteTimeChargeBanlance;
     }
 
@@ -820,7 +820,15 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
                 + deliveryTimeWindowAntecipation + "," + totalOccupationRate + "\t";
         return stringWithObjectives;
     }
-
+    
+    public String getStringWithNormalizedOriginalObjectivesForCsvFile() {
+        String stringWithObjectives = totalDistanceNormalized + ","
+                + totalDeliveryDelayNormalized + "," + totalRouteTimeChargeBanlanceNormalized + ","
+                + numberOfVehiclesNormalized + "," + totalTravelTimeNormalized + "," + totalWaintingTimeNormalized + ","
+                + deliveryTimeWindowAntecipationNormalized + "," + totalOccupationRateNormalized + "\t";
+        return stringWithObjectives;
+    }
+    
     public double[] getOriginalObjectivesArray() {
         int size = originalObjectives.size();
         double[] array = new double[size];
@@ -837,8 +845,15 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
                 + totalDeliveryDelay + "\t" + totalRouteTimeChargeBanlance + "\t"
                 + numberOfVehicles + "\t" + totalWaintingTime + "\t" + totalTravelTime + "\t" + deliveryTimeWindowAntecipation
                 + "\t" + totalOccupationRate + "\t";
+        
+        String sNormalized = totalDistanceNormalized + "\t"
+                + totalDeliveryDelayNormalized + "\t" + totalRouteTimeChargeBanlanceNormalized + "\t"
+                + numberOfVehiclesNormalized + "\t" + totalWaintingTimeNormalized + "\t" + totalTravelTimeNormalized + 
+                "\t" + deliveryTimeWindowAntecipation  + "\t" + totalOccupationRateNormalized+ "\t";
 
-        s = getListOfAggregatedObjectives() + "\t" + getStringWithOriginalObjectivesForCsvFile() + " " + this.getAttendanceRequestSize() + " ";
+        
+        s = getListOfAggregatedObjectives() + "\t" + getStringWithOriginalObjectivesForCsvFile() + " " + 
+                getStringWithNormalizedOriginalObjectivesForCsvFile() + " " + this.getAttendanceRequestSize() + " ";
         int indice = 1;
         String listaAtendimento = " ";
         for (Route r : setOfRoutes) {

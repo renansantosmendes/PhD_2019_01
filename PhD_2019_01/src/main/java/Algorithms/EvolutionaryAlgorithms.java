@@ -16,6 +16,8 @@ import java.util.Comparator;
 import RandomNumberGenerator.UniformRandomGenerator;
 import ReductionTechniques.CorrelationType;
 import ReductionTechniques.HierarchicalCluster;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -25,9 +27,11 @@ public class EvolutionaryAlgorithms {
 
     private static PrintStream currentExecutionOriginalParetoStream;
     private static PrintStream currentExecutionReducedParetoStream;
+    private static PrintStream currentExecutionOriginalParetoNormalizedStream;
     private static PrintStream initialPopulationStream;
     private static PrintStream initialPopulationReducedStream;
     private static PrintStream combinedParetoStream;
+    private static PrintStream combinedParetoNormalizedStream;
     private static PrintStream combinedParetoReducedStream;
     private static PrintStream fullCombinedParetoStream;
     private static PrintStream executionTimesStream;
@@ -197,6 +201,8 @@ public class EvolutionaryAlgorithms {
         try {
             currentExecutionOriginalParetoStream = new PrintStream(folderName + "/" + fileName.toLowerCase()
                     + "-original-pareto-execution-" + currentExecutionNumber + ".txt");
+            currentExecutionOriginalParetoNormalizedStream = new PrintStream(folderName + "/" + fileName.toLowerCase()
+                    + "-original-pareto-execution-" + currentExecutionNumber + ".txt");
             currentExecutionReducedParetoStream = new PrintStream(folderName + "/" + fileName.toLowerCase()
                     + "-reduced-pareto-execution-" + currentExecutionNumber + ".txt");
         } catch (FileNotFoundException ex) {
@@ -220,10 +226,6 @@ public class EvolutionaryAlgorithms {
             System.out.println("Folder already exists!");
         }
         try {
-            initialPopulationStream = new PrintStream(folderName + "/"
-                    + fileName.toLowerCase() + "-initial_population.csv");;
-            initialPopulationReducedStream = new PrintStream(folderName + "/"
-                    + fileName.toLowerCase() + "-initial_population_reduced.csv");;
             combinedParetoReducedStream = new PrintStream(folderName + "/"
                     + fileName.toLowerCase() + "-combined_pareto_reduced.csv");
             combinedParetoStream = new PrintStream(folderName + "/"
@@ -238,6 +240,19 @@ public class EvolutionaryAlgorithms {
     }
 
     public static void saveInitialPopulation(List<ProblemSolution> solutions) {
+        solutions.forEach(u -> initialPopulationStream.print(u + "\n"));
+        solutions.forEach(u -> initialPopulationReducedStream.print(u.getListOfAggregatedObjectives() + "\n"));
+    }
+
+    public static void saveInitialPopulation(List<ProblemSolution> solutions, int execution) {
+        try {
+            initialPopulationStream = new PrintStream(folderName + "/"
+                    + fileName.toLowerCase() + "-initial_population_" + execution + ".csv");
+            initialPopulationReducedStream = new PrintStream(folderName + "/"
+                    + fileName.toLowerCase() + "-initial_population_" + execution + "_reduced.csv");
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+        }
         solutions.forEach(u -> initialPopulationStream.print(u + "\n"));
         solutions.forEach(u -> initialPopulationReducedStream.print(u.getListOfAggregatedObjectives() + "\n"));
     }
@@ -257,6 +272,7 @@ public class EvolutionaryAlgorithms {
         List<ProblemSolution> nonDominatedSolutions = new ArrayList<>();
         genericDominanceAlgorithm(combinedPareto, nonDominatedSolutions);
         for (ProblemSolution solution : nonDominatedSolutions) {
+            combinedParetoNormalizedStream.print(solution.getStringWithNormalizedOriginalObjectivesForCsvFile() + "\n");
             combinedParetoReducedStream.print(solution.getListOfAggregatedObjectives() + "\n");
             combinedParetoStream.print(solution.getStringWithOriginalObjectivesForCsvFile() + "\n");
             fullCombinedParetoStream.print(solution + "\n");
@@ -268,7 +284,7 @@ public class EvolutionaryAlgorithms {
     }
 
     public static void MOEAD(String instanceName, int neighborSize, int maxEvaluations, int maximumNumberOfReplacedSolutions,
-            int reducedDimension, List<List<Integer>> transformationList, List<Double> parameters, List<Double> nadirPoint, Integer populationSize,
+            int reducedDimension, List<List<Integer>> transformationList, List<Double> parameters, List<List<Double>> nadirPoint, Integer populationSize,
             Integer maximumNumberOfGenerations, EvolutionaryAlgorithms.FunctionType functionType,
             Integer maximumNumberOfExecutions, double neighborhoodSelectionProbability, double probabilityOfMutation,
             double probabilityOfCrossover, List<Request> requests, Map<Integer, List<Request>> requestsWhichBoardsInNode,
@@ -291,7 +307,7 @@ public class EvolutionaryAlgorithms {
             List<ProblemSolution> initialPopulation = new ArrayList<>();
             List<ProblemSolution> externalPopulation = new ArrayList<>();
 
-            initializeRandomPopulation(parameters, reducedDimension, initialPopulation, populationSize, requests,
+            initializeRandomPopulation(nadirPoint, parameters, reducedDimension, initialPopulation, populationSize, requests,
                     requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                     requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
 
@@ -301,7 +317,7 @@ public class EvolutionaryAlgorithms {
             hc.reduce();
             transformationList = generateTransformationList();//hc.getTransfomationList();//
 
-            initializeRandomPopulationForMOEAD(transformationList, parameters, reducedDimension, population, populationSize, requests,
+            initializeRandomPopulationForMOEAD(nadirPoint, transformationList, parameters, reducedDimension, population, populationSize, requests,
                     requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                     requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
             saveInitialPopulation(population);
@@ -328,14 +344,14 @@ public class EvolutionaryAlgorithms {
 
                     int maximumSize = parents.size();
 
-                    twoPointsCrossoverForMOEAD(reducedDimension, transformationList, parameters, children, population, maximumSize, probabilityOfCrossover, parents, requests,
+                    twoPointsCrossoverForMOEAD(reducedDimension, nadirPoint, transformationList, parameters, children, population, maximumSize, probabilityOfCrossover, parents, requests,
                             requestList, setOfVehicles, listOfNonAttendedRequests, requestsWhichBoardsInNode,
                             requestsWhichLeavesInNode, timeBetweenNodes, distanceBetweenNodes, numberOfNodes,
                             vehicleCapacity, timeWindows);
 
                     ProblemSolution child = children.get(0);
 
-                    mutation2ShuffleForMOEAD(reducedDimension, transformationList, parameters, child, probabilityOfMutation, requests, requestsWhichBoardsInNode,
+                    mutation2ShuffleForMOEAD(reducedDimension, nadirPoint, transformationList, parameters, child, probabilityOfMutation, requests, requestsWhichBoardsInNode,
                             requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                             requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
 
@@ -465,7 +481,7 @@ public class EvolutionaryAlgorithms {
 //        line3.add(1);
 //        line3.add(0);
 //        line3.add(0);
-        
+
 //        line1.clear();
 //        line1.add(1);
 //        line1.add(1);
@@ -475,16 +491,14 @@ public class EvolutionaryAlgorithms {
 //        line1.add(1);
 //        line1.add(1);
 //        line1.add(1);
-        
         //artigo
         transformationList.add(line1);
         transformationList.add(line2);
-        
+
         //testes do doutorado
 //        transformationList.add(line1);
 //        transformationList.add(line1);
 //        transformationList.add(line1);
-
 //        transformationList.add(line1);
 //        transformationList.add(line2);
 //        transformationList.add(line3);
@@ -496,7 +510,8 @@ public class EvolutionaryAlgorithms {
     }
 
     public static void onMOEAD(String instanceName, int neighborSize, int maxEvaluations, int maximumNumberOfReplacedSolutions,
-            int reducedDimension, CorrelationType correlation, List<List<Integer>> transformationList, List<Double> parameters, List<Double> nadirPoint, Integer populationSize,
+            int reducedDimension, CorrelationType correlation, List<List<Integer>> transformationList, List<Double> parameters,
+            List<List<Double>> nadirPoint, Integer populationSize,
             Integer maximumNumberOfGenerations, EvolutionaryAlgorithms.FunctionType functionType,
             Integer maximumNumberOfExecutions, double neighborhoodSelectionProbability, double probabilityOfMutation,
             double probabilityOfCrossover, List<Request> requests, Map<Integer, List<Request>> requestsWhichBoardsInNode,
@@ -519,21 +534,22 @@ public class EvolutionaryAlgorithms {
             List<ProblemSolution> initialPopulation = new ArrayList<>();
             List<ProblemSolution> externalPopulation = new ArrayList<>();
 
-            initializeRandomPopulation(parameters, reducedDimension, initialPopulation, populationSize, requests,
+            initializeRandomPopulation(nadirPoint, parameters, reducedDimension, initialPopulation, populationSize, requests,
                     requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                     requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
-
+            population.forEach(u -> System.out.println(u));
             int numberOfClusters = reducedDimension;
             HierarchicalCluster hc = new HierarchicalCluster(getMatrixOfObjetives(initialPopulation, parameters),
                     numberOfClusters, correlation);
             hc.reduce();
             transformationList = hc.getTransfomationList();
 
-            initializeRandomPopulationForMOEAD(transformationList, parameters, reducedDimension, population, populationSize, requests,
+            initializeRandomPopulationForMaxMin(currentExecutionNumber, nadirPoint, transformationList, parameters, reducedDimension, population, populationSize, requests,
                     requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                     requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
-            saveInitialPopulation(population);
 
+            saveInitialPopulation(population, currentExecutionNumber);
+            population.forEach(u -> System.out.println(u));
             int numberOfObjectives = reducedDimension;
             int[][] neighborhood = new int[populationSize][neighborSize];
             double[][] lambda = initializeUniformWeight(numberOfObjectives, populationSize);
@@ -547,10 +563,9 @@ public class EvolutionaryAlgorithms {
                 MOEADUtils.randomPermutation(permutation, populationSize);
                 hc = new HierarchicalCluster(getMatrixOfObjetives(population, parameters),
                         numberOfClusters, correlation);
-                //linha alterada para testar
                 hc.reduce(transformationList);
-//                System.out.println("current evaluation " + evaluations);
-//                hc.getTransfomationList().forEach(u -> System.out.println(u));
+                System.out.println("current evaluation " + evaluations);
+                hc.getTransfomationList().forEach(u -> System.out.println(u));
                 transformationList = hc.getTransfomationList();
 
                 for (int i = 0; i < population.size(); i++) {
@@ -561,20 +576,20 @@ public class EvolutionaryAlgorithms {
 
                     int maximumSize = parents.size();
 
-                    twoPointsCrossoverForMOEAD(reducedDimension, transformationList, parameters, children, population,
+                    twoPointsCrossoverForMOEAD(reducedDimension, nadirPoint, transformationList, parameters, children, population,
                             maximumSize, probabilityOfCrossover, parents, requests, requestList, setOfVehicles, listOfNonAttendedRequests,
                             requestsWhichBoardsInNode, requestsWhichLeavesInNode, timeBetweenNodes, distanceBetweenNodes, numberOfNodes,
                             vehicleCapacity, timeWindows);
 
                     ProblemSolution child = children.get(0);
 
-                    mutation2ShuffleForMOEAD(reducedDimension, transformationList, parameters, child, probabilityOfMutation, requests,
+                    mutation2ShuffleForMOEAD(reducedDimension, nadirPoint, transformationList, parameters, child, probabilityOfMutation, requests,
                             requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
                             listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows,
                             currentTime, lastNode);
-                    
+
                     evaluations++;
-                    
+
                     updateIdealPoint(idealPoint, child, numberOfObjectives);
                     updateNeighborhood(child, neighborhood, population, subProblemId, neighborType, lambda,
                             idealPoint, maximumNumberOfReplacedSolutions, numberOfObjectives, functionType);
@@ -593,13 +608,84 @@ public class EvolutionaryAlgorithms {
             } while (evaluations < maxEvaluations);
             combinedPareto.addAll(externalPopulation);
             long elapsed = System.currentTimeMillis() - start;
-//            externalPopulation.forEach(u -> System.out.println(u));
+            externalPopulation.forEach(u -> System.out.println(u));
             saveExecutionTime(elapsed - elapsedSaveTime);
             saveNonDominatedSolutionsFromCurrentExecution(population);
-
         }
-
         saveCombinedPareto();
+    }
+
+    public static List<ProblemSolution> populationGeneratorForWeights(String instanceName, int neighborSize, int maxEvaluations, int maximumNumberOfReplacedSolutions,
+            int reducedDimension, CorrelationType correlation, List<List<Integer>> transformationList, List<Double> parameters,
+            List<List<Double>> nadirPoint, Integer populationSize,
+            Integer maximumNumberOfGenerations, EvolutionaryAlgorithms.FunctionType functionType,
+            Integer maximumNumberOfExecutions, double neighborhoodSelectionProbability, double probabilityOfMutation,
+            double probabilityOfCrossover, List<Request> requests, Map<Integer, List<Request>> requestsWhichBoardsInNode,
+            Map<Integer, List<Request>> requestsWhichLeavesInNode, Integer numberOfNodes, Integer vehicleCapacity,
+            Set<Integer> setOfVehicles, List<Request> listOfNonAttendedRequests, List<Request> requestList,
+            List<Integer> loadIndexList, List<List<Long>> timeBetweenNodes, List<List<Long>> distanceBetweenNodes,
+            Long timeWindows, Long currentTime, Integer lastNode) throws IOException {
+
+        List<ProblemSolution> fullPopulation = new ArrayList<>();
+        for (currentExecutionNumber = 0; currentExecutionNumber < maximumNumberOfExecutions; currentExecutionNumber++) {
+            System.out.println("Current random population = " + currentExecutionNumber);
+            List<ProblemSolution> population = new ArrayList<>();
+            List<ProblemSolution> initialPopulation = new ArrayList<>();
+
+            initializeRandomPopulation(nadirPoint, parameters, reducedDimension, initialPopulation, populationSize, requests,
+                    requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
+                    requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
+            int numberOfClusters = reducedDimension;
+            HierarchicalCluster hc = new HierarchicalCluster(getMatrixOfObjetives(initialPopulation, parameters),
+                    numberOfClusters, correlation);
+            hc.reduce();
+            transformationList = hc.getTransfomationList();
+
+            initializeRandomPopulationForMaxMin(currentExecutionNumber, nadirPoint, transformationList, parameters, reducedDimension, population, populationSize, requests,
+                    requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
+                    requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
+
+            fullPopulation.addAll(population);
+        }
+        return fullPopulation;
+    }
+
+    public static List<List<Double>> getMinMaxForObjectives(List<ProblemSolution> solutions) {
+        List<Double> maxObjectives = initializeMaxValues();
+        List<Double> minObjectives = initializeMinValues();
+
+        for (ProblemSolution solution : solutions) {
+            for (int i = 0; i < solution.getOriginalObjectives().size(); i++) {
+
+                if (solution.getOriginalObjectives().get(i) > maxObjectives.get(i)) {
+                    maxObjectives.set(i, solution.getOriginalObjectives().get(i));
+                }
+
+                if (solution.getOriginalObjectives().get(i) < minObjectives.get(i)) {
+                    minObjectives.set(i, solution.getOriginalObjectives().get(i));
+                }
+            }
+        }
+        List<List<Double>> maxMin = new ArrayList<>();
+        maxMin.add(minObjectives);
+        maxMin.add(maxObjectives);
+        return maxMin;
+    }
+
+    public static List<Double> initializeMaxValues() {
+        List<Double> maxValues = new ArrayList<>();
+        for (int i = 0; i < 8; i++) {
+            maxValues.add(-1.0);
+        }
+        return maxValues;
+    }
+
+    public static List<Double> initializeMinValues() {
+        List<Double> minValues = new ArrayList<>();
+        for (int i = 0; i < 8; i++) {
+            minValues.add(1000000000000.0);
+        }
+        return minValues;
     }
 
     public static List<List<Integer>> createTransformationList(int reducedDimension, int numberOfObjectives) {
@@ -675,7 +761,8 @@ public class EvolutionaryAlgorithms {
         return listOfSolutions;
     }
 
-    public static double NSGAII(String instanceName, int reducedDimension, List<Double> parameters, List<Double> nadirPoint, Integer populationSize, Integer maximumNumberOfGenerations,
+    public static double NSGAII(String instanceName, int reducedDimension, List<Double> parameters, List<List<Double>> nadirPoint,
+            Integer populationSize, Integer maximumNumberOfGenerations,
             Integer maximumNumberOfExecutions, double probabilityOfMutation, double probabilityOfCrossover,
             List<Request> requests, Map<Integer, List<Request>> requestsWhichBoardsInNode,
             Map<Integer, List<Request>> requestsWhichLeavesInNode, Integer numberOfNodes, Integer vehicleCapacity,
@@ -722,7 +809,7 @@ public class EvolutionaryAlgorithms {
 //                inicializePopulation(population, populationSize, requests,
 //                        requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
 //                        requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
-                initializeRandomPopulation(parameters, reducedDimension, population, populationSize, requests,
+                initializeRandomPopulation(nadirPoint, parameters, reducedDimension, population, populationSize, requests,
                         requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                         requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
                 if (executionCounter == 0) {
@@ -746,12 +833,12 @@ public class EvolutionaryAlgorithms {
 
                 rouletteWheelSelectionAlgorithm(parents, offspring, maximumSize);
 
-                twoPointsCrossover(reducedDimension, parameters, offspring, population, maximumSize, probabilityOfCrossover, parents, requests,
+                twoPointsCrossover(reducedDimension, nadirPoint, parameters, offspring, population, maximumSize, probabilityOfCrossover, parents, requests,
                         requestList, setOfVehicles, listOfNonAttendedRequests, requestsWhichBoardsInNode,
                         requestsWhichLeavesInNode, timeBetweenNodes, distanceBetweenNodes, numberOfNodes,
                         vehicleCapacity, timeWindows);
 
-                mutation2Shuffle(reducedDimension, parameters, offspring, probabilityOfMutation, requests, requestsWhichBoardsInNode,
+                mutation2Shuffle(reducedDimension, nadirPoint, parameters, offspring, probabilityOfMutation, requests, requestsWhichBoardsInNode,
                         requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                         requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
 
@@ -801,8 +888,8 @@ public class EvolutionaryAlgorithms {
                     offspring.addAll(population);
                     rouletteWheelSelectionAlgorithm(parents, offspring, maximumSize);
 
-                    twoPointsCrossover(reducedDimension, parameters, offspring, population, maximumSize, probabilityOfCrossover, parents, requests, requestList, setOfVehicles, listOfNonAttendedRequests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, timeBetweenNodes, distanceBetweenNodes, numberOfNodes, vehicleCapacity, timeWindows);
-                    mutation2Shuffle(reducedDimension, parameters, offspring, probabilityOfMutation, requests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
+                    twoPointsCrossover(reducedDimension, nadirPoint, parameters, offspring, population, maximumSize, probabilityOfCrossover, parents, requests, requestList, setOfVehicles, listOfNonAttendedRequests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, timeBetweenNodes, distanceBetweenNodes, numberOfNodes, vehicleCapacity, timeWindows);
+                    mutation2Shuffle(reducedDimension, nadirPoint, parameters, offspring, probabilityOfMutation, requests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
                     //normalizeObjectiveFunctionsValues(offspring);
                     normalizeAggregatedObjectiveFunctions(offspring);
 
@@ -868,7 +955,8 @@ public class EvolutionaryAlgorithms {
         return hypervolume;
     }
 
-    public static double CL_NSGAII(String instanceName, int reducedDimension, List<Double> parameters, List<Double> nadirPoint, Integer populationSize, Integer maximumNumberOfGenerations,
+    public static double CL_NSGAII(String instanceName, int reducedDimension, List<Double> parameters, List<List<Double>> nadirPoint,
+            Integer populationSize, Integer maximumNumberOfGenerations,
             Integer maximumNumberOfExecutions, double probabilityOfMutation, double probabilityOfCrossover,
             List<Request> requests, Map<Integer, List<Request>> requestsWhichBoardsInNode,
             Map<Integer, List<Request>> requestsWhichLeavesInNode, Integer numberOfNodes, Integer vehicleCapacity,
@@ -916,7 +1004,7 @@ public class EvolutionaryAlgorithms {
 //                inicializePopulation(population, populationSize, requests,
 //                        requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
 //                        requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
-                initializeRandomPopulation(parameters, reducedDimension, population, populationSize, requests,
+                initializeRandomPopulation(nadirPoint, parameters, reducedDimension, population, populationSize, requests,
                         requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                         requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
 
@@ -940,12 +1028,12 @@ public class EvolutionaryAlgorithms {
 
                 rouletteWheelSelectionAlgorithm(parents, offspring, maximumSize);
 
-                twoPointsCrossover(reducedDimension, parameters, offspring, population, maximumSize, probabilityOfCrossover, parents, requests,
+                twoPointsCrossover(reducedDimension, nadirPoint, parameters, offspring, population, maximumSize, probabilityOfCrossover, parents, requests,
                         requestList, setOfVehicles, listOfNonAttendedRequests, requestsWhichBoardsInNode,
                         requestsWhichLeavesInNode, timeBetweenNodes, distanceBetweenNodes, numberOfNodes,
                         vehicleCapacity, timeWindows);
 
-                mutation2Shuffle(reducedDimension, parameters, offspring, probabilityOfMutation, requests, requestsWhichBoardsInNode,
+                mutation2Shuffle(reducedDimension, nadirPoint, parameters, offspring, probabilityOfMutation, requests, requestsWhichBoardsInNode,
                         requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                         requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
 
@@ -1002,8 +1090,8 @@ public class EvolutionaryAlgorithms {
                     offspring.addAll(population);
                     rouletteWheelSelectionAlgorithm(parents, offspring, maximumSize);
 
-                    twoPointsCrossover(reducedDimension, parameters, offspring, population, maximumSize, probabilityOfCrossover, parents, requests, requestList, setOfVehicles, listOfNonAttendedRequests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, timeBetweenNodes, distanceBetweenNodes, numberOfNodes, vehicleCapacity, timeWindows);
-                    mutation2Shuffle(reducedDimension, parameters, offspring, probabilityOfMutation, requests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
+                    twoPointsCrossover(reducedDimension, nadirPoint, parameters, offspring, population, maximumSize, probabilityOfCrossover, parents, requests, requestList, setOfVehicles, listOfNonAttendedRequests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, timeBetweenNodes, distanceBetweenNodes, numberOfNodes, vehicleCapacity, timeWindows);
+                    mutation2Shuffle(reducedDimension, nadirPoint, parameters, offspring, probabilityOfMutation, requests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
                     //normalizeObjectiveFunctionsValues(offspring);
                     normalizeAggregatedObjectiveFunctions(offspring);
 
@@ -1067,7 +1155,7 @@ public class EvolutionaryAlgorithms {
         return hypervolume;
     }
 
-    public static double genericNSGAII(String instanceName, int reducedDimension, List<Double> parameters, List<Double> nadirPoint, Integer populationSize, Integer maximumNumberOfGenerations,
+    public static double genericNSGAII(String instanceName, int reducedDimension, List<Double> parameters, List<List<Double>> nadirPoint, Integer populationSize, Integer maximumNumberOfGenerations,
             Integer maximumNumberOfExecutions, double probabilityOfMutation, double probabilityOfCrossover,
             List<Request> requests, Map<Integer, List<Request>> requestsWhichBoardsInNode,
             Map<Integer, List<Request>> requestsWhichLeavesInNode, Integer numberOfNodes, Integer vehicleCapacity,
@@ -1115,7 +1203,7 @@ public class EvolutionaryAlgorithms {
 //                inicializePopulation(population, populationSize, requests,
 //                        requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
 //                        requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
-                initializeRandomPopulation(parameters, reducedDimension, population, populationSize, requests,
+                initializeRandomPopulation(nadirPoint, parameters, reducedDimension, population, populationSize, requests,
                         requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                         requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
 
@@ -1139,12 +1227,12 @@ public class EvolutionaryAlgorithms {
 
                 rouletteWheelSelectionAlgorithm(parents, offspring, maximumSize);
 
-                twoPointsCrossover(reducedDimension, parameters, offspring, population, maximumSize, probabilityOfCrossover, parents, requests,
+                twoPointsCrossover(reducedDimension, nadirPoint, parameters, offspring, population, maximumSize, probabilityOfCrossover, parents, requests,
                         requestList, setOfVehicles, listOfNonAttendedRequests, requestsWhichBoardsInNode,
                         requestsWhichLeavesInNode, timeBetweenNodes, distanceBetweenNodes, numberOfNodes,
                         vehicleCapacity, timeWindows);
 
-                mutation2Shuffle(reducedDimension, parameters, offspring, probabilityOfMutation, requests, requestsWhichBoardsInNode,
+                mutation2Shuffle(reducedDimension, nadirPoint, parameters, offspring, probabilityOfMutation, requests, requestsWhichBoardsInNode,
                         requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                         requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
 
@@ -1201,8 +1289,8 @@ public class EvolutionaryAlgorithms {
                     offspring.addAll(population);
                     rouletteWheelSelectionAlgorithm(parents, offspring, maximumSize);
 
-                    twoPointsCrossover(reducedDimension, parameters, offspring, population, maximumSize, probabilityOfCrossover, parents, requests, requestList, setOfVehicles, listOfNonAttendedRequests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, timeBetweenNodes, distanceBetweenNodes, numberOfNodes, vehicleCapacity, timeWindows);
-                    mutation2Shuffle(reducedDimension, parameters, offspring, probabilityOfMutation, requests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
+                    twoPointsCrossover(reducedDimension, nadirPoint, parameters, offspring, population, maximumSize, probabilityOfCrossover, parents, requests, requestList, setOfVehicles, listOfNonAttendedRequests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, timeBetweenNodes, distanceBetweenNodes, numberOfNodes, vehicleCapacity, timeWindows);
+                    mutation2Shuffle(reducedDimension, nadirPoint, parameters, offspring, probabilityOfMutation, requests, requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
                     //normalizeObjectiveFunctionsValues(offspring);
                     normalizeAggregatedObjectiveFunctions(offspring);
 
@@ -1381,7 +1469,7 @@ public class EvolutionaryAlgorithms {
         return volumes.stream().mapToDouble(Double::valueOf).sum();
     }
 
-    public static double smetric(List<ProblemSolution> solutions, List<Double> nadirPoint) {
+    public static double smetric(List<ProblemSolution> solutions, List<List<Double>> nadirPoint) {
         solutions.sort(Comparator.comparingDouble(ProblemSolution::getAggregatedObjective1));
 
         double x_nadir = 1.0;
@@ -1403,14 +1491,14 @@ public class EvolutionaryAlgorithms {
         return volumes.stream().mapToDouble(Double::valueOf).sum();
     }
 
-    public static void normalizeAggregatedObjectiveFunctions(List<ProblemSolution> solutions, List<Double> nadirPoint) {
-        solutions.forEach(s -> {
-            s.setAggregatedObjective1Normalized(s.getAggregatedObjective1() / nadirPoint.get(0));
-            s.setAggregatedObjective2Normalized(s.getAggregatedObjective2() / nadirPoint.get(1));
-        });
+    public static void normalizeAggregatedObjectiveFunctions(List<ProblemSolution> solutions, List<List<Double>> nadirPoint) {
+//        solutions.forEach(s -> {
+//            s.setAggregatedObjective1Normalized(s.getAggregatedObjective1() / nadirPoint.get(0));
+//            s.setAggregatedObjective2Normalized(s.getAggregatedObjective2() / nadirPoint.get(1));
+//        });
     }
 
-    public static void SPEA2(String instanceName, int reducedDimension, List<Double> parameters, List<Double> nadirPoint, Integer populationSize,
+    public static void SPEA2(String instanceName, int reducedDimension, List<Double> parameters, List<List<Double>> nadirPoint, Integer populationSize,
             Integer fileSize, Integer maximumNumberOfGenerations,
             Integer maximumNumberOfExecutions, double probabilityOfMutation, double probabilityOfCrossover,
             List<Request> requests, Map<Integer, List<Request>> requestsWhichBoardsInNode,
@@ -1451,7 +1539,7 @@ public class EvolutionaryAlgorithms {
 //                inicializePopulation(population, populationSize, requests,
 //                        requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
 //                        requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
-                initializeRandomPopulation(parameters, reducedDimension, population, populationSize, requests,
+                initializeRandomPopulation(nadirPoint, parameters, reducedDimension, population, populationSize, requests,
                         requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                         requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
 
@@ -1479,12 +1567,12 @@ public class EvolutionaryAlgorithms {
                     genericDominanceAlgorithm(file, nonDominated);
                     rouletteWheelSelectionAlgorithm(parents, file, tamMax);
 
-                    onePointCrossover(reducedDimension, parameters, population, file, fileSize, probabilityOfCrossover, parents, requests,
+                    onePointCrossover(reducedDimension, nadirPoint, parameters, population, file, fileSize, probabilityOfCrossover, parents, requests,
                             requestList, setOfVehicles, listOfNonAttendedRequests, requestsWhichBoardsInNode,
                             requestsWhichLeavesInNode, timeBetweenNodes, distanceBetweenNodes, numberOfNodes,
                             vehicleCapacity, timeWindows);
 
-                    mutation2Opt(reducedDimension, parameters, population, probabilityOfMutation, requests, requestsWhichBoardsInNode,
+                    mutation2Opt(reducedDimension, nadirPoint, parameters, population, probabilityOfMutation, requests, requestsWhichBoardsInNode,
                             requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                             requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
 
@@ -2217,12 +2305,12 @@ public class EvolutionaryAlgorithms {
         }
     }
 
-    public static void initializePopulation(List<ProblemSolution> Pop, int reducedDimension, int TamPop, List<Request> listRequests, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout,
+    public static void initializePopulation(List<ProblemSolution> Pop, List<List<Double>> nadirPoint, int reducedDimension, int TamPop, List<Request> listRequests, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout,
             Integer n, Integer Qmax, Set<Integer> K, List<Request> U, List<Request> P, List<Integer> m, List<List<Long>> d,
             List<List<Long>> c, Long TimeWindows, Long currentTime, Integer lastNode) {
         ProblemSolution s0 = new ProblemSolution();
         for (int i = 0; i < TamPop; i++) {
-            s0.setSolution(geraPesos(reducedDimension, i, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode));
+            s0.setSolution(geraPesos(reducedDimension, nadirPoint, i, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode));
             //Pop.add(s0);
             Pop.get(i).setSolution(s0);
             //System.out.println("s0 = " + s0);

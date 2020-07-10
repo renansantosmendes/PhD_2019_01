@@ -296,24 +296,24 @@ public class Algorithms {
         if (S.getAggregatedObjectives().length == 8) {
 
             objectives = new double[S.getAggregatedObjectives().length];
-            objectives[0] = S.getTotalDistance();
-            objectives[1] = S.getTotalDeliveryDelay();
-            objectives[2] = S.getTotalRouteTimeChargeBanlance();
-            objectives[3] = S.getNumberOfVehicles();
-            objectives[4] = S.getTotalTravelTime();
-            objectives[5] = S.getTotalWaintingTime();
-            objectives[6] = S.getDeliveryTimeWindowAntecipation();
+            objectives[0] = S.getTotalDistanceNormalized();
+            objectives[1] = S.getTotalDeliveryDelayNormalized();
+            objectives[2] = S.getTotalRouteTimeChargeBanlanceNormalized();
+            objectives[3] = S.getNumberOfVehiclesNormalized();
+            objectives[4] = S.getTotalTravelTimeNormalized();
+            objectives[5] = S.getTotalWaintingTimeNormalized();
+            objectives[6] = S.getDeliveryTimeWindowAntecipationNormalized();
             objectives[7] = S.getTotalOccupationRate();
         } else {
 
             double[] single_objectives = new double[8];
-            single_objectives[0] = S.getTotalDistance();
-            single_objectives[1] = S.getTotalDeliveryDelay();
-            single_objectives[2] = S.getTotalRouteTimeChargeBanlance();
-            single_objectives[3] = S.getNumberOfVehicles();
-            single_objectives[4] = S.getTotalTravelTime();
-            single_objectives[5] = S.getTotalWaintingTime();
-            single_objectives[6] = S.getDeliveryTimeWindowAntecipation();
+            single_objectives[0] = S.getTotalDistanceNormalized();
+            single_objectives[1] = S.getTotalDeliveryDelayNormalized();
+            single_objectives[2] = S.getTotalRouteTimeChargeBanlanceNormalized();
+            single_objectives[3] = S.getNumberOfVehiclesNormalized();
+            single_objectives[4] = S.getTotalTravelTimeNormalized();
+            single_objectives[5] = S.getTotalWaintingTimeNormalized();
+            single_objectives[6] = S.getDeliveryTimeWindowAntecipationNormalized();
             single_objectives[7] = S.getTotalOccupationRate();
 
             objectives = new double[S.getAggregatedObjectives().length];
@@ -399,24 +399,24 @@ public class Algorithms {
         if (S.getAggregatedObjectives().length == 8) {
 
             objectives = new double[S.getAggregatedObjectives().length];
-            objectives[0] = S.getTotalDistance();
-            objectives[1] = S.getTotalDeliveryDelay();
-            objectives[2] = S.getTotalRouteTimeChargeBanlance();
-            objectives[3] = S.getNumberOfVehicles();
-            objectives[4] = S.getTotalTravelTime();
-            objectives[5] = S.getTotalWaintingTime();
-            objectives[6] = S.getDeliveryTimeWindowAntecipation();
-            objectives[7] = S.getTotalOccupationRate();
+            objectives[0] = S.getTotalDistanceNormalized();
+            objectives[1] = S.getTotalDeliveryDelayNormalized();
+            objectives[2] = S.getTotalRouteTimeChargeBanlanceNormalized();
+            objectives[3] = S.getNumberOfVehiclesNormalized();
+            objectives[4] = S.getTotalTravelTimeNormalized();
+            objectives[5] = S.getTotalWaintingTimeNormalized();
+            objectives[6] = S.getDeliveryTimeWindowAntecipationNormalized();
+            objectives[7] = S.getTotalOccupationRateNormalized();
         } else {
 
             double[] single_objectives = new double[8];
-            single_objectives[0] = S.getTotalDistance();
-            single_objectives[1] = S.getTotalDeliveryDelay();
-            single_objectives[2] = S.getTotalRouteTimeChargeBanlance();
-            single_objectives[3] = S.getNumberOfVehicles();
-            single_objectives[4] = S.getTotalTravelTime();
-            single_objectives[5] = S.getTotalWaintingTime();
-            single_objectives[6] = S.getDeliveryTimeWindowAntecipation();
+            single_objectives[0] = S.getTotalDistanceNormalized();
+            single_objectives[1] = S.getTotalDeliveryDelayNormalized();
+            single_objectives[2] = S.getTotalRouteTimeChargeBanlanceNormalized();
+            single_objectives[3] = S.getNumberOfVehiclesNormalized();
+            single_objectives[4] = S.getTotalTravelTimeNormalized();
+            single_objectives[5] = S.getTotalWaintingTimeNormalized();
+            single_objectives[6] = S.getDeliveryTimeWindowAntecipationNormalized();
             single_objectives[7] = S.getTotalOccupationRate();
 
             objectives = new double[S.getAggregatedObjectives().length];
@@ -432,6 +432,9 @@ public class Algorithms {
                 }
                 objectives[i] = objectives_sum;
             }
+
+//            objectives[0] = objectives[0]/150000.0;
+//            objectives[1] = objectives[1]/10000.0;
 //
 //            int i;
 //            for (i = 0; i < objectives.length; i++) {
@@ -444,12 +447,10 @@ public class Algorithms {
 //                }
 //                objectives[i] = objectives_sum;
 //            }
-
 //            List<List<Double>> components = new ArrayList<>();
 //            List<Double> component1 = new ArrayList<>();
 //            List<Double> component2 = new ArrayList<>();
 //            List<Double> component3 = new ArrayList<>();
-
             //componentes from pca
 //            component1.add(9.99884457e-01);
 //            component1.add(2.71305804e-03);
@@ -639,7 +640,6 @@ public class Algorithms {
 //                }
 //                objectives[i] = objectives_sum + bias.get(i);
 //            }
-
         }
         S.setAggregatedObjectives(objectives);
 
@@ -687,7 +687,7 @@ public class Algorithms {
         }
     }
 
-    public static ProblemSolution greedyConstructive(Double alphaD, Double alphaP, Double alphaV, Double alphaT,
+    public static ProblemSolution greedyConstructive(Double alphaD, Double alphaP, Double alphaV, Double alphaT, List<List<Double>> nadirPoint,
             int reducedDimension, List<Request> requests, Map<Integer, List<Request>> requestsWichBoardsInNode,
             Map<Integer, List<Request>> requestsWichLeavesInNode, Integer numberOfNodes, Integer vehicleCapacity,
             Set<Integer> setOfVehicles, List<Request> listOfNonAttendedRequests, List<Request> requestList,
@@ -814,14 +814,14 @@ public class Algorithms {
         }
 
         solution.setNonAttendedRequestsList(listOfNonAttendedRequests);
-        evaluateSolution(solution, distanceBetweenNodes, vehicleCapacity, requests);
+        evaluateSolution(solution, nadirPoint, distanceBetweenNodes, vehicleCapacity, requests);
         solution.setLogger(log);
         solution.linkTheRoutes();
 
         return solution;
     }
 
-    public static ProblemSolution greedyConstructiveForMOEAD(Double alphaD, Double alphaP, Double alphaV, Double alphaT,
+    public static ProblemSolution greedyConstructiveForMOEAD(Double alphaD, Double alphaP, Double alphaV, Double alphaT, List<List<Double>> nadirPoint,
             List<List<Integer>> transformationList, List<Double> parameters,
             int reducedDimension, List<Request> requests, Map<Integer, List<Request>> requestsWichBoardsInNode,
             Map<Integer, List<Request>> requestsWichLeavesInNode, Integer numberOfNodes, Integer vehicleCapacity,
@@ -949,7 +949,7 @@ public class Algorithms {
         }
 
         solution.setNonAttendedRequestsList(listOfNonAttendedRequests);
-        evaluateSolution(solution, distanceBetweenNodes, vehicleCapacity, requests);
+        evaluateSolution(solution, nadirPoint, distanceBetweenNodes, vehicleCapacity, requests);
         evaluateAggregatedObjectiveFunctionsForMOEAD(transformationList, parameters, solution);
 
         solution.setLogger(log);
@@ -958,7 +958,7 @@ public class Algorithms {
         return solution;
     }
 
-    public static ProblemSolution individualConstructive() {
+    public static ProblemSolution individualConstructive(List<List<Double>> nadirPoint) {
         ProblemSolution solution = new ProblemSolution();
         List<Request> requestList = new ArrayList<>();
         requestList.addAll(data.getListOfRequests());
@@ -999,7 +999,7 @@ public class Algorithms {
             route.addVisitedNodes(0);
             requestList.remove(0);
 
-            evaluateSolution(solution, data.getDistanceBetweenNodes(), data.getVehicleCapacity(), data.getListOfRequests());
+            evaluateSolution(solution, nadirPoint, data.getDistanceBetweenNodes(), data.getVehicleCapacity(), data.getListOfRequests());
             solution.setLogger(log);
             solution.linkTheRoutes();
 
@@ -1009,7 +1009,8 @@ public class Algorithms {
         return solution;
     }
 
-    private static void evaluateSolution(ProblemSolution solution, List<List<Long>> distanceBetweenNodes, Integer vehicleCapacity, List<Request> listOfRequests) {
+    private static void evaluateSolution(ProblemSolution solution, List<List<Double>> nadirPoint, List<List<Long>> distanceBetweenNodes,
+            Integer vehicleCapacity, List<Request> listOfRequests) {
         solution.setTotalDistance(FO1(solution, distanceBetweenNodes));
         solution.setTotalDeliveryDelay(FO2(solution));
         solution.setTotalRouteTimeChargeBanlance(FO3(solution));
@@ -1019,12 +1020,24 @@ public class Algorithms {
         solution.setTotalWaintingTime(FO7(solution));
         solution.setDeliveryTimeWindowAntecipation(FO8(solution));
         solution.setTotalOccupationRate(FO9(solution, vehicleCapacity));
+        
+        solution.setTotalDistanceNormalized((double) (FO1(solution, distanceBetweenNodes) - nadirPoint.get(0).get(0))/(nadirPoint.get(1).get(0) - nadirPoint.get(0).get(0)));
+        solution.setTotalDeliveryDelayNormalized((double) (FO2(solution) - nadirPoint.get(0).get(1))/(nadirPoint.get(1).get(1) - nadirPoint.get(0).get(1)));
+        solution.setTotalRouteTimeChargeBanlanceNormalized((double) (FO3(solution)- nadirPoint.get(0).get(2))/(nadirPoint.get(1).get(2) - nadirPoint.get(0).get(2)));
+        solution.setNumberOfNonAttendedRequestsNormalized((double) (FO4(solution) - nadirPoint.get(0).get(3))/(nadirPoint.get(1).get(3) - nadirPoint.get(0).get(3)));
+        solution.setNumberOfVehiclesNormalized((double) (FO5(solution) - nadirPoint.get(0).get(3))/(nadirPoint.get(1).get(3) - nadirPoint.get(0).get(3)));
+        solution.setTotalTravelTimeNormalized((double) (FO6(solution) - nadirPoint.get(0).get(4))/(nadirPoint.get(1).get(4) - nadirPoint.get(0).get(4)));
+        solution.setTotalWaintingTimeNormalized((double) (FO7(solution) - nadirPoint.get(0).get(5))/(nadirPoint.get(1).get(5) - nadirPoint.get(0).get(5)));
+        solution.setDeliveryTimeWindowAntecipationNormalized((double) (FO8(solution) - nadirPoint.get(0).get(6))/(nadirPoint.get(1).get(6) - nadirPoint.get(0).get(6)));
+        solution.setTotalOccupationRateNormalized((double)(FO9(solution, vehicleCapacity)  - nadirPoint.get(0).get(7))/(nadirPoint.get(1).get(7) - nadirPoint.get(0).get(7)));
+        
         solution.setObjectivesList();
         Algorithms.evaluateAggregatedObjectiveFunctions(solution, 1, 1, 1, 1, 1);
         solution.setObjectiveFunction(FuncaoDeAvaliacao(solution, listOfRequests, distanceBetweenNodes));
     }
 
-    public static ProblemSolution rebuildSolution(int reducedDimension, List<Double> parameters, List<Integer> vizinho, List<Request> listRequests, List<Request> P,
+    public static ProblemSolution rebuildSolution(int reducedDimension, List<List<Double>> nadirPoint, List<Double> parameters,
+            List<Integer> vizinho, List<Request> listRequests, List<Request> P,
             Set<Integer> K, List<Request> U, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout,
             List<List<Long>> d, List<List<Long>> c, Integer n, Integer Qmax, Long TimeWindows) {
         P.clear();
@@ -1297,7 +1310,7 @@ public class Algorithms {
         ProblemSolution greedySolution = new ProblemSolution(reducedDimension);
         if (!U.isEmpty()) {
             List<Integer> loadIndex = generateLoadIndex(n, Pin, Pout);
-            greedySolution = greedyConstructive(0.25, 0.25, 0.25, 0.25,
+            greedySolution = greedyConstructive(0.25, 0.25, 0.25, 0.25, nadirPoint,
                     reducedDimension, U, Pin, Pout, n, Qmax,
                     K, requestListForSecondFase, P,
                     loadIndex, d, c,
@@ -1307,7 +1320,7 @@ public class Algorithms {
 
         solution.setAggregatedObjectives(new double[reducedDimension]);
         solution.setNonAttendedRequestsList(U);
-        evaluateSolution(solution, c, Qmax, listRequests);
+        evaluateSolution(solution, nadirPoint, c, Qmax, listRequests);
         evaluateAggregatedObjectiveFunctions(parameters, solution);
         solution.setLogger(log);
 
@@ -1315,14 +1328,14 @@ public class Algorithms {
             return solution;
         } else {
             ProblemSolution newSolution = new ProblemSolution(reducedDimension);
-            newSolution.setSolution(concatenatesSolutions(solution, greedySolution, reducedDimension,
+            newSolution.setSolution(concatenatesSolutions(solution, greedySolution, nadirPoint, reducedDimension,
                     parameters, c, Qmax, listRequests));
             //solution.setSolution(newSolution);
             return newSolution;
         }
     }
 
-    public static ProblemSolution rebuildSolutionForOfflineAlgorithms(int reducedDimension, List<List<Integer>> transformationList,
+    public static ProblemSolution rebuildSolutionForOfflineAlgorithms(int reducedDimension, List<List<Double>> nadirPoint, List<List<Integer>> transformationList,
             List<Double> parameters, List<Integer> vizinho, List<Request> listRequests, List<Request> P,
             Set<Integer> K, List<Request> U, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout,
             List<List<Long>> d, List<List<Long>> c, Integer n, Integer Qmax, Long TimeWindows) {
@@ -1596,7 +1609,7 @@ public class Algorithms {
         ProblemSolution greedySolution = new ProblemSolution(reducedDimension);
         if (!U.isEmpty()) {
             List<Integer> loadIndex = generateLoadIndex(n, Pin, Pout);
-            greedySolution = greedyConstructiveForMOEAD(0.25, 0.25, 0.25, 0.25, transformationList, parameters,
+            greedySolution = greedyConstructiveForMOEAD(0.25, 0.25, 0.25, 0.25, nadirPoint, transformationList, parameters,
                     reducedDimension, U, Pin, Pout, n, Qmax,
                     K, requestListForSecondFase, P,
                     loadIndex, d, c,
@@ -1606,7 +1619,7 @@ public class Algorithms {
 
         solution.setAggregatedObjectives(new double[reducedDimension]);
         solution.setNonAttendedRequestsList(U);
-        evaluateSolution(solution, c, Qmax, listRequests);
+        evaluateSolution(solution, nadirPoint, c, Qmax, listRequests);
         evaluateAggregatedObjectiveFunctionsForMOEAD(transformationList, parameters, solution);
         solution.setLogger(log);
 
@@ -1614,14 +1627,15 @@ public class Algorithms {
             return solution;
         } else {
             ProblemSolution newSolution = new ProblemSolution(reducedDimension);
-            newSolution.setSolution(concatenatesSolutions(solution, greedySolution, reducedDimension,
+            newSolution.setSolution(concatenatesSolutions(solution, greedySolution, nadirPoint, reducedDimension,
                     parameters, c, Qmax, listRequests));
             //solution.setSolution(newSolution);
             return newSolution;
         }
     }
 
-    public static ProblemSolution rebuildSolutionForOnlineAlgorithms(int reducedDimension, List<List<Integer>> transfomationList,
+    public static ProblemSolution rebuildSolutionForOnlineAlgorithms(int reducedDimension, List<List<Double>> nadirPoint,
+            List<List<Integer>> transfomationList,
             List<Double> parameters, List<Integer> vizinho, List<Request> listRequests, List<Request> P,
             Set<Integer> K, List<Request> U, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout,
             List<List<Long>> d, List<List<Long>> c, Integer n, Integer Qmax, Long TimeWindows) {
@@ -1904,7 +1918,7 @@ public class Algorithms {
         ProblemSolution greedySolution = new ProblemSolution(reducedDimension);
         if (!U.isEmpty()) {
             List<Integer> loadIndex = generateLoadIndex(n, Pin, Pout);
-            greedySolution = greedyConstructiveForMOEAD(0.25, 0.25, 0.25, 0.25, transfomationList, parameters,
+            greedySolution = greedyConstructiveForMOEAD(0.25, 0.25, 0.25, 0.25, nadirPoint, transfomationList, parameters,
                     reducedDimension, U, Pin, Pout, n, Qmax,
                     K, requestListForSecondFase, P,
                     loadIndex, d, c,
@@ -1914,7 +1928,7 @@ public class Algorithms {
 
         solution.setAggregatedObjectives(new double[reducedDimension]);
         solution.setNonAttendedRequestsList(U);
-        evaluateSolution(solution, c, Qmax, listRequests);
+        evaluateSolution(solution, nadirPoint, c, Qmax, listRequests);
         evaluateAggregatedObjectiveFunctionsForOnlineAlgorithm(parameters, transfomationList, solution);
         solution.setLogger(log);
 
@@ -1922,14 +1936,14 @@ public class Algorithms {
             return solution;
         } else {
             ProblemSolution newSolution = new ProblemSolution(reducedDimension);
-            newSolution.setSolution(concatenatesSolutionsForOnlineAlgorithms(solution, greedySolution, transfomationList, reducedDimension,
+            newSolution.setSolution(concatenatesSolutionsForOnlineAlgorithms(solution, greedySolution, nadirPoint, transfomationList, reducedDimension,
                     parameters, c, Qmax, listRequests));
             //solution.setSolution(newSolution);
             return newSolution;
         }
     }
 
-    private static ProblemSolution concatenatesSolutions(ProblemSolution solution1, ProblemSolution solution2,
+    private static ProblemSolution concatenatesSolutions(ProblemSolution solution1, ProblemSolution solution2, List<List<Double>> nadirPoint,
             int reducedDimension, List<Double> parameters, List<List<Long>> distanceBetweenNodes, Integer vehicleCapacity,
             List<Request> listOfRequests) {
         Set<Route> setOfRoutes = new HashSet<>();
@@ -1940,12 +1954,13 @@ public class Algorithms {
         ProblemSolution solution = new ProblemSolution(reducedDimension);
         solution.setSetOfRoutes(setOfRoutes);
         solution.linkTheRoutes();
-        evaluateSolution(solution, distanceBetweenNodes, vehicleCapacity, listOfRequests);
+        evaluateSolution(solution, nadirPoint, distanceBetweenNodes,  vehicleCapacity, listOfRequests);
         evaluateAggregatedObjectiveFunctions(parameters, solution);
         return solution;
     }
 
     private static ProblemSolution concatenatesSolutionsForOnlineAlgorithms(ProblemSolution solution1, ProblemSolution solution2,
+            List<List<Double>> nadirPoint,
             List<List<Integer>> transfomationList, int reducedDimension, List<Double> parameters, List<List<Long>> distanceBetweenNodes,
             Integer vehicleCapacity, List<Request> listOfRequests) {
         Set<Route> setOfRoutes = new HashSet<>();
@@ -1956,7 +1971,7 @@ public class Algorithms {
         ProblemSolution solution = new ProblemSolution(reducedDimension);
         solution.setSetOfRoutes(setOfRoutes);
         solution.linkTheRoutes();
-        evaluateSolution(solution, distanceBetweenNodes, vehicleCapacity, listOfRequests);
+        evaluateSolution(solution, nadirPoint, distanceBetweenNodes, vehicleCapacity, listOfRequests);
         evaluateAggregatedObjectiveFunctionsForOnlineAlgorithm(parameters, transfomationList, solution);
         return solution;
     }
@@ -1974,7 +1989,7 @@ public class Algorithms {
         return loadIndex;
     }
 
-    public static void GeneticAlgorithm(int reducedDimension, List<Double> parameters, List<ProblemSolution> Pop, Integer TamPop, Integer MaxGer, double Pm, double Pc, List<Request> listRequests,
+    public static void GeneticAlgorithm(int reducedDimension, List<List<Double>> nadirPoint, List<Double> parameters, List<ProblemSolution> Pop, Integer TamPop, Integer MaxGer, double Pm, double Pc, List<Request> listRequests,
             Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout, Integer n, Integer Qmax, Set<Integer> K,
             List<Request> U, List<Request> P, List<Integer> m, List<List<Long>> d, List<List<Long>> c,
             Long TimeWindows, Long currentTime, Integer lastNode) {
@@ -2011,7 +2026,7 @@ public class Algorithms {
 
             for (int cont = 0; cont < 1; cont++) {
                 //--------------- Inicializa com a mesma população inicial ------------------
-                InicializaPopulacaoPerturbacao(reducedDimension, parameters, Pop, TamPop, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode);
+                InicializaPopulacaoPerturbacao(reducedDimension, nadirPoint, parameters, Pop, TamPop, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode);
 
                 Pop.sort(Comparator.comparingDouble(ProblemSolution::getObjectiveFunction));
                 NewFitness(Pop);
@@ -2052,12 +2067,12 @@ public class Algorithms {
                     //Cruzamento
                     //Cruzamento(Pop, Pc, pais, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows);
 
-                    twoPointsCrossover(reducedDimension, parameters, Pop, Pop, TamPop, Pc, pais, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows);
+                    twoPointsCrossover(reducedDimension, nadirPoint, parameters, Pop, Pop, TamPop, Pc, pais, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows);
                     //Mutação
                     //Mutacao(Pop, Pm, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode);
                     //Mutacao2Opt(Pop, Pm, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode);
                     //MutacaoShuffle(Pop, Pm, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode);                   
-                    mutation2Shuffle(reducedDimension, parameters, Pop, Pm, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode);
+                    mutation2Shuffle(reducedDimension, nadirPoint, parameters, Pop, Pm, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode);
                     //MutacaoILS(Pop, Pm, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode);
 
                     //Elitismo
@@ -2086,7 +2101,8 @@ public class Algorithms {
         printPopulation(Pop);
     }
 
-    public static void InicializaSolucaoArquivo(int reducedDimension, List<Double> parameters, List<ProblemSolution> Pop, String NomeArquivo, List<Request> listRequests, List<Request> P, Set<Integer> K,
+    public static void InicializaSolucaoArquivo(int reducedDimension, List<Double> parameters, List<List<Double>> nadirPoint,
+            List<ProblemSolution> Pop, String NomeArquivo, List<Request> listRequests, List<Request> P, Set<Integer> K,
             List<Request> U, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout,
             List<List<Long>> d, List<List<Long>> c, Integer n, Integer Qmax, Long TimeWindows) {
 
@@ -2112,7 +2128,8 @@ public class Algorithms {
                 teste = linha[i];
             }
 
-            S.setSolution(rebuildSolution(reducedDimension, parameters, lista, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
+            S.setSolution(rebuildSolution(reducedDimension, nadirPoint, parameters,
+                    lista, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
             System.out.println("Solução = " + S);
             Pop.get(cont).setSolution(S);
 
@@ -2129,7 +2146,8 @@ public class Algorithms {
                     lista.add(no);
                     //System.out.println("Nó = " + no);
                 }
-                S.setSolution(rebuildSolution(reducedDimension, parameters, lista, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
+                S.setSolution(rebuildSolution(reducedDimension, nadirPoint, parameters,
+                        lista, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
                 System.out.println("Solução = " + S);
                 Pop.get(cont).setSolution(S);
                 //Pop.get(cont).setLinkedRoute(lista);
@@ -2143,7 +2161,7 @@ public class Algorithms {
 
     }
 
-    public static ProblemSolution VariableNeighborhoodDescend(int reducedDimension, List<Double> parameters, ProblemSolution s_0, List<Request> listRequests, List<Request> P, Set<Integer> K,
+    public static ProblemSolution VariableNeighborhoodDescend(int reducedDimension,List<List<Double>> nadirPoint, List<Double> parameters, ProblemSolution s_0, List<Request> listRequests, List<Request> P, Set<Integer> K,
             List<Request> U, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout, List<List<Long>> d,
             List<List<Long>> c, Integer n, Integer Qmax, Long TimeWindows) {
 
@@ -2160,7 +2178,7 @@ public class Algorithms {
                 k++;
             }
             System.out.println("k = " + k);
-            s.setSolution(firstImprovementAlgorithm(reducedDimension, parameters, s_0, k, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
+            s.setSolution(firstImprovementAlgorithm(reducedDimension, nadirPoint, parameters, s_0, k, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
             //s.setSolution(bestImprovementAlgorithm(s_0, k, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
             if (s.getObjectiveFunction() < melhor.getObjectiveFunction()) {
                 melhor.setSolution(s);
@@ -2173,7 +2191,7 @@ public class Algorithms {
         return melhor;
     }
 
-    public static ProblemSolution RVND(int reducedDimension, List<Double> parameters, ProblemSolution s_0, List<Request> listRequests, List<Request> P, Set<Integer> K, List<Request> U,
+    public static ProblemSolution RVND(int reducedDimension, List<List<Double>> nadirPoint, List<Double> parameters, ProblemSolution s_0, List<Request> listRequests, List<Request> P, Set<Integer> K, List<Request> U,
             Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout, List<List<Long>> d, List<List<Long>> c,
             Integer n, Integer Qmax, Long TimeWindows) {
 
@@ -2198,7 +2216,7 @@ public class Algorithms {
             System.out.println("k = " + k + "\tN = " + vizinhanca.get(k - 1));
             //System.out.println("iteração VariableNeighborhoodDescend = " + cont1);
             //s.setSolution(firstImprovementAlgorithm(s_0,k,listRequests,P,K,U,Pin,Pout, d, c, n, Qmax,TimeWindows));
-            s.setSolution(bestImprovementAlgorithm(reducedDimension, parameters, s_0, vizinhanca.get(k - 1), listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
+            s.setSolution(bestImprovementAlgorithm(reducedDimension, nadirPoint, parameters, s_0, vizinhanca.get(k - 1), listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
             if (s.getObjectiveFunction() < melhor.getObjectiveFunction()) {
                 melhor.setSolution(s);
                 k = 1;
@@ -2209,7 +2227,7 @@ public class Algorithms {
         return melhor;
     }
 
-    public static ProblemSolution VNS(int reducedDimension, List<Double> parameters, ProblemSolution s_0, List<Request> listRequests, List<Request> P, Set<Integer> K,
+    public static ProblemSolution VNS(int reducedDimension, List<List<Double>> nadirPoint, List<Double> parameters, ProblemSolution s_0, List<Request> listRequests, List<Request> P, Set<Integer> K,
             List<Request> U, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout, List<List<Long>> d,
             List<List<Long>> c, Integer n, Integer Qmax, Long TimeWindows) {
 
@@ -2228,7 +2246,7 @@ public class Algorithms {
             while ((k <= r)) {
 
                 //s_linha.setSolution(vizinhoAleatorio(s_0, k, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
-                s_2linha.setSolution(VariableNeighborhoodDescend(reducedDimension, parameters, s_linha, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
+                s_2linha.setSolution(VariableNeighborhoodDescend(reducedDimension, nadirPoint, parameters, s_linha, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
 
                 if (s_2linha.getObjectiveFunction() < melhor.getObjectiveFunction()) {
                     melhor.setSolution(s_2linha);
@@ -2244,7 +2262,7 @@ public class Algorithms {
         return melhor;
     }
 
-    public static ProblemSolution perturbation(int reducedDimension, List<Double> parameters, ProblemSolution s, List<Request> listRequests, Map<Integer, List<Request>> Pin,
+    public static ProblemSolution perturbation(int reducedDimension, List<List<Double>> nadirPoint, List<Double> parameters, ProblemSolution s, List<Request> listRequests, Map<Integer, List<Request>> Pin,
             Map<Integer, List<Request>> Pout, Integer n, Integer Qmax, Set<Integer> K, List<Request> U, List<Request> P,
             List<Integer> m, List<List<Long>> d, List<List<Long>> c, Long TimeWindows) {
         Random rnd = new Random();
@@ -2266,13 +2284,14 @@ public class Algorithms {
         original.add(posicao1, original.remove(posicao2));
         //}
         ProblemSolution S = new ProblemSolution();
-        S.setSolution(rebuildSolution(reducedDimension, parameters, original, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
+        S.setSolution(rebuildSolution(reducedDimension, nadirPoint, parameters, original,
+                listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
         s.setSolution(S);
 
         return s;
     }
 
-    public static ProblemSolution perturbationWithSeed(int reducedDimension, List<Double> parameters, ProblemSolution s, List<Request> listRequests, Map<Integer, List<Request>> Pin,
+    public static ProblemSolution perturbationWithSeed(int reducedDimension, List<List<Double>> nadirPoint, List<Double> parameters, ProblemSolution s, List<Request> listRequests, Map<Integer, List<Request>> Pin,
             Map<Integer, List<Request>> Pout, Integer n, Integer Qmax, Set<Integer> K, List<Request> U, List<Request> P,
             List<Integer> m, List<List<Long>> d, List<List<Long>> c, Long TimeWindows) {
         Random rnd = new Random();
@@ -2294,13 +2313,13 @@ public class Algorithms {
         original.add(posicao1, original.remove(posicao2));
         //}
         ProblemSolution S = new ProblemSolution();
-        S.setSolution(rebuildSolution(reducedDimension, parameters, original, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
+        S.setSolution(rebuildSolution(reducedDimension, nadirPoint, parameters, original, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
         s.setSolution(S);
 
         return s;
     }
 
-    public static ProblemSolution geraPesos(int reducedDimension, Integer semente, List<Request> listRequests, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout,
+    public static ProblemSolution geraPesos(int reducedDimension, List<List<Double>> nadirPoint, Integer semente, List<Request> listRequests, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout,
             Integer n, Integer Qmax, Set<Integer> K, List<Request> U, List<Request> P, List<Integer> m, List<List<Long>> d,
             List<List<Long>> c, Long TimeWindows, Long currentTime, Integer lastNode) {
         //for (int i = 0; i < 1; i++) {
@@ -2316,7 +2335,7 @@ public class Algorithms {
         } while (x + y + z > 1);
 
         //System.out.println(x + "\t" + y + "\t" + z + "\t" + w);
-        S.setSolution(greedyConstructive(x, y, z, w, reducedDimension, listRequests, Pin, Pout, n, Qmax,
+        S.setSolution(greedyConstructive(x, y, z, w, nadirPoint, reducedDimension, listRequests, Pin, Pout, n, Qmax,
                 K, U, P, m, d, c, TimeWindows, currentTime, lastNode));
         //System.out.println("SolucaoGulosaAleatoria = "+ S);
         //S.setSolution(GeraSolucaoAleatoria(Pop, TamPop, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode));
@@ -2325,7 +2344,8 @@ public class Algorithms {
         //}
     }
 
-    public static ProblemSolution randomPerturbationWithSeed(int i, int reducedDimension, List<Double> parameters, ProblemSolution s, List<Request> listRequests, Map<Integer, List<Request>> Pin,
+    public static ProblemSolution randomPerturbationWithSeed(int i, int reducedDimension, List<List<Double>> nadirPoint,
+            List<Double> parameters, ProblemSolution s, List<Request> listRequests, Map<Integer, List<Request>> Pin,
             Map<Integer, List<Request>> Pout, Integer n, Integer Qmax, Set<Integer> K, List<Request> U, List<Request> P,
             List<Integer> m, List<List<Long>> d, List<List<Long>> c, Long TimeWindows) {
         Random rnd = new Random(i + 1);
@@ -2345,13 +2365,14 @@ public class Algorithms {
         original.add(posicao1, original.remove(posicao2));
 
         ProblemSolution S = new ProblemSolution(reducedDimension);
-        S.setSolution(rebuildSolution(reducedDimension, parameters, original, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
+        S.setSolution(rebuildSolution(reducedDimension, nadirPoint, parameters, original, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
         s.setSolution(S);
 
         return s;
     }
 
-    public static ProblemSolution randomPerturbationWithSeedForOnlineAlgorithm(int i, int reducedDimension, List<Double> parameters,
+    public static ProblemSolution randomPerturbationWithSeedForOnlineAlgorithm(int i, int reducedDimension, List<List<Double>> nadirPoint,
+            List<Double> parameters,
             ProblemSolution s, List<Request> listRequests, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout, Integer n,
             Integer Qmax, Set<Integer> K, List<Request> U, List<Request> P, List<Integer> m, List<List<Long>> d, List<List<Long>> c,
             Long TimeWindows) {
@@ -2372,14 +2393,15 @@ public class Algorithms {
 
         ProblemSolution S = new ProblemSolution(reducedDimension);
         List<List<Integer>> transformationList = createTransformationList(reducedDimension, s.getOriginalObjectives().size());
-        S.setSolution(rebuildSolutionForOnlineAlgorithms(reducedDimension, transformationList,
+        S.setSolution(rebuildSolutionForOnlineAlgorithms(reducedDimension, nadirPoint, transformationList,
                 parameters, original, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
         s.setSolution(S);
 
         return s;
     }
 
-    public static ProblemSolution randomPerturbationWithSeedForMOEAD(int i, int reducedDimension, List<List<Integer>> transformationList,
+    public static ProblemSolution randomPerturbationWithSeedForMOEAD(int i, int reducedDimension, List<List<Double>> nadirPoint,
+            List<List<Integer>> transformationList,
             List<Double> parameters, ProblemSolution s, List<Request> listRequests, Map<Integer, List<Request>> Pin,
             Map<Integer, List<Request>> Pout, Integer n, Integer Qmax, Set<Integer> K, List<Request> U, List<Request> P,
             List<Integer> m, List<List<Long>> d, List<List<Long>> c, Long TimeWindows) {
@@ -2399,7 +2421,7 @@ public class Algorithms {
         original.add(posicao1, original.remove(posicao2));
 
         ProblemSolution S = new ProblemSolution(reducedDimension);
-        S.setSolution(rebuildSolutionForOnlineAlgorithms(reducedDimension, transformationList,
+        S.setSolution(rebuildSolutionForOnlineAlgorithms(reducedDimension, nadirPoint, transformationList,
                 parameters, original, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
         s.setSolution(S);
 
@@ -2436,7 +2458,7 @@ public class Algorithms {
         return transformationList;
     }
 
-    public static ProblemSolution IteratedLocalSearch(int reducedDimension, List<Double> parameters, ProblemSolution s_0, List<Request> listRequests, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout, Integer n, Integer Qmax, Set<Integer> K,
+    public static ProblemSolution IteratedLocalSearch(int reducedDimension, List<List<Double>> nadirPoint, List<Double> parameters, ProblemSolution s_0, List<Request> listRequests, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout, Integer n, Integer Qmax, Set<Integer> K,
             List<Request> U, List<Request> P, List<Integer> m, List<List<Long>> d,
             List<List<Long>> c, Long TimeWindows) {
 
@@ -2446,14 +2468,14 @@ public class Algorithms {
         List<ProblemSolution> historico = new ArrayList<>();
         int MAXITER = 4;
 
-        s.setSolution(VariableNeighborhoodDescend(reducedDimension, parameters, s_0, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
+        s.setSolution(VariableNeighborhoodDescend(reducedDimension, nadirPoint, parameters, s_0, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
         System.out.println("After the first local search s = " + s);
         int cont = 0;
         while (cont < MAXITER) {
             System.out.println("Iteration ILS = " + cont);
-            s_linha.setSolution(perturbation(reducedDimension, parameters, s, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows));
+            s_linha.setSolution(perturbation(reducedDimension, nadirPoint, parameters, s, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows));
             System.out.println("After pertubation s'= " + s_linha);
-            s_2linha.setSolution(VariableNeighborhoodDescend(reducedDimension, parameters, s_linha, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
+            s_2linha.setSolution(VariableNeighborhoodDescend(reducedDimension, nadirPoint, parameters, s_linha, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
 
             if (s_2linha.getObjectiveFunction() < s_0.getObjectiveFunction()) {
                 s.setSolution(s_2linha);
@@ -2497,7 +2519,7 @@ public class Algorithms {
         System.out.println();
     }
 
-    public static void GeraPopGulosa(int reducedDimension, List<ProblemSolution> Pop, Integer TamPop, List<Request> listRequests, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout,
+    public static void GeraPopGulosa(int reducedDimension, List<List<Double>> nadirPoint, List<ProblemSolution> Pop, Integer TamPop, List<Request> listRequests, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout,
             Integer n, Integer Qmax, Set<Integer> K, List<Request> U, List<Request> P, List<Integer> m, List<List<Long>> d,
             List<List<Long>> c, Long TimeWindows, Long currentTime, Integer lastNode) {
         ProblemSolution s = new ProblemSolution();
@@ -2505,7 +2527,7 @@ public class Algorithms {
         //initializePopulation(Pop, TamPop, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode);
 
         for (int i = 0; i < TamPop; i++) {
-            s.setSolution(geraPesos(reducedDimension, i, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d,
+            s.setSolution(geraPesos(reducedDimension, nadirPoint, i, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d,
                     c, TimeWindows, currentTime, lastNode));
             //Pop.add(s);
             //System.out.println(s);
@@ -2519,7 +2541,7 @@ public class Algorithms {
     }
 
     // Algoritmo GRASP_reativo 
-    public static ProblemSolution GRASP_reativo(int reducedDimension, List<Double> parameters, Integer MAX_ITERATIONS, Double alphaD, Double alphaP, Double alphaV, Double alphaT, int tipoBusca,
+    public static ProblemSolution GRASP_reativo(int reducedDimension, List<List<Double>> nadirPoint, List<Double> parameters, Integer MAX_ITERATIONS, Double alphaD, Double alphaP, Double alphaV, Double alphaT, int tipoBusca,
             int tipoEstrategia, int tipoMovimento, List<Request> listRequests, PrintStream saida, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout,
             Integer n, Integer Qmax, Set<Integer> K, List<Request> U, List<Request> P, List<Integer> m,
             List<List<Long>> d, List<List<Long>> c, Long TimeWindows) {
@@ -3105,11 +3127,11 @@ public class Algorithms {
             ProblemSolution busca;
             switch (tipoBusca) {
                 case 1:
-                    busca = new ProblemSolution(buscaLocal(reducedDimension, parameters, solution, tipoEstrategia, tipoMovimento, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
+                    busca = new ProblemSolution(buscaLocal(reducedDimension, nadirPoint, parameters, solution, tipoEstrategia, tipoMovimento, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
                     break;
                 case 2:
                     //busca = new ProblemSolution( buscaTabu(S, tipoEstrategia, tipoMovimento, listRequests) );
-                    busca = new ProblemSolution(buscaTabu(reducedDimension, parameters, solution, tipoEstrategia, tipoMovimento, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
+                    busca = new ProblemSolution(buscaTabu(reducedDimension, nadirPoint, parameters, solution, tipoEstrategia, tipoMovimento, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
                     break;
                 default:
                     busca = new ProblemSolution();
@@ -3192,7 +3214,7 @@ public class Algorithms {
      * Busca Local
      *
      */
-    public static ProblemSolution buscaLocal(int reducedDimension, List<Double> parameters, ProblemSolution inicial, int tipoEstrategia, int tipoMovimento, List<Request> listRequests, List<Request> P,
+    public static ProblemSolution buscaLocal(int reducedDimension, List<List<Double>> nadirPoint, List<Double> parameters, ProblemSolution inicial, int tipoEstrategia, int tipoMovimento, List<Request> listRequests, List<Request> P,
             Set<Integer> K, List<Request> U, Map<Integer, List<Request>> Pin, Map<Integer, List<Request>> Pout,
             List<List<Long>> d, List<List<Long>> c, Integer n, Integer Qmax, Long TimeWindows) {
         ProblemSolution melhor = new ProblemSolution();
@@ -3210,7 +3232,7 @@ public class Algorithms {
 
                 melhor.setSolution(s);
                 //s.setSolution(bestImprovementAlgorithm(melhor,tipoMovimento, listRequests));
-                s.setSolution(bestImprovementAlgorithm(reducedDimension, parameters, melhor, tipoMovimento, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
+                s.setSolution(bestImprovementAlgorithm(reducedDimension, nadirPoint, parameters, melhor, tipoMovimento, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
 
             } while (!s.equals(melhor));
 
@@ -3220,7 +3242,7 @@ public class Algorithms {
 
                 melhor.setSolution(s);
                 //s.setSolution(firstImprovementAlgorithm(melhor,tipoMovimento, listRequests));
-                s.setSolution(firstImprovementAlgorithm(reducedDimension, parameters, melhor, tipoMovimento, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
+                s.setSolution(firstImprovementAlgorithm(reducedDimension, nadirPoint, parameters, melhor, tipoMovimento, listRequests, P, K, U, Pin, Pout, d, c, n, Qmax, TimeWindows));
 
             } while (!s.equals(melhor));
 
@@ -3229,21 +3251,21 @@ public class Algorithms {
         return melhor;
     }
 
-    public static List<ProblemSolution> generateInitialPopulation(int reducedDimension, List<Double> parameters, int populationSize, final Integer vehicleCapacity,
+    public static List<ProblemSolution> generateInitialPopulation(int reducedDimension, List<Double> parameters, List<List<Double>> nadirPoint, int populationSize, final Integer vehicleCapacity,
             List<Request> listOfRequests, Map<Integer, List<Request>> requestsWichBoardsInNode,
             Map<Integer, List<Request>> requestsWichLeavesInNode, Integer numberOfNodes,
             Set<Integer> setOfVehicles, List<Request> listOfNonAttendedRequests, List<Request> requestList,
             List<Integer> loadIndexList, List<List<Long>> timeBetweenNodes, List<List<Long>> distanceBetweenNodes,
             Long timeWindows, Long currentTime, Integer lastNode) {
 
-        ProblemSolution solution = greedyConstructive(0.2, 0.15, 0.55, 0.1, reducedDimension, listOfRequests, requestsWichBoardsInNode,
+        ProblemSolution solution = greedyConstructive(0.2, 0.15, 0.55, 0.1, nadirPoint, reducedDimension, listOfRequests, requestsWichBoardsInNode,
                 requestsWichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, requestList,
                 loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
 
         ProblemSolution solution1 = new ProblemSolution();
         List<ProblemSolution> population = new ArrayList<>();
         for (int i = 0; i < populationSize; i++) {
-            solution1.setSolution(perturbation(reducedDimension, parameters, solution, listOfRequests, requestsWichBoardsInNode, requestsWichLeavesInNode,
+            solution1.setSolution(perturbation(reducedDimension, nadirPoint, parameters, solution, listOfRequests, requestsWichBoardsInNode, requestsWichLeavesInNode,
                     numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes,
                     distanceBetweenNodes, timeWindows));
             ProblemSolution solution2 = new ProblemSolution();
@@ -3260,40 +3282,27 @@ public class Algorithms {
             List<Integer> loadIndexList, List<List<Long>> timeBetweenNodes, List<List<Long>> distanceBetweenNodes,
             Long timeWindows, Long currentTime, Integer lastNode) {
 
-//        ProblemSolution solution = greedyConstructive(0.2, 0.15, 0.55, 0.1,listOfRequests,requestsWichBoardsInNode, 
-//                requestsWichLeavesInNode, numberOfNodes, vehicleCapacity,setOfVehicles, listOfNonAttendedRequests, requestList,
-//                loadIndexList,timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime,lastNode);
         ProblemSolution solution1 = new ProblemSolution();
         List<ProblemSolution> population = new ArrayList<>();
 
         for (int i = 0; i < populationSize; i++) {
             ProblemSolution solution = new ProblemSolution();
-//            solution.setSolution(GeraSolucaoAleatoria(population, populationSize, listOfRequests, requestsWichBoardsInNode,
-//                    requestsWichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
-//                    requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode));
             System.out.println(solution);
             population.add(solution);
         }
 
-//        for (int i = 0; i < populationSize; i++) {
-//            solution1.setSolution(perturbation(solution, listOfRequests,requestsWichBoardsInNode,requestsWichLeavesInNode,
-//                    numberOfNodes, vehicleCapacity,setOfVehicles, listOfNonAttendedRequests, requestList,loadIndexList, timeBetweenNodes,
-//                    distanceBetweenNodes,timeWindows));
-//            ProblemSolution solution2 = new ProblemSolution();
-//            solution2.setSolution(solution1);
-//            population.add(solution2);
-//        }
         return population;
     }
 
-    public static void generateRandomSolutionsUsingPerturbation(int reducedDimension, List<Double> parameters, int numberOfRandomSolutions, final Integer vehicleCapacity,
+    public static void generateRandomSolutionsUsingPerturbation(int reducedDimension, List<Double> parameters, List<List<Double>> nadirPoint,
+            int numberOfRandomSolutions, final Integer vehicleCapacity,
             List<Request> listOfRequests, Map<Integer, List<Request>> requestsWichBoardsInNode,
             Map<Integer, List<Request>> requestsWichLeavesInNode, Integer numberOfNodes,
             Set<Integer> setOfVehicles, List<Request> listOfNonAttendedRequests, List<Request> requestList,
             List<Integer> loadIndexList, List<List<Long>> timeBetweenNodes, List<List<Long>> distanceBetweenNodes,
             Long timeWindows, Long currentTime, Integer lastNode) throws FileNotFoundException {
 
-        ProblemSolution solution = greedyConstructive(0.2, 0.15, 0.55, 0.1, reducedDimension, listOfRequests, requestsWichBoardsInNode,
+        ProblemSolution solution = greedyConstructive(0.2, 0.15, 0.55, 0.1, nadirPoint, reducedDimension, listOfRequests, requestsWichBoardsInNode,
                 requestsWichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, requestList,
                 loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
 
@@ -3306,7 +3315,7 @@ public class Algorithms {
         PrintStream printStreamForObjectives = new PrintStream(destinationFileForObjectives);
         PrintStream printStreamForSolutions = new PrintStream(destinationFileForSolutions);
         for (int i = 0; i < numberOfRandomSolutions; i++) {
-            solution1.setSolution(perturbation(reducedDimension, parameters, solution, listOfRequests, requestsWichBoardsInNode, requestsWichLeavesInNode,
+            solution1.setSolution(perturbation(reducedDimension, nadirPoint, parameters, solution, listOfRequests, requestsWichBoardsInNode, requestsWichLeavesInNode,
                     numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes,
                     distanceBetweenNodes, timeWindows));
             //System.out.println(solution1.getStringWithObjectives());
@@ -3316,7 +3325,7 @@ public class Algorithms {
         }
     }
 
-    public static void generateRandomSolutionsUsingGreedyAlgorithm(int reducedDimension, int numberOfRandomSolutions, final Integer vehicleCapacity,
+    public static void generateRandomSolutionsUsingGreedyAlgorithm(int reducedDimension, List<List<Double>> nadirPoint, int numberOfRandomSolutions, final Integer vehicleCapacity,
             List<Request> listOfRequests, Map<Integer, List<Request>> requestsWichBoardsInNode,
             Map<Integer, List<Request>> requestsWichLeavesInNode, Integer numberOfNodes, Set<Integer> setOfVehicles,
             List<Request> listOfNonAttendedRequests, List<Request> requestList, List<Integer> loadIndexList,
@@ -3333,7 +3342,7 @@ public class Algorithms {
         PrintStream printStreamForObjectives = new PrintStream(destinationFileForObjectives);
         PrintStream printStreamForSolutions = new PrintStream(destinationFileForSolutions);
         for (int i = 0; i < numberOfRandomSolutions; i++) {
-            solution1.setSolution(geraPesos(reducedDimension, i, listOfRequests, requestsWichBoardsInNode, requestsWichLeavesInNode, numberOfNodes,
+            solution1.setSolution(geraPesos(reducedDimension, nadirPoint, i, listOfRequests, requestsWichBoardsInNode, requestsWichLeavesInNode, numberOfNodes,
                     vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes,
                     distanceBetweenNodes, timeWindows, currentTime, lastNode));
 //            System.out.println(solution1.getStringWithObjectives());
