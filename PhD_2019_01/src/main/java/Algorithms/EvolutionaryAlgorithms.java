@@ -202,7 +202,7 @@ public class EvolutionaryAlgorithms {
             currentExecutionOriginalParetoStream = new PrintStream(folderName + "/" + fileName.toLowerCase()
                     + "-original-pareto-execution-" + currentExecutionNumber + ".txt");
             currentExecutionOriginalParetoNormalizedStream = new PrintStream(folderName + "/" + fileName.toLowerCase()
-                    + "-original-pareto-execution-" + currentExecutionNumber + ".txt");
+                    + "-original-pareto-normalized-execution-" + currentExecutionNumber + ".txt");
             currentExecutionReducedParetoStream = new PrintStream(folderName + "/" + fileName.toLowerCase()
                     + "-reduced-pareto-execution-" + currentExecutionNumber + ".txt");
         } catch (FileNotFoundException ex) {
@@ -226,6 +226,8 @@ public class EvolutionaryAlgorithms {
             System.out.println("Folder already exists!");
         }
         try {
+            combinedParetoNormalizedStream = new PrintStream(folderName + "/"
+                    + fileName.toLowerCase() + "-combined_pareto_normalized.csv");
             combinedParetoReducedStream = new PrintStream(folderName + "/"
                     + fileName.toLowerCase() + "-combined_pareto_reduced.csv");
             combinedParetoStream = new PrintStream(folderName + "/"
@@ -261,9 +263,11 @@ public class EvolutionaryAlgorithms {
         List<ProblemSolution> nonDominatedSolutions = new ArrayList<>();
         genericDominanceAlgorithm(solutions, nonDominatedSolutions);
         currentExecutionOriginalParetoStream.print("#\n");
+        currentExecutionOriginalParetoNormalizedStream.print("#\n");
         currentExecutionReducedParetoStream.print("#\n");
         for (ProblemSolution solution : nonDominatedSolutions) {
             currentExecutionOriginalParetoStream.print(solution.getStringWithOriginalObjectivesForCsvFile() + "\n");
+            currentExecutionOriginalParetoNormalizedStream.print(solution.getStringWithNormalizedOriginalObjectivesForCsvFile() + "\n");
             currentExecutionReducedParetoStream.print(solution.getStringWithReducedObjectives() + "\n");
         }
     }
@@ -320,7 +324,8 @@ public class EvolutionaryAlgorithms {
             initializeRandomPopulationForMOEAD(nadirPoint, transformationList, parameters, reducedDimension, population, populationSize, requests,
                     requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                     requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
-            saveInitialPopulation(population);
+            
+            saveInitialPopulation(population, currentExecutionNumber);
 
             int numberOfObjectives = reducedDimension;
             int[][] neighborhood = new int[populationSize][neighborSize];
@@ -335,7 +340,9 @@ public class EvolutionaryAlgorithms {
                 MOEADUtils.randomPermutation(permutation, populationSize);
 
                 transformationList = generateTransformationList();//hc.getTransfomationList();//
-
+                System.out.println("current evaluation " + evaluations);
+//                transformationList.forEach(u -> System.out.println(u));
+                
                 for (int i = 0; i < population.size(); i++) {
                     int subProblemId = permutation[i];
                     NeighborType neighborType = chooseNeighborType(neighborhoodSelectionProbability);
@@ -377,7 +384,7 @@ public class EvolutionaryAlgorithms {
             long elapsed = System.currentTimeMillis() - start;
             saveExecutionTime(elapsed - elapsedSaveTime);
             saveNonDominatedSolutionsFromCurrentExecution(population);
-
+            externalPopulation.forEach(u -> System.out.println(u));
         }
         saveCombinedPareto();
     }
@@ -550,6 +557,7 @@ public class EvolutionaryAlgorithms {
 
             saveInitialPopulation(population, currentExecutionNumber);
             population.forEach(u -> System.out.println(u));
+            
             int numberOfObjectives = reducedDimension;
             int[][] neighborhood = new int[populationSize][neighborSize];
             double[][] lambda = initializeUniformWeight(numberOfObjectives, populationSize);
@@ -561,8 +569,7 @@ public class EvolutionaryAlgorithms {
             do {
                 int[] permutation = new int[populationSize];
                 MOEADUtils.randomPermutation(permutation, populationSize);
-                hc = new HierarchicalCluster(getMatrixOfObjetives(population, parameters),
-                        numberOfClusters, correlation);
+                hc = new HierarchicalCluster(getMatrixOfObjetivesNormalized(population), numberOfClusters, correlation);
                 hc.reduce(transformationList);
                 System.out.println("current evaluation " + evaluations);
                 hc.getTransfomationList().forEach(u -> System.out.println(u));
@@ -1404,6 +1411,19 @@ public class EvolutionaryAlgorithms {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
                 matrix[i][j] = population.get(i).getOriginalObjectives().get(j) * parameters.get(j);
+            }
+        }
+        return matrix;
+    }
+    
+    public static double[][] getMatrixOfObjetivesNormalized(List<ProblemSolution> population) {
+        int rows = population.size();
+        int columns = population.get(0).getOriginalObjectivesNormalized().size();
+        double[][] matrix = new double[rows][columns];
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                matrix[i][j] = population.get(i).getOriginalObjectivesNormalized().get(j);
             }
         }
         return matrix;

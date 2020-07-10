@@ -523,7 +523,7 @@ public class Methods {
 
         for (int i = 0; i < TamPop; i++) {
             ProblemSolution S = new ProblemSolution();
-            S.setSolution(generateRandomSolution(reducedDimension, Pop, TamPop, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode));
+            S.setSolution(generateRandomSolution(reducedDimension, nadirPoint, Pop, TamPop, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode));
             //S.setSolution(PerturbacaoSemente(parameters, S, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows));
             Pop.add(S);
         }
@@ -541,7 +541,7 @@ public class Methods {
             Long TimeWindows, Long currentTime, Integer lastNode) {
 
         ProblemSolution solution = new ProblemSolution(reducedDimension);
-        solution.setSolution(generateRandomSolution(reducedDimension, Pop, TamPop, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode));
+        solution.setSolution(generateRandomSolution(reducedDimension, nadirPoint, Pop, TamPop, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode));
         for (int i = 0; i < TamPop; i++) {
             ProblemSolution randomSolution = new ProblemSolution(reducedDimension);
             randomSolution.setSolution(randomPerturbationWithSeedForOnlineAlgorithm(i, reducedDimension, nadirPoint, parameters, solution, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows));
@@ -556,7 +556,7 @@ public class Methods {
             Long TimeWindows, Long currentTime, Integer lastNode) {
 
         ProblemSolution solution = new ProblemSolution(reducedDimension);
-        solution.setSolution(generateRandomSolution(reducedDimension, population, TamPop, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c,
+        solution.setSolution(generateRandomSolution(reducedDimension, nadirPoint, population, TamPop, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c,
                 TimeWindows, currentTime, lastNode));
         for (int i = 0; i < TamPop; i++) {
             ProblemSolution randomSolution = new ProblemSolution(reducedDimension);
@@ -573,7 +573,7 @@ public class Methods {
             Long TimeWindows, Long currentTime, Integer lastNode) {
 
         ProblemSolution solution = new ProblemSolution(reducedDimension);
-        solution.setSolution(generateRandomSolution(reducedDimension, population, TamPop, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c,
+        solution.setSolution(generateRandomSolution(reducedDimension, nadirPoint, population, TamPop, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c,
                 TimeWindows, currentTime, lastNode));
         for (int i = 0; i < TamPop; i++) {
             ProblemSolution randomSolution = new ProblemSolution(reducedDimension);
@@ -589,7 +589,7 @@ public class Methods {
             Long TimeWindows, Long currentTime, Integer lastNode) {
 
         ProblemSolution solution = new ProblemSolution(reducedDimension);
-        solution.setSolution(generateRandomSolution(reducedDimension, Pop, TamPop, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode));
+        solution.setSolution(generateRandomSolution(reducedDimension, nadirPoint, Pop, TamPop, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode));
         for (int i = 0; i < TamPop; i++) {
             ProblemSolution randomSolution = new ProblemSolution(reducedDimension);
             randomSolution.setSolution(randomPerturbationWithSeed(i, reducedDimension, nadirPoint, parameters, solution, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows));
@@ -616,7 +616,7 @@ public class Methods {
         for (int i = 0; i < TamPop; i++) {
             ProblemSolution S = new ProblemSolution();
             ProblemSolution S_linha = new ProblemSolution();
-            S.setSolution(generateRandomSolution(reducedDimension, Pop, TamPop, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode));
+            S.setSolution(generateRandomSolution(reducedDimension, nadirPoint, Pop, TamPop, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows, currentTime, lastNode));
             //S_linha.setSolution(perturbation(S, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows));
             S_linha.setSolution(randomPerturbationWithSeed(i, reducedDimension, nadirPoint, parameters, S, listRequests, Pin, Pout, n, Qmax, K, U, P, m, d, c, TimeWindows));
             Pop.add(S_linha);
@@ -641,7 +641,8 @@ public class Methods {
         }
     }
 
-    public static ProblemSolution generateRandomSolution(int reducedDimension, List<ProblemSolution> Pop, Integer TamPop, List<Request> listRequests, Map<Integer, List<Request>> Pin,
+    public static ProblemSolution generateRandomSolution(int reducedDimension, List<List<Double>> nadirPoint,
+            List<ProblemSolution> Pop, Integer TamPop, List<Request> listRequests, Map<Integer, List<Request>> Pin,
             Map<Integer, List<Request>> Pout, Integer n, Integer Qmax, Set<Integer> K, List<Request> U,
             List<Request> P, List<Integer> m, List<List<Long>> d, List<List<Long>> c,
             Long TimeWindows, Long currentTime, Integer lastNode) {
@@ -766,6 +767,9 @@ public class Methods {
         solution.setDeliveryTimeWindowAntecipation(FO8(solution));
         solution.setTotalOccupationRate(FO9(solution, Qmax));
         solution.setObjectivesList();
+        solution.setObjectivesNormalizedList();
+        
+        evaluateSolution(solution, nadirPoint, c, Qmax, listRequests);
         //evaluateAggregatedObjectiveFunctions(solution, 1, 1, 1, 1, 1);
 
         solution.setObjectiveFunction(FuncaoDeAvaliacao(solution, listRequests, c));
