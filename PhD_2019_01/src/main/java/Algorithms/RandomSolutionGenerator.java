@@ -117,19 +117,19 @@ public class RandomSolutionGenerator {
 
         Methods.initializeFleetOfVehicles(setOfVehicles, numberOfVehicles);
 
-        ProblemSolution solution = greedyConstructive(0.2, 0.15, 0.55, 0.1,reducedDimension, requestList, requestsWichBoardsInNode,
-                requestsWichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, listOfRequests,
-                loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
+//        ProblemSolution solution = greedyConstructive(0.2, 0.15, 0.55, 0.1,reducedDimension, requestList, requestsWichBoardsInNode,
+//                requestsWichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, listOfRequests,
+//                loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
 
         ProblemSolution solution1 = new ProblemSolution();
 
         for (int i = 0; i < numberOfSolutionsPerInstance; i++) {//numberOfSolutionsPerInstance
-            solution1.setSolution(perturbation(reducedDimension, parameters, solution,requestList , requestsWichBoardsInNode, requestsWichLeavesInNode,
-                    numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, listOfRequests, loadIndexList, timeBetweenNodes,
-                    distanceBetweenNodes, timeWindows));
-            //System.out.println(solution1);
-            printStreamForObjectives.print(solution1.getStringWithOriginalObjectivesForCsvFile() + "\n");
-            printStreamForSolutions.print(solution1 + "\n");
+//            solution1.setSolution(perturbation(reducedDimension, parameters, solution,requestList , requestsWichBoardsInNode, requestsWichLeavesInNode,
+//                    numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, listOfRequests, loadIndexList, timeBetweenNodes,
+//                    distanceBetweenNodes, timeWindows));
+//            //System.out.println(solution1);
+//            printStreamForObjectives.print(solution1.getStringWithOriginalObjectivesForCsvFile() + "\n");
+//            printStreamForSolutions.print(solution1 + "\n");
         }
     }
 }
