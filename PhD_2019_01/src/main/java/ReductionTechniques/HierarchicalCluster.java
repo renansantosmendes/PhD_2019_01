@@ -5,7 +5,7 @@ import ReductionTechniques.CorrelationType;
 import java.io.*;
 import java.util.*;
 import org.apache.commons.math3.linear.RealMatrix;
-import org.apache.commons.math3.stat.correlation.KendallsCorrelation;
+import Correlations.KendallsCorrelation;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import org.apache.commons.math3.stat.correlation.SpearmansCorrelation;
 

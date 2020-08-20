@@ -72,7 +72,7 @@ public class UniformRandomGenerator {
         lambda = new double[populationSize][numberOfObjectives];
         while (i < this.populationSize) {
             if (i < this.numberOfObjectives) {
-                List<Double> listOfRandomNumbers = generateIdentityMatrix(i,this.numberOfObjectives);
+                List<Double> listOfRandomNumbers = generateIdentityMatrix(i, this.numberOfObjectives);
 
                 for (int j = 0; j < listOfRandomNumbers.size(); j++) {
                     lambda[i][j] = listOfRandomNumbers.get(j);
@@ -95,7 +95,7 @@ public class UniformRandomGenerator {
         lambda = new double[populationSize][numberOfObjectives];
         while (i < this.populationSize) {
             if (i < this.numberOfObjectives) {
-                List<Double> listOfRandomNumbers = generateIdentityMatrix(i,this.numberOfObjectives);
+                List<Double> listOfRandomNumbers = generateIdentityMatrix(i, this.numberOfObjectives);
 
                 for (int j = 0; j < listOfRandomNumbers.size(); j++) {
                     lambda[i][j] = listOfRandomNumbers.get(j);
