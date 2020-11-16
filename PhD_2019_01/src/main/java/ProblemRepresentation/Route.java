@@ -128,7 +128,32 @@ public class Route implements Comparable<Route> {
     }
 
     public void calculateOccupationRate(int vehicleCapacity) {
-        this.setOccupationRate(this.getVehicleOccupationWhenLeavesNode().stream()
+        
+        List<Integer> list = getVehicleOccupationWhenLeavesNode();
+//        System.out.println("lista");
+//        System.out.println(list);
+        if(list.get(0) == 0){
+            list.remove(list.size()-1);
+            list.remove(0);
+        }
+//        if (list.get(list.size()-1) == 0){
+//            list.remove(list.size()-1);
+//            
+//            if (list.get(0) == 0){
+//                list.remove(0);
+//            }
+//        }
+//        list.remove(list.size()-1);
+//        list.remove(0);
+//        System.out.println("lista after");
+//        System.out.println(list);
+        
+        
+//        this.setOccupationRate(this.getVehicleOccupationWhenLeavesNode().stream()
+//                .mapToDouble(Integer::valueOf).average() //max()average()
+//                .getAsDouble() / vehicleCapacity);
+        
+        this.setOccupationRate(list.stream()
                 .mapToDouble(Integer::valueOf).average() //max()average()
                 .getAsDouble() / vehicleCapacity);
     }

@@ -35,7 +35,7 @@ public class StaticGoogleMap {
     private List<Node> nodesList;
     private final String URLRoot = "https://maps.googleapis.com/maps/api/staticmap?center=";
     private final String directionsApiKey = "AIzaSyCgaZr9fRAUs3_8lftkt026_MfZ3yZVN4E";
-    private final String staticMapKey = "AIzaSyBpval3mOcQgQ5PlCX8tV7Cm5k-E00_98A";
+    private final String staticMapKey = "AIzaSyDGIY0wYBd9hwvsUqLbaUjNvVnhHOBCdxU";
     private StringBuilder stringOfNodes = new StringBuilder();
     private StringBuilder polylines = new StringBuilder();
     private StringBuilder polylinesForAllRotes = new StringBuilder();

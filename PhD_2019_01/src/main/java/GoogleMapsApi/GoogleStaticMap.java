@@ -32,7 +32,7 @@ public class GoogleStaticMap {
     private List<Node> nodesList;
     private final String URLRoot = "https://maps.googleapis.com/maps/api/staticmap?center=";
     private final String directionsApiKey = "AIzaSyCgaZr9fRAUs3_8lftkt026_MfZ3yZVN4E";
-    private final String staticMapKey = "AIzaSyBpval3mOcQgQ5PlCX8tV7Cm5k-E00_98A";
+    private final String staticMapKey = "AIzaSyDnbydYYYtvGROBcUXDiiOaxafkmJ0vyos";
     private StringBuilder stringOfNodes = new StringBuilder();
     private StringBuilder polylines = new StringBuilder();
     private StringBuilder polylinesForAllRotes = new StringBuilder();
@@ -78,7 +78,6 @@ public class GoogleStaticMap {
         this.nodesTable = nodesTable;
         String folder;
         folder = "RouteDataForStaticMap";
-
         boolean successForCreateDataFolder = (new File(folder)).mkdirs();
         boolean successForCreateStaticMapsFolder = (new File(staticMapsFolder)).mkdirs();
         if (totalOfRoutes == 0) {
@@ -141,6 +140,8 @@ public class GoogleStaticMap {
         URL url = new URL(URLRoot + mapCenter + "," + city + "," + state + "," + country + "&zoom=" + zoom + "&scale=" + scale
                 + "&size=" + width + "x" + height + "&maptype=" + mapType + stringOfNodes.toString()
                 + pathGeneratedForAllRoutes + "&key=" + staticMapKey + "&format=jpg");
+        System.out.println("URL");
+        System.out.println(url);
         return url;
     }
 

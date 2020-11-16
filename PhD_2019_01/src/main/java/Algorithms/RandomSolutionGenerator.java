@@ -33,7 +33,7 @@ public class RandomSolutionGenerator {
 
     private String vehicleCapacities[] = {"4"};//"11""16""13" -> removed
     private String nodesDistance[] = {"s"};//m l
-    private String numberOfRequests[] = {"050","100","150","200","250"};//
+    private String numberOfRequests[] = {"250"};//{"050","100","150","200","250"};
     private String timeWindows[] = {"10"};//05 "03"-> removed
     private String numberOfNodes = "12";
     private int numberOfInstances;

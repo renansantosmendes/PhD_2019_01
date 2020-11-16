@@ -149,7 +149,7 @@ public class RankedList {
         for (Integer i : feasibleNodes) {
             if (requestsWhichBoardsInNode.get(i).size() > 0) {
                 for (Request request : requestsWhichBoardsInNode.get(i)) {
-                    EarliestTime.add(request.getPickupTimeWIndowLower());
+                    EarliestTime.add(request.getPickupTimeWindowLower());
                 }
                 timeWindowRankList.put(i, (double) (Collections.min(EarliestTime) + timeBetweenNodes.get(lastNode).get(i)));
                 EarliestTime.clear();

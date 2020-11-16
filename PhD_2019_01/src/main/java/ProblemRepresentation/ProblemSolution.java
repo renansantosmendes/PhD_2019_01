@@ -843,7 +843,7 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
 
     public String getStringWithOriginalObjectivesForCsvFile() {
         String stringWithObjectives = totalDistance + ","
-                + totalDeliveryDelay + "," + totalRouteTimeChargeBanlance + ","
+                + totalDeliveryDelay + "," + 6.9/*totalRouteTimeChargeBanlance*/ + ","
                 + numberOfVehicles + "," + totalTravelTime + "," + totalWaintingTime + ","
                 + deliveryTimeWindowAntecipation + "," + totalOccupationRate + "\t";
         return stringWithObjectives;
@@ -1072,7 +1072,7 @@ public class ProblemSolution implements Comparable<ProblemSolution> {
         int sum = 0;
         for (Route route : routes) {
             for (Request request : route.getRequestAttendanceList()) {
-                sum += request.getPickupTime() - request.getPickupTimeWIndowLower();
+                sum += request.getPickupTime() - request.getPickupTimeWindowLower();
             }
         }
         return sum;

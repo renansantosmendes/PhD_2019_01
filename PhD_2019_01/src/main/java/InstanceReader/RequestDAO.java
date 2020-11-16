@@ -49,8 +49,8 @@ public class RequestDAO {
             LocalDateTime pickUpTime = null;
             LocalDateTime requestDay = null;
             //pickUpTimeWindowLower = LocalDateTime.of(2017, 1, 1, (int) request.getPickupTimeWIndowLower()/60, (int) request.getPickupTimeWIndowLower()%60);
-            pickUpTimeWindowLower = LocalDateTime.of(2017, 1, 1, (int) request.getPickupTimeWIndowLower() / 60,
-                    (int) request.getPickupTimeWIndowLower() % 60);
+            pickUpTimeWindowLower = LocalDateTime.of(2017, 1, 1, (int) request.getPickupTimeWindowLower() / 60,
+                    (int) request.getPickupTimeWindowLower() % 60);
             pickUpTimeWindowUpper = LocalDateTime.of(2017, 1, 1, (int) request.getPickupTimeWindowUpper() / 60,
                     (int) request.getPickupTimeWindowUpper() % 60);
             deliveryTimeWindowLower = LocalDateTime.of(2017, 1, 1, (int) request.getDeliveryTimeWindowLower() / 60,
@@ -86,8 +86,8 @@ public class RequestDAO {
             LocalDateTime pickUpTime = LocalDateTime.of(2017, 1, 1, 0, 0);
             LocalDateTime requestDay = LocalDateTime.of(2017, 1, 1, 0, 0);
             //pickUpTimeWindowLower = LocalDateTime.of(2017, 1, 1, (int) request.getPickupTimeWIndowLower()/60, (int) request.getPickupTimeWIndowLower()%60);
-            pickUpTimeWindowLower = LocalDateTime.of(2017, 1, 1, (int) request.getPickupTimeWIndowLower() / 60,
-                    (int) request.getPickupTimeWIndowLower() % 60);
+            pickUpTimeWindowLower = LocalDateTime.of(2017, 1, 1, (int) request.getPickupTimeWindowLower() / 60,
+                    (int) request.getPickupTimeWindowLower() % 60);
             pickUpTimeWindowUpper = LocalDateTime.of(2017, 1, 1, (int) request.getPickupTimeWindowUpper() / 60,
                     (int) request.getPickupTimeWindowUpper() % 60);
             deliveryTimeWindowLower = LocalDateTime.of(2017, 1, 1, (int) request.getDeliveryTimeWindowLower() / 60,

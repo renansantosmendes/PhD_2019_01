@@ -13,6 +13,7 @@ import ProblemRepresentation.*;
 import com.google.maps.errors.ApiException;
 import Algorithms.EvolutionaryAlgorithms.*;
 import static Algorithms.EvolutionaryAlgorithms.*;
+import static Algorithms.Methods.initializeRandomPopulation;
 import static Algorithms.Methods.readProblemData;
 import static Algorithms.Methods.readProblemUsingExcelData;
 import InstanceReader.ScriptGenerator;
@@ -51,10 +52,10 @@ public class VRPDRT_Main {
 
     public static void main(String[] args) throws ApiException, Exception, IOException, BiffException {
         String directionsApiKey = "AIzaSyD9W0em7H723uVOMD6QFe_1Mns71XAi5JU";
-        String filePath = "/home/renansantos/Área de Trabalho/Excel Instances/";
-//        filePath = "/home/rmendes/VRPDRT/";
+        String filePath = "C:\\Doutorado - Renan\\Excel Instances\\";
+        //filePath = "/home/rmendes/VRPDRT/";
 
-        int numberOfRequests = 50;
+        int numberOfRequests = 350;
         int requestTimeWindows = 10;
         final Integer vehicleCapacity = 4;
         String instanceSize = "s";
@@ -83,7 +84,7 @@ public class VRPDRT_Main {
         List<Double> parameters = new ArrayList<>();
         List<List<Double>> nadirPoint = new ArrayList<>();
         List<List<Integer>> transformationList = new ArrayList<>();
-        if (numberOfRequests == 250) {
+        if (numberOfRequests >= 250) {
             new ScriptGenerator(instanceName, instanceSize, vehicleCapacity)
                     .generate("30d", "lamho-0");
         } else {
@@ -138,7 +139,6 @@ public class VRPDRT_Main {
 
         nadirPoint = getMinMaxForObjectives(solutions);
         System.out.println("Min max founds " + nadirPoint);
-//        
 //        MOEAD(instanceName, neighborSize, numberOfEvaluations, maximumNumberOfReplacedSolutions, reducedDimension, transformationList, parameters,
 //        nadirPoint, populationSize, maximumNumberOfGenerations, functionType, maximumNumberOfExecutions,
 //        neighborhoodSelectionProbability, probabilityOfMutation, probabilityOfCrossover, requests,
@@ -146,20 +146,19 @@ public class VRPDRT_Main {
 //        listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows,
 //        currentTime, lastNode);
 
-        onMOEAD(instanceName, neighborSize, numberOfEvaluations, intervalOfAggregations, maximumNumberOfReplacedSolutions, reducedDimension, CorrelationType.KENDALL,
-        transformationList, parameters, nadirPoint, populationSize, maximumNumberOfGenerations, functionType, maximumNumberOfExecutions,
-        neighborhoodSelectionProbability, probabilityOfMutation, probabilityOfCrossover, requests,
-        requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
-        listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows,
-        currentTime, lastNode);       
-        
-//        solutions.forEach(u -> System.out.println(u));
-//        onMOEAD(instanceName, neighborSize, numberOfEvaluations, intervalOfAggregations, maximumNumberOfReplacedSolutions, reducedDimension, CorrelationType.PEARSON,
+//        onMOEAD(instanceName, neighborSize, numberOfEvaluations, intervalOfAggregations, maximumNumberOfReplacedSolutions, reducedDimension, CorrelationType.KENDALL,
 //        transformationList, parameters, nadirPoint, populationSize, maximumNumberOfGenerations, functionType, maximumNumberOfExecutions,
 //        neighborhoodSelectionProbability, probabilityOfMutation, probabilityOfCrossover, requests,
 //        requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
 //        listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows,
-//        currentTime, lastNode);
+//        currentTime, lastNode);       
+        
+        onMOEAD(instanceName, neighborSize, numberOfEvaluations, intervalOfAggregations, maximumNumberOfReplacedSolutions, reducedDimension, CorrelationType.PEARSON,
+        transformationList, parameters, nadirPoint, populationSize, maximumNumberOfGenerations, functionType, maximumNumberOfExecutions,
+        neighborhoodSelectionProbability, probabilityOfMutation, probabilityOfCrossover, requests,
+        requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
+        listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows,
+        currentTime, lastNode);
     }
 
 }

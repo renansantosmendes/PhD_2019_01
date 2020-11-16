@@ -262,7 +262,7 @@ public class VRPDRT {
                         break;
                     }
 
-                    if (!feasibleNodeIsFound && currentTime + timeBetweenNodes.get(lastNode).get(currentNode) >= request.getPickupTimeWIndowLower() - timeWindows
+                    if (!feasibleNodeIsFound && currentTime + timeBetweenNodes.get(lastNode).get(currentNode) >= request.getPickupTimeWindowLower() - timeWindows
                             && currentTime + timeBetweenNodes.get(lastNode).get(currentNode) <= request.getPickupTimeWindowUpper()) {
                         feasibleNodes.add(currentNode);
                         feasibleNodeIsFound = true;
@@ -291,7 +291,7 @@ public class VRPDRT {
                 if (lastNode == 0) {
                     for (Request request : requestsWhichBoardsInNode.get(newNode)) {
                         if (timeBetweenNodes.get(lastNode).get(newNode) <= request.getPickupTimeWindowUpper()) {
-                            earliestTime.add(request.getPickupTimeWIndowLower());
+                            earliestTime.add(request.getPickupTimeWindowLower());
                         }
                     }
                     currentTime = Math.max(Collections.min(earliestTime) - timeBetweenNodes.get(lastNode).get(newNode), 0);
@@ -343,7 +343,7 @@ public class VRPDRT {
         listRequestAux.addAll(requestsWhichBoardsInNode.get(lastNode));
 
         for (Request request : listRequestAux) {
-            if (currentRoute.getActualOccupation() < vehicleCapacity && currentTime >= request.getPickupTimeWIndowLower() && currentTime <= request.getPickupTimeWindowUpper()) {
+            if (currentRoute.getActualOccupation() < vehicleCapacity && currentTime >= request.getPickupTimeWindowLower() && currentTime <= request.getPickupTimeWindowUpper()) {
                 requestsWhichBoardsInNode.get(lastNode).remove((Request) request.clone());
                 log += "COLETA: " + currentTime + ": " + (Request) request.clone() + " ";
                 currentRoute.boardPassenger((Request) request.clone(), currentTime);
@@ -364,9 +364,9 @@ public class VRPDRT {
         long aux;
 
         for (Request request : listRequestAux) {
-            if (currentRoute.getActualOccupation() < vehicleCapacity && currentTime + waitTime >= request.getPickupTimeWIndowLower() && currentTime + waitTime <= request.getPickupTimeWindowUpper()) {
-                aux = currentTime + waitTime - request.getPickupTimeWIndowLower();
-                currentTime = Math.min(currentTime + waitTime, request.getPickupTimeWIndowLower());
+            if (currentRoute.getActualOccupation() < vehicleCapacity && currentTime + waitTime >= request.getPickupTimeWindowLower() && currentTime + waitTime <= request.getPickupTimeWindowUpper()) {
+                aux = currentTime + waitTime - request.getPickupTimeWindowLower();
+                currentTime = Math.min(currentTime + waitTime, request.getPickupTimeWindowLower());
                 waitTime = aux;
                 requestsWhichBoardsInNode.get(lastNode).remove((Request) request.clone());
                 log += "COLETAw: " + currentTime + ": " + (Request) request.clone() + " ";
@@ -404,7 +404,7 @@ public class VRPDRT {
                 //Procura solicitação para embarcar
                 if (currentRoute.getActualOccupation() < vehicleCapacity) {//se tiver lugar, ele tenta embarcar alguem no veículo
                     for (Request request : requestsWhichBoardsInNode.get(i)) {//percorre todos os nós menos o nó que acabou de ser adicionado (por causa da restrição)
-                        if (currentTime + timeBetweenNodes.get(lastNode).get(i) >= request.getPickupTimeWIndowLower() - timeWindows
+                        if (currentTime + timeBetweenNodes.get(lastNode).get(i) >= request.getPickupTimeWindowLower() - timeWindows
                                 && currentTime + timeBetweenNodes.get(lastNode).get(i) <= request.getPickupTimeWindowUpper()) {
                             feasibleRequestIsFound = true;
                             break;
@@ -539,7 +539,7 @@ public class VRPDRT {
                                     break;
                                 }
                                 //if( (currentTime + d.get(lastNode).get(i)) <= request.getPickupTimeWindowUpper()){
-                                if (currentTime + timeBetweenNodes.get(lastNode).get(i) >= request.getPickupTimeWIndowLower() - timeWindows
+                                if (currentTime + timeBetweenNodes.get(lastNode).get(i) >= request.getPickupTimeWindowLower() - timeWindows
                                         && currentTime + timeBetweenNodes.get(lastNode).get(i) <= request.getPickupTimeWindowUpper() && neighborhood.contains(request.getDestination())) {
                                     newNode = neighborhood.remove(k);
                                     encontrado = true;
@@ -573,7 +573,7 @@ public class VRPDRT {
                     //System.out.println("VIZINHO PROBLEMATICO "+vizinho);
                     for (Request request : requestsWhichBoardsInNode.get(newNode)) {
                         if (timeBetweenNodes.get(lastNode).get(newNode) <= request.getPickupTimeWindowUpper() && neighborhood.contains(request.getDestination())) {
-                            EarliestTime.add(request.getPickupTimeWIndowLower());
+                            EarliestTime.add(request.getPickupTimeWindowLower());
                         }
                     }
 
@@ -611,7 +611,7 @@ public class VRPDRT {
                 listRequestAux.addAll(requestsWhichBoardsInNode.get(lastNode));
 
                 for (Request request : listRequestAux) {
-                    if (currentRoute.getActualOccupation() < vehicleCapacity && currentTime >= request.getPickupTimeWIndowLower() && currentTime <= request.getPickupTimeWindowUpper() && neighborhood.contains(request.getDestination())) {
+                    if (currentRoute.getActualOccupation() < vehicleCapacity && currentTime >= request.getPickupTimeWindowLower() && currentTime <= request.getPickupTimeWindowUpper() && neighborhood.contains(request.getDestination())) {
                         requestsWhichBoardsInNode.get(lastNode).remove((Request) request.clone());
                         log += "COLETA: " + currentTime + ": " + (Request) request.clone() + " ";
                         currentRoute.boardPassenger((Request) request.clone(), currentTime);
@@ -627,10 +627,10 @@ public class VRPDRT {
                 long aux;
 
                 for (Request request : listRequestAux) {
-                    if (currentRoute.getActualOccupation() < vehicleCapacity && currentTime + waitTime >= request.getPickupTimeWIndowLower() && currentTime + waitTime <= request.getPickupTimeWindowUpper() && neighborhood.contains(request.getDestination())) {
+                    if (currentRoute.getActualOccupation() < vehicleCapacity && currentTime + waitTime >= request.getPickupTimeWindowLower() && currentTime + waitTime <= request.getPickupTimeWindowUpper() && neighborhood.contains(request.getDestination())) {
 
-                        aux = currentTime + waitTime - request.getPickupTimeWIndowLower();
-                        currentTime = Math.min(currentTime + waitTime, request.getPickupTimeWIndowLower());
+                        aux = currentTime + waitTime - request.getPickupTimeWindowLower();
+                        currentTime = Math.min(currentTime + waitTime, request.getPickupTimeWindowLower());
                         waitTime = aux;
                         requestsWhichBoardsInNode.get(lastNode).remove((Request) request.clone());
                         log += "COLETAw: " + currentTime + ": " + (Request) request.clone() + " ";
@@ -664,7 +664,7 @@ public class VRPDRT {
 
                         if (currentRoute.getActualOccupation() < vehicleCapacity) {
                             for (Request request : requestsWhichBoardsInNode.get(i)) {
-                                if (currentTime + timeBetweenNodes.get(lastNode).get(i) >= request.getPickupTimeWIndowLower() - timeWindows
+                                if (currentTime + timeBetweenNodes.get(lastNode).get(i) >= request.getPickupTimeWindowLower() - timeWindows
                                         && currentTime + timeBetweenNodes.get(lastNode).get(i) <= request.getPickupTimeWindowUpper() && neighborhood.contains(request.getDestination())) {
                                     encontrado = true;
                                     break;
@@ -802,7 +802,7 @@ public class VRPDRT {
                                     break;
                                 }
                                 //if( (currentTime + d.get(lastNode).get(i)) <= request.getPickupTimeWindowUpper()){
-                                if (currentTime + timeBetweenNodes.get(lastNode).get(i) >= request.getPickupTimeWIndowLower() - timeWindows
+                                if (currentTime + timeBetweenNodes.get(lastNode).get(i) >= request.getPickupTimeWindowLower() - timeWindows
                                         && currentTime + timeBetweenNodes.get(lastNode).get(i) <= request.getPickupTimeWindowUpper() && neighborhood.contains(request.getDestination())) {
                                     newNode = neighborhood.remove(k);
                                     encontrado = true;
@@ -836,7 +836,7 @@ public class VRPDRT {
                     //System.out.println("VIZINHO PROBLEMATICO "+vizinho);
                     for (Request request : requestsWhichBoardsInNode.get(newNode)) {
                         if (timeBetweenNodes.get(lastNode).get(newNode) <= request.getPickupTimeWindowUpper() && neighborhood.contains(request.getDestination())) {
-                            EarliestTime.add(request.getPickupTimeWIndowLower());
+                            EarliestTime.add(request.getPickupTimeWindowLower());
                         }
                     }
 
@@ -874,7 +874,7 @@ public class VRPDRT {
                 listRequestAux.addAll(requestsWhichBoardsInNode.get(lastNode));
 
                 for (Request request : listRequestAux) {
-                    if (currentRoute.getActualOccupation() < vehicleCapacity && currentTime >= request.getPickupTimeWIndowLower() && currentTime <= request.getPickupTimeWindowUpper() && neighborhood.contains(request.getDestination())) {
+                    if (currentRoute.getActualOccupation() < vehicleCapacity && currentTime >= request.getPickupTimeWindowLower() && currentTime <= request.getPickupTimeWindowUpper() && neighborhood.contains(request.getDestination())) {
                         requestsWhichBoardsInNode.get(lastNode).remove((Request) request.clone());
                         log += "COLETA: " + currentTime + ": " + (Request) request.clone() + " ";
                         currentRoute.boardPassenger((Request) request.clone(), currentTime);
@@ -890,10 +890,10 @@ public class VRPDRT {
                 long aux;
 
                 for (Request request : listRequestAux) {
-                    if (currentRoute.getActualOccupation() < vehicleCapacity && currentTime + waitTime >= request.getPickupTimeWIndowLower() && currentTime + waitTime <= request.getPickupTimeWindowUpper() && neighborhood.contains(request.getDestination())) {
+                    if (currentRoute.getActualOccupation() < vehicleCapacity && currentTime + waitTime >= request.getPickupTimeWindowLower() && currentTime + waitTime <= request.getPickupTimeWindowUpper() && neighborhood.contains(request.getDestination())) {
 
-                        aux = currentTime + waitTime - request.getPickupTimeWIndowLower();
-                        currentTime = Math.min(currentTime + waitTime, request.getPickupTimeWIndowLower());
+                        aux = currentTime + waitTime - request.getPickupTimeWindowLower();
+                        currentTime = Math.min(currentTime + waitTime, request.getPickupTimeWindowLower());
                         waitTime = aux;
                         requestsWhichBoardsInNode.get(lastNode).remove((Request) request.clone());
                         log += "COLETAw: " + currentTime + ": " + (Request) request.clone() + " ";
@@ -927,7 +927,7 @@ public class VRPDRT {
 
                         if (currentRoute.getActualOccupation() < vehicleCapacity) {
                             for (Request request : requestsWhichBoardsInNode.get(i)) {
-                                if (currentTime + timeBetweenNodes.get(lastNode).get(i) >= request.getPickupTimeWIndowLower() - timeWindows
+                                if (currentTime + timeBetweenNodes.get(lastNode).get(i) >= request.getPickupTimeWindowLower() - timeWindows
                                         && currentTime + timeBetweenNodes.get(lastNode).get(i) <= request.getPickupTimeWindowUpper() && neighborhood.contains(request.getDestination())) {
                                     encontrado = true;
                                     break;

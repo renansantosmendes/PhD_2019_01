@@ -225,7 +225,7 @@ public class Methods {
         for (Integer i : FeasibleNode) {
             if (Pin.get(i).size() > 0) {
                 for (Request request : Pin.get(i)) {
-                    EarliestTime.add(request.getPickupTimeWIndowLower());
+                    EarliestTime.add(request.getPickupTimeWindowLower());
                 }
 
                 TRL.put(i, (double) (Collections.min(EarliestTime) + d.get(lastNode).get(i)));
@@ -286,7 +286,7 @@ public class Methods {
                 if (lastNode == 0) {
                     for (Request request : Pin.get(newNode)) {
                         if (d.get(lastNode).get(newNode) <= request.getPickupTimeWindowUpper()) {
-                            EarliestTime.add(request.getPickupTimeWIndowLower());
+                            EarliestTime.add(request.getPickupTimeWindowLower());
                         }
                     }
                     currentTime = Math.max(Collections.min(EarliestTime) - d.get(lastNode).get(newNode), 0);
@@ -343,7 +343,7 @@ public class Methods {
         listRequestAux.addAll(Pin.get(lastNode));
 
         for (Request request : listRequestAux) {
-            if (R.getActualOccupation() < Qmax && currentTime >= request.getPickupTimeWIndowLower() && currentTime <= request.getPickupTimeWindowUpper()) {
+            if (R.getActualOccupation() < Qmax && currentTime >= request.getPickupTimeWindowLower() && currentTime <= request.getPickupTimeWindowUpper()) {
                 Pin.get(lastNode).remove((Request) request.clone());
                 log += "COLETA: " + currentTime + ": " + (Request) request.clone() + " ";
                 R.boardPassenger((Request) request.clone(), currentTime);
@@ -364,10 +364,10 @@ public class Methods {
         long aux;
 
         for (Request request : listRequestAux) {
-            if (R.getActualOccupation() < Qmax && currentTime + waitTime >= request.getPickupTimeWIndowLower() && currentTime + waitTime <= request.getPickupTimeWindowUpper()) {
+            if (R.getActualOccupation() < Qmax && currentTime + waitTime >= request.getPickupTimeWindowLower() && currentTime + waitTime <= request.getPickupTimeWindowUpper()) {
 
-                aux = currentTime + waitTime - request.getPickupTimeWIndowLower();
-                currentTime = Math.min(currentTime + waitTime, request.getPickupTimeWIndowLower());
+                aux = currentTime + waitTime - request.getPickupTimeWindowLower();
+                currentTime = Math.min(currentTime + waitTime, request.getPickupTimeWindowLower());
                 waitTime = aux;
 
                 Pin.get(lastNode).remove((Request) request.clone());
@@ -415,7 +415,7 @@ public class Methods {
                 //Procura solicitação para embarcar
                 if (R.getActualOccupation() < Qmax) {//se tiver lugar, ele tenta embarcar alguem no veículo
                     for (Request request : Pin.get(i)) {//percorre todos os nós menos o nó que acabou de ser adicionado (por causa da restrição)
-                        if (currentTime + d.get(lastNode).get(i) >= request.getPickupTimeWIndowLower() - TimeWindows
+                        if (currentTime + d.get(lastNode).get(i) >= request.getPickupTimeWindowLower() - TimeWindows
                                 && currentTime + d.get(lastNode).get(i) <= request.getPickupTimeWindowUpper()) {
                             encontrado = true;
                             break;
@@ -493,7 +493,7 @@ public class Methods {
                         break;
                     }
                     //para lastNode que não seja a origem - faz cair dentro da janela de tempo de pelo menos uma requisição
-                    if (!encontrado && currentTime + d.get(lastNode).get(i) >= request.getPickupTimeWIndowLower() - timeWindows
+                    if (!encontrado && currentTime + d.get(lastNode).get(i) >= request.getPickupTimeWindowLower() - timeWindows
                             && currentTime + d.get(lastNode).get(i) <= request.getPickupTimeWindowUpper()) {
                         FeasibleNode.add(i);
                         encontrado = true;

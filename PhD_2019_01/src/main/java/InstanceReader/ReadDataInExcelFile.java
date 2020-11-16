@@ -32,7 +32,7 @@ public class ReadDataInExcelFile {
     private String requestsData;
     private String nodesData;
     private String adjacenciesData;
-    private String requestsFile = "instances.xls";
+    private String requestsFile = "instance_paper.xls";
     private String nodesFile = "nodes.xls";
     private String adjacenciesFile = "adjacencies.xls";
     private int numberOfNodes = 0;
@@ -85,16 +85,20 @@ public class ReadDataInExcelFile {
             Cell pickupTimeWindowUpper = sheet.getCell(4, i);
             Cell deliveryTimeWindowLower = sheet.getCell(5, i);
             Cell deliveryTimeWindowUpper = sheet.getCell(6, i);
+            try{
+                Request request = new Request(Integer.parseInt(id.getContents()),
+                        Integer.parseInt(origin.getContents()),
+                        Integer.parseInt(destination.getContents()),
+                        Integer.parseInt(pickupTimeWindowLower.getContents()) + 60,
+                        Integer.parseInt(pickupTimeWindowUpper.getContents()) + 60,
+                        Integer.parseInt(deliveryTimeWindowLower.getContents()) + 60,
+                        Integer.parseInt(deliveryTimeWindowUpper.getContents()) + 60);
 
-            Request request = new Request(Integer.parseInt(id.getContents()),
-                    Integer.parseInt(origin.getContents()),
-                    Integer.parseInt(destination.getContents()),
-                    Integer.parseInt(pickupTimeWindowLower.getContents()),
-                    Integer.parseInt(pickupTimeWindowUpper.getContents()),
-                    Integer.parseInt(deliveryTimeWindowLower.getContents()),
-                    Integer.parseInt(deliveryTimeWindowUpper.getContents()));
-
-            requests.add(request);
+                requests.add(request);
+            }
+            catch(Exception e){
+                System.out.println(e);
+            }
 
         }
         return requests;

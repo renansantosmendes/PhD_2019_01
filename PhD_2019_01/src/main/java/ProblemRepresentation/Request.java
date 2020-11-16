@@ -106,7 +106,7 @@ public class Request implements Comparable, Cloneable {
         this.destination = destination;
     }
 
-    public long getPickupTimeWIndowLower() {
+    public long getPickupTimeWindowLower() {
         return pickupTimeWindowLower;
     }
 

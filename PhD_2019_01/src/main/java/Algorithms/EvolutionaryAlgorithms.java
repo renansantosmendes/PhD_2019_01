@@ -685,7 +685,9 @@ public class EvolutionaryAlgorithms {
             initializeRandomPopulationForMaxMin(currentExecutionNumber, nadirPoint, transformationList, parameters, reducedDimension, population, populationSize, requests,
                     requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                     requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
-
+            
+//            PrintStream populationStream = new PrintStream(".\\PopulationHV\\population_" + currentExecutionNumber + ".csv");
+//            population.forEach(u -> populationStream.print(u.getOriginalObjectivesNormalized() + "\n"));
             fullPopulation.addAll(population);
         }
         return fullPopulation;
