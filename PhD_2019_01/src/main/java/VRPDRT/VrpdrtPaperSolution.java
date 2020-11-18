@@ -23,6 +23,7 @@ import ProblemRepresentation.ProblemSolution;
 import ProblemRepresentation.Request;
 import ReductionTechniques.CorrelationType;
 import com.google.maps.errors.ApiException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,6 +33,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import jxl.read.biff.BiffException;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 /**
  *
@@ -160,11 +164,26 @@ public class VrpdrtPaperSolution {
         System.out.println(s);
         System.out.println(s.getStringWithOriginalObjectivesForCsvFile());
 
-//        s.getStaticMapWithAllRoutes(setOfNodes, adjacenciesData, nodesData);
-        System.out.println("set of nodes");
         List<Node> nodes = new ReadDataInExcelFile(filePath, instanceName, nodesData, adjacenciesData).getListOfNodes();
         System.out.println(nodes);
-        
-        s.getStaticMapWithAllRoutes(nodes, "bh_adj_n12s", nodesData);
+
+//        s.getStaticMapWithAllRoutes(nodes, "bh_adj_n12s", nodesData);
+        String keyName = "staticMapKey";
+        String configFilePath = ".\\resources\\config.json";
+        try {
+            JSONParser parser = new JSONParser();
+            JSONArray data = (JSONArray) parser.parse(new FileReader(configFilePath));
+            System.out.println("data");
+            String apiKey = "";
+            for(int i=0; i<data.size(); i++){
+                JSONObject object = (JSONObject) data.get(i);
+                if(object.get("apiName").equals(keyName)){
+                    apiKey = (String) object.get("apiKey");
+                }
+            }
+            System.out.println(apiKey);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

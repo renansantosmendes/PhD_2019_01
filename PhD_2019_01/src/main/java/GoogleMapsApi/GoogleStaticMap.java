@@ -10,6 +10,7 @@ import ProblemRepresentation.Node;
 import ProblemRepresentation.Request;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -18,10 +19,16 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import static javax.swing.JFrame.EXIT_ON_CLOSE;
 import javax.swing.JLabel;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 /**
  *
@@ -31,8 +38,8 @@ public class GoogleStaticMap {
 
     private List<Node> nodesList;
     private final String URLRoot = "https://maps.googleapis.com/maps/api/staticmap?center=";
-    private final String directionsApiKey = "AIzaSyCgaZr9fRAUs3_8lftkt026_MfZ3yZVN4E";
-    private final String staticMapKey = "AIzaSyDnbydYYYtvGROBcUXDiiOaxafkmJ0vyos";
+    private String directionsApiKey = "";
+    private String staticMapKey = "";
     private StringBuilder stringOfNodes = new StringBuilder();
     private StringBuilder polylines = new StringBuilder();
     private StringBuilder polylinesForAllRotes = new StringBuilder();
@@ -63,11 +70,16 @@ public class GoogleStaticMap {
         this.nodesTable = nodesTable;
         String folder;
         folder = "RouteDataForStaticMap";
-
+        readApiKeysFromConfigFile();
         boolean successForCreateDataFolder = (new File(folder)).mkdirs();
         boolean successForCreateStaticMapsFolder = (new File(staticMapsFolder)).mkdirs();
 
         buildStringWithNodeMarkets();
+    }
+
+    private void readApiKeysFromConfigFile() {
+        this.directionsApiKey = this.getApiKeyFromFile("staticMapKey", ".\\resources\\config.json");
+        this.staticMapKey = this.getApiKeyFromFile("directionsKey", ".\\resources\\config.json");
     }
 
     public GoogleStaticMap(List<Node> nodesList, List<Integer> route, String adjacenciesTable, String nodesTable)
@@ -78,6 +90,7 @@ public class GoogleStaticMap {
         this.nodesTable = nodesTable;
         String folder;
         folder = "RouteDataForStaticMap";
+        readApiKeysFromConfigFile();
         boolean successForCreateDataFolder = (new File(folder)).mkdirs();
         boolean successForCreateStaticMapsFolder = (new File(staticMapsFolder)).mkdirs();
         if (totalOfRoutes == 0) {
@@ -99,6 +112,7 @@ public class GoogleStaticMap {
         this.nodesList = nodesList;
         this.routesOfStopPoints = routesOfStopPoints;
         this.nodesTable = nodesTable;
+        readApiKeysFromConfigFile(); 
         String folder;
         folder = "RouteDataForStaticMap";
 
@@ -110,24 +124,28 @@ public class GoogleStaticMap {
         this.buildPathForMapWithAllRoutes(adjacenciesTable, nodesTable);
         this.buildMapInWindow();
     }
-    
-//    public GoogleStaticMap(List<Node> nodesList, Set<List<Request>> routesOfRequests, String adjacenciesTable, String nodesTable)
-//            throws IOException {
-//        totalOfRoutes++;
-//        this.nodesList = nodesList;
-//        this.routesOfRequests = routesOfRequests;
-//        this.nodesTable = nodesTable;
-//        String folder;
-//        folder = "RouteDataForStaticMap";
-//
-//        boolean successForCreateDataFolder = (new File(folder)).mkdirs();
-//        boolean successForCreateStaticMapsFolder = (new File(staticMapsFolder)).mkdirs();
-//
-//        buildStringWithNodeMarkets();
-//
-//        this.buildPathForMapWithAllRoutes(adjacenciesTable, nodesTable);
-//        this.buildMapInWindow();
-//    }
+
+    private String getApiKeyFromFile(String keyName, String configFilePath) {
+
+        try {
+            JSONParser parser = new JSONParser();
+            JSONArray data = (JSONArray) parser.parse(new FileReader(configFilePath));
+            System.out.println("data");
+            String apiKey = "";
+            for (int i = 0; i < data.size(); i++) {
+                JSONObject object = (JSONObject) data.get(i);
+                if (object.get("apiName").equals(keyName)) {
+                    apiKey = (String) object.get("apiKey");
+                }
+            }
+            return apiKey;
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParseException ex) {
+            Logger.getLogger(GoogleStaticMap.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return "";
+    }
 
     private void buildStringWithNodeMarkets() {
         for (int i = 0; i < this.nodesList.size(); i++) {
