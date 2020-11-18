@@ -78,8 +78,8 @@ public class GoogleStaticMap {
     }
 
     private void readApiKeysFromConfigFile() {
-        this.directionsApiKey = this.getApiKeyFromFile("staticMapKey", ".\\resources\\config.json");
-        this.staticMapKey = this.getApiKeyFromFile("directionsKey", ".\\resources\\config.json");
+        this.staticMapKey = this.getApiKeyFromFile("staticMapKey", ".\\resources\\config.json");
+        this.directionsApiKey = this.getApiKeyFromFile("directionsKey", ".\\resources\\config.json");
     }
 
     public GoogleStaticMap(List<Node> nodesList, List<Integer> route, String adjacenciesTable, String nodesTable)

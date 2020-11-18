@@ -167,23 +167,6 @@ public class VrpdrtPaperSolution {
         List<Node> nodes = new ReadDataInExcelFile(filePath, instanceName, nodesData, adjacenciesData).getListOfNodes();
         System.out.println(nodes);
 
-//        s.getStaticMapWithAllRoutes(nodes, "bh_adj_n12s", nodesData);
-        String keyName = "staticMapKey";
-        String configFilePath = ".\\resources\\config.json";
-        try {
-            JSONParser parser = new JSONParser();
-            JSONArray data = (JSONArray) parser.parse(new FileReader(configFilePath));
-            System.out.println("data");
-            String apiKey = "";
-            for(int i=0; i<data.size(); i++){
-                JSONObject object = (JSONObject) data.get(i);
-                if(object.get("apiName").equals(keyName)){
-                    apiKey = (String) object.get("apiKey");
-                }
-            }
-            System.out.println(apiKey);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        s.getStaticMapWithAllRoutes(nodes, "bh_adj_n12s", nodesData);
     }
 }
