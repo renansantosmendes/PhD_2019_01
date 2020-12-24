@@ -32,7 +32,7 @@ public class ReadDataInExcelFile {
     private String requestsData;
     private String nodesData;
     private String adjacenciesData;
-    private String requestsFile = "instance_paper.xls";
+    private String requestsFile = "instances.xls";//"instance_paper.xls";
     private String nodesFile = "nodes.xls";
     private String adjacenciesFile = "adjacencies.xls";
     private int numberOfNodes = 0;
@@ -89,10 +89,10 @@ public class ReadDataInExcelFile {
                 Request request = new Request(Integer.parseInt(id.getContents()),
                         Integer.parseInt(origin.getContents()),
                         Integer.parseInt(destination.getContents()),
-                        Integer.parseInt(pickupTimeWindowLower.getContents()) + 60,
-                        Integer.parseInt(pickupTimeWindowUpper.getContents()) + 60,
-                        Integer.parseInt(deliveryTimeWindowLower.getContents()) + 60,
-                        Integer.parseInt(deliveryTimeWindowUpper.getContents()) + 60);
+                        Integer.parseInt(pickupTimeWindowLower.getContents()),
+                        Integer.parseInt(pickupTimeWindowUpper.getContents()),
+                        Integer.parseInt(deliveryTimeWindowLower.getContents()),
+                        Integer.parseInt(deliveryTimeWindowUpper.getContents()));
 
                 requests.add(request);
             }

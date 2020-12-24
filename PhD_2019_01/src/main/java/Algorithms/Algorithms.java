@@ -176,34 +176,12 @@ public class Algorithms {
     }
 
     public static long FO3(ProblemSolution solution) {
-//        Set<Route> routes = new HashSet<>();
-//        routes.addAll(solution.getSetOfRoutes());
-//        List<Long> routeEndTime = new ArrayList<>();
-//        int soma = 0;
-//        for (Route route : routes) {
-//            long time = route.getTimeListTheVehicleLeavesTheNode().get(route.getNodesVisitationList().size() - 2);
-//            routeEndTime.add(time);
-//        }
-//        routeEndTime.sort(Comparator.naturalOrder());
-//
-//        Long greaterRoute = routeEndTime.get(routeEndTime.size() - 1);
-//        Long smallerRoute = routeEndTime.get(0);
-//
-//        return greaterRoute - smallerRoute;
-
         Set<Route> routes = new HashSet<>();
         routes.addAll(solution.getSetOfRoutes());
         List<Long> routeEndTime = new ArrayList<>();
+        int soma = 0;
         for (Route route : routes) {
-            System.out.println("teste na rota");
-//            System.out.println(route.getRequestAttendanceList().get(0).getPickupTime());
-//            System.out.println(route.getRequestAttendanceList().get(route.getRequestAttendanceList().size() - 1).getDeliveryTime());
-            long endTime = route.getTimeListTheVehicleLeavesTheNode().get(route.getTimeListTheVehicleLeavesTheNode().size() - 2);
-            long startTime = route.getTimeListTheVehicleLeavesTheNode().get(1);
-            System.out.println("Start " + startTime + " end " + endTime);
-            long time = endTime - startTime ;
-//            long time = route.getTimeListTheVehicleLeavesTheNode().get(route.getNodesVisitationList().size() - 2);
-//            long time = route.getTimeListTheVehicleLeavesTheNode().get(route.getNodesVisitationList().size() - 2);
+            long time = route.getTimeListTheVehicleLeavesTheNode().get(route.getNodesVisitationList().size() - 2);
             routeEndTime.add(time);
         }
         routeEndTime.sort(Comparator.naturalOrder());
@@ -212,6 +190,28 @@ public class Algorithms {
         Long smallerRoute = routeEndTime.get(0);
 
         return greaterRoute - smallerRoute;
+
+//        Set<Route> routes = new HashSet<>();
+//        routes.addAll(solution.getSetOfRoutes());
+//        List<Long> routeEndTime = new ArrayList<>();
+//        for (Route route : routes) {
+////            System.out.println("teste na rota");
+////            System.out.println(route.getRequestAttendanceList().get(0).getPickupTime());
+////            System.out.println(route.getRequestAttendanceList().get(route.getRequestAttendanceList().size() - 1).getDeliveryTime());
+//            long endTime = route.getTimeListTheVehicleLeavesTheNode().get(route.getTimeListTheVehicleLeavesTheNode().size() - 2);
+//            long startTime = route.getTimeListTheVehicleLeavesTheNode().get(1);
+////            System.out.println("Start " + startTime + " end " + endTime);
+//            long time = endTime - startTime ;
+////            long time = route.getTimeListTheVehicleLeavesTheNode().get(route.getNodesVisitationList().size() - 2);
+////            long time = route.getTimeListTheVehicleLeavesTheNode().get(route.getNodesVisitationList().size() - 2);
+//            routeEndTime.add(time);
+//        }
+//        routeEndTime.sort(Comparator.naturalOrder());
+//
+//        Long greaterRoute = routeEndTime.get(routeEndTime.size() - 1);
+//        Long smallerRoute = routeEndTime.get(0);
+
+//        return greaterRoute - smallerRoute;
     }
 
     public static int FO4(ProblemSolution solution) {

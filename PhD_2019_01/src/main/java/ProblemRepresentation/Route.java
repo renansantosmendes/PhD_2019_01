@@ -129,13 +129,13 @@ public class Route implements Comparable<Route> {
 
     public void calculateOccupationRate(int vehicleCapacity) {
         
-        List<Integer> list = getVehicleOccupationWhenLeavesNode();
-//        System.out.println("lista");
-//        System.out.println(list);
-        if(list.get(0) == 0){
-            list.remove(list.size()-1);
-            list.remove(0);
-        }
+//        List<Integer> list = getVehicleOccupationWhenLeavesNode();
+////        System.out.println("lista");
+////        System.out.println(list);
+//        if(list.get(0) == 0){
+//            list.remove(list.size()-1);
+//            list.remove(0);
+//        }
 //        if (list.get(list.size()-1) == 0){
 //            list.remove(list.size()-1);
 //            
@@ -149,13 +149,13 @@ public class Route implements Comparable<Route> {
 //        System.out.println(list);
         
         
-//        this.setOccupationRate(this.getVehicleOccupationWhenLeavesNode().stream()
-//                .mapToDouble(Integer::valueOf).average() //max()average()
-//                .getAsDouble() / vehicleCapacity);
-        
-        this.setOccupationRate(list.stream()
+        this.setOccupationRate(this.getVehicleOccupationWhenLeavesNode().stream()
                 .mapToDouble(Integer::valueOf).average() //max()average()
                 .getAsDouble() / vehicleCapacity);
+        
+//        this.setOccupationRate(list.stream()
+//                .mapToDouble(Integer::valueOf).average() //max()average()
+//                .getAsDouble() / vehicleCapacity);
     }
 
     public void addVisitedNodes(Integer visitedNode) {
