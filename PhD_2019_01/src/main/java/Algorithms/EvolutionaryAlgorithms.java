@@ -16,8 +16,10 @@ import java.util.Comparator;
 import RandomNumberGenerator.UniformRandomGenerator;
 import ReductionTechniques.CorrelationType;
 import ReductionTechniques.HierarchicalCluster;
+import Algorithms.FeatureSelectionMethod;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.math3.stat.descriptive.moment.Variance;
 
 /**
  *
@@ -579,6 +581,7 @@ public class EvolutionaryAlgorithms {
                     System.out.println("Reducing...");
                     hc = new HierarchicalCluster(getMatrixOfObjetivesNormalized(population), numberOfClusters, correlation);
                     hc.reduce(transformationList);
+                    featureSelection(getMatrixOfObjetivesNormalized(population),transformationList, FeatureSelectionMethod.VARIANCE);
                 }
                 System.out.println("current evaluation " + evaluations);
                 hc.getTransfomationList().forEach(u -> System.out.println(u));
@@ -634,7 +637,19 @@ public class EvolutionaryAlgorithms {
         }
         saveCombinedPareto();
     }
-
+    
+    public static void featureSelection(double[][] data, List<List<Integer>> transformationList, FeatureSelectionMethod selectionMethod){
+        if (selectionMethod == FeatureSelectionMethod.DISPERSION_RATION){
+            
+        } else if(selectionMethod == FeatureSelectionMethod.VARIANCE){
+            Variance variance = new Variance();
+            
+            for(int i=0; i<data.length;i++){
+                System.out.println(variance.evaluate(data[i]));
+            }  
+        }
+    }
+    
     public static void saveCurrentAggregation(List<List<Integer>> transformationList) {
         currentAggregationStream.print(getAggregationString(transformationList) + "\n");
     }
