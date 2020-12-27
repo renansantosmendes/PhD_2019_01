@@ -19,6 +19,9 @@ import ReductionTechniques.HierarchicalCluster;
 import Algorithms.FeatureSelectionMethod;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.IntStream;
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.stat.descriptive.moment.Variance;
 
 /**
@@ -576,12 +579,12 @@ public class EvolutionaryAlgorithms {
             do {
                 int[] permutation = new int[populationSize];
                 MOEADUtils.randomPermutation(permutation, populationSize);
-                
-                if(currentGeneration % intervalOfAggregations == 0){
+
+                if (currentGeneration % intervalOfAggregations == 0) {
                     System.out.println("Reducing...");
                     hc = new HierarchicalCluster(getMatrixOfObjetivesNormalized(population), numberOfClusters, correlation);
                     hc.reduce(transformationList);
-                    featureSelection(getMatrixOfObjetivesNormalized(population),transformationList, FeatureSelectionMethod.VARIANCE);
+                    featureSelection(getMatrixOfObjetivesNormalized(population), transformationList, FeatureSelectionMethod.VARIANCE);
                 }
                 System.out.println("current evaluation " + evaluations);
                 hc.getTransfomationList().forEach(u -> System.out.println(u));
@@ -637,19 +640,68 @@ public class EvolutionaryAlgorithms {
         }
         saveCombinedPareto();
     }
-    
-    public static void featureSelection(double[][] data, List<List<Integer>> transformationList, FeatureSelectionMethod selectionMethod){
-        if (selectionMethod == FeatureSelectionMethod.DISPERSION_RATION){
-            
-        } else if(selectionMethod == FeatureSelectionMethod.VARIANCE){
+
+    public static void featureSelection(double[][] data, List<List<Integer>> transformationList, FeatureSelectionMethod selectionMethod) {
+        if (selectionMethod == FeatureSelectionMethod.DISPERSION_RATION) {
+
+        } else if (selectionMethod == FeatureSelectionMethod.VARIANCE) {
             Variance variance = new Variance();
+            List<Double> variances = new ArrayList<>();
+            for (int i = 0; i < data[0].length; i++) {
+                variances.add(variance.evaluate(getColumn(data, i)));
+            }
+            System.out.println("variances " + variances);
+            List<List<Double>> variancesList = new ArrayList<>();
+            List<Integer> positions = new ArrayList<>();
+
+            for (int i = 0; i < transformationList.size(); i++) {
+                List<Double> line = new ArrayList<>();
+                for (int j = 0; j < transformationList.get(0).size(); j++) {
+                    line.add(variances.get(j) * transformationList.get(i).get(j));
+                }
+                variancesList.add(line);
+            }
+
+            for (int i = 0; i < variancesList.size(); i++) {
+                positions.add(variancesList.get(i).indexOf(Collections.max(variancesList.get(i))));
+            }
+
+            System.out.println("variance multiplied " + positions);
+            List<List<Integer>> emptyList = generateEmptyTransformationList(transformationList.get(0).size(), transformationList.size());
             
-            for(int i=0; i<data.length;i++){
-                System.out.println(variance.evaluate(data[i]));
-            }  
+            for(int i=0; i<positions.size(); i++){
+                emptyList.get(i).set(positions.get(i), 1);
+            }
+            emptyList.forEach(u -> System.out.println(u));
         }
     }
-    
+
+    public static List<List<Integer>> generateEmptyTransformationList(int numberOfOriginalFunctions, int numberOfReducedFunctions) {
+        List<List<Integer>> emptyList = new ArrayList<>();
+        for (int i = 0; i < numberOfReducedFunctions; i++) {
+            List<Integer> line = new ArrayList<>();
+            for(int j=0; j<numberOfOriginalFunctions; j++){
+                line.add(0);
+            }
+            emptyList.add(line);
+        }
+
+        return emptyList;
+    }
+
+    public static double[] getColumn(double[][] data, int columnIndex) {
+        RealMatrix rm = new Array2DRowRealMatrix(data);
+        return rm.getColumn(columnIndex);
+    }
+
+    public static List<Double> convertArray2List(double[] data) {
+        List<Double> valuesList = new ArrayList<>();
+        for (int i = 0; i < data.length; i++) {
+            valuesList.add(data[i]);
+        }
+        return valuesList;
+    }
+
     public static void saveCurrentAggregation(List<List<Integer>> transformationList) {
         currentAggregationStream.print(getAggregationString(transformationList) + "\n");
     }
@@ -700,7 +752,7 @@ public class EvolutionaryAlgorithms {
             initializeRandomPopulationForMaxMin(currentExecutionNumber, nadirPoint, transformationList, parameters, reducedDimension, population, populationSize, requests,
                     requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
                     requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
-            
+
 //            PrintStream populationStream = new PrintStream(".\\PopulationHV\\population_" + currentExecutionNumber + ".csv");
 //            population.forEach(u -> populationStream.print(u.getOriginalObjectivesNormalized() + "\n"));
             fullPopulation.addAll(population);
