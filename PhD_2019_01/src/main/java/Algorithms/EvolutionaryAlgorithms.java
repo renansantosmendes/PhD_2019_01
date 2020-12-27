@@ -584,7 +584,7 @@ public class EvolutionaryAlgorithms {
                     System.out.println("Reducing...");
                     hc = new HierarchicalCluster(getMatrixOfObjetivesNormalized(population), numberOfClusters, correlation);
                     hc.reduce(transformationList);
-                    featureSelection(getMatrixOfObjetivesNormalized(population), transformationList, FeatureSelectionMethod.VARIANCE);
+                    featureSelection(getMatrixOfObjetivesNormalized(population), transformationList, FeatureSelectionMethod.DISPERSION_RATION);
                 }
                 System.out.println("current evaluation " + evaluations);
                 hc.getTransfomationList().forEach(u -> System.out.println(u));
@@ -643,7 +643,13 @@ public class EvolutionaryAlgorithms {
 
     public static void featureSelection(double[][] data, List<List<Integer>> transformationList, FeatureSelectionMethod selectionMethod) {
         if (selectionMethod == FeatureSelectionMethod.DISPERSION_RATION) {
-
+            List<Double> ratio = new ArrayList<>();
+            for (int i = 0; i < data[0].length; i++) {
+//                ratio.add(arithmeticMean(getColumn(data, i))/geometricMean(getColumn(data, i)));
+//                ratio.add(arithmeticMean(getColumn(data, i)));
+                ratio.add(geometricMean(getColumn(data, i)));
+            }
+            System.out.println("metrics " + ratio);
         } else if (selectionMethod == FeatureSelectionMethod.VARIANCE) {
             Variance variance = new Variance();
             List<Double> variances = new ArrayList<>();
@@ -668,19 +674,41 @@ public class EvolutionaryAlgorithms {
 
             System.out.println("variance multiplied " + positions);
             List<List<Integer>> emptyList = generateEmptyTransformationList(transformationList.get(0).size(), transformationList.size());
-            
-            for(int i=0; i<positions.size(); i++){
+
+            for (int i = 0; i < positions.size(); i++) {
                 emptyList.get(i).set(positions.get(i), 1);
             }
             emptyList.forEach(u -> System.out.println(u));
+            transformationList = emptyList;
+            System.out.println("transformation list with feature selection");
+            transformationList.forEach(u -> System.out.println(u));
         }
+    }
+
+    public static double geometricMean(double[] data) {
+        double sum = data[0];
+
+        for (int i = 1; i < data.length; i++) {
+            sum *= data[i];
+        }
+        System.out.println("sum=" + sum);
+        return Math.pow(sum, 1.0 / data.length);
+    }
+    
+    public static double arithmeticMean(double[] data) {
+        double sum = data[0];
+
+        for (int i = 1; i < data.length; i++) {
+            sum += data[i];
+        }
+        return sum / data.length;
     }
 
     public static List<List<Integer>> generateEmptyTransformationList(int numberOfOriginalFunctions, int numberOfReducedFunctions) {
         List<List<Integer>> emptyList = new ArrayList<>();
         for (int i = 0; i < numberOfReducedFunctions; i++) {
             List<Integer> line = new ArrayList<>();
-            for(int j=0; j<numberOfOriginalFunctions; j++){
+            for (int j = 0; j < numberOfOriginalFunctions; j++) {
                 line.add(0);
             }
             emptyList.add(line);
