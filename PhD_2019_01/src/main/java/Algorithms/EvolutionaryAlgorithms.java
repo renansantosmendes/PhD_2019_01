@@ -526,7 +526,7 @@ public class EvolutionaryAlgorithms {
     }
 
     public static void onMOEAD(String instanceName, int neighborSize, int maxEvaluations, int intervalOfAggregations, int maximumNumberOfReplacedSolutions,
-            int reducedDimension, CorrelationType correlation, List<List<Integer>> transformationList, List<Double> parameters,
+            int reducedDimension, CorrelationType correlation, FeatureSelectionMethod featureSelectionMethod, List<List<Integer>> transformationList, List<Double> parameters,
             List<List<Double>> nadirPoint, Integer populationSize,
             Integer maximumNumberOfGenerations, EvolutionaryAlgorithms.FunctionType functionType,
             Integer maximumNumberOfExecutions, double neighborhoodSelectionProbability, double probabilityOfMutation,
@@ -584,14 +584,12 @@ public class EvolutionaryAlgorithms {
                     System.out.println("Reducing...");
                     hc = new HierarchicalCluster(getMatrixOfObjetivesNormalized(population), numberOfClusters, correlation);
                     hc.reduce(transformationList);
-                    transformationList = featureSelection(getMatrixOfObjetivesNormalized(population), transformationList, FeatureSelectionMethod.DISPERSION_RATION);
+                    transformationList = featureSelection(getMatrixOfObjetivesNormalized(population), transformationList, featureSelectionMethod);
                 }
                 System.out.println("current evaluation " + evaluations);
-//                hc.getTransfomationList().forEach(u -> System.out.println(u));
                 transformationList = hc.getTransfomationList();
                 
-                transformationList = featureSelection(getMatrixOfObjetivesNormalized(population), transformationList, FeatureSelectionMethod.DISPERSION_RATION);
-                transformationList.forEach(u -> System.out.println(u));
+                transformationList = featureSelection(getMatrixOfObjetivesNormalized(population), transformationList, featureSelectionMethod);
                 System.out.println(getAggregationString(transformationList));
                 saveCurrentAggregation(transformationList);
                 System.out.println("");
