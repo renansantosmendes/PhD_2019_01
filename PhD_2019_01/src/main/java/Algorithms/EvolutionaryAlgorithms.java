@@ -584,11 +584,14 @@ public class EvolutionaryAlgorithms {
                     System.out.println("Reducing...");
                     hc = new HierarchicalCluster(getMatrixOfObjetivesNormalized(population), numberOfClusters, correlation);
                     hc.reduce(transformationList);
-                    featureSelection(getMatrixOfObjetivesNormalized(population), transformationList, FeatureSelectionMethod.DISPERSION_RATION);
+                    transformationList = featureSelection(getMatrixOfObjetivesNormalized(population), transformationList, FeatureSelectionMethod.DISPERSION_RATION);
                 }
                 System.out.println("current evaluation " + evaluations);
-                hc.getTransfomationList().forEach(u -> System.out.println(u));
+//                hc.getTransfomationList().forEach(u -> System.out.println(u));
                 transformationList = hc.getTransfomationList();
+                
+                transformationList = featureSelection(getMatrixOfObjetivesNormalized(population), transformationList, FeatureSelectionMethod.DISPERSION_RATION);
+                transformationList.forEach(u -> System.out.println(u));
                 System.out.println(getAggregationString(transformationList));
                 saveCurrentAggregation(transformationList);
                 System.out.println("");
@@ -641,22 +644,43 @@ public class EvolutionaryAlgorithms {
         saveCombinedPareto();
     }
 
-    public static void featureSelection(double[][] data, List<List<Integer>> transformationList, FeatureSelectionMethod selectionMethod) {
+    public static List<List<Integer>> featureSelection(double[][] data, List<List<Integer>> transformationList, FeatureSelectionMethod selectionMethod) {
         if (selectionMethod == FeatureSelectionMethod.DISPERSION_RATION) {
             List<Double> ratio = new ArrayList<>();
             for (int i = 0; i < data[0].length; i++) {
-//                ratio.add(arithmeticMean(getColumn(data, i))/geometricMean(getColumn(data, i)));
-//                ratio.add(arithmeticMean(getColumn(data, i)));
-                ratio.add(geometricMean(getColumn(data, i)));
+                ratio.add(arithmeticMean(getColumn(data, i))/geometricMean(getColumn(data, i)));
             }
-            System.out.println("metrics " + ratio);
+            
+            List<List<Double>> ratioList = new ArrayList<>();
+            List<Integer> positions = new ArrayList<>();
+
+            for (int i = 0; i < transformationList.size(); i++) {
+                List<Double> line = new ArrayList<>();
+                for (int j = 0; j < transformationList.get(0).size(); j++) {
+                    line.add(ratio.get(j) * transformationList.get(i).get(j));
+                }
+                ratioList.add(line);
+            }
+
+            for (int i = 0; i < ratioList.size(); i++) {
+                positions.add(ratioList.get(i).indexOf(Collections.max(ratioList.get(i))));
+            }
+
+            List<List<Integer>> emptyList = generateEmptyTransformationList(transformationList.get(0).size(), transformationList.size());
+
+            for (int i = 0; i < positions.size(); i++) {
+                emptyList.get(i).set(positions.get(i), 1);
+            }
+            emptyList.forEach(u -> System.out.println(u));
+            transformationList = emptyList;
+
+            return transformationList;
         } else if (selectionMethod == FeatureSelectionMethod.VARIANCE) {
             Variance variance = new Variance();
             List<Double> variances = new ArrayList<>();
             for (int i = 0; i < data[0].length; i++) {
                 variances.add(variance.evaluate(getColumn(data, i)));
             }
-            System.out.println("variances " + variances);
             List<List<Double>> variancesList = new ArrayList<>();
             List<Integer> positions = new ArrayList<>();
 
@@ -672,7 +696,6 @@ public class EvolutionaryAlgorithms {
                 positions.add(variancesList.get(i).indexOf(Collections.max(variancesList.get(i))));
             }
 
-            System.out.println("variance multiplied " + positions);
             List<List<Integer>> emptyList = generateEmptyTransformationList(transformationList.get(0).size(), transformationList.size());
 
             for (int i = 0; i < positions.size(); i++) {
@@ -680,18 +703,20 @@ public class EvolutionaryAlgorithms {
             }
             emptyList.forEach(u -> System.out.println(u));
             transformationList = emptyList;
-            System.out.println("transformation list with feature selection");
-            transformationList.forEach(u -> System.out.println(u));
+
+            return transformationList;
+        } else {
+            return transformationList;
         }
     }
 
     public static double geometricMean(double[] data) {
-        double sum = data[0];
+        double sum = 1.0;
 
-        for (int i = 1; i < data.length; i++) {
-            sum *= data[i];
+        for (int i = 0; i < data.length; i++) {
+            if (data[i] > 0)
+                sum *= data[i];
         }
-        System.out.println("sum=" + sum);
         return Math.pow(sum, 1.0 / data.length);
     }
     
