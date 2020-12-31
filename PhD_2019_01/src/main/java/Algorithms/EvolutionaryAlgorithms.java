@@ -581,18 +581,19 @@ public class EvolutionaryAlgorithms {
                 MOEADUtils.randomPermutation(permutation, populationSize);
 
                 if (currentGeneration % intervalOfAggregations == 0) {
-                    System.out.println("Reducing...");
                     hc = new HierarchicalCluster(getMatrixOfObjetivesNormalized(population), numberOfClusters, correlation);
                     hc.reduce(transformationList);
+//                    transformationList = featureSelection(getMatrixOfObjetivesNormalized(population), transformationList, featureSelectionMethod);
+
+                    transformationList = hc.getTransfomationList();
+
                     transformationList = featureSelection(getMatrixOfObjetivesNormalized(population), transformationList, featureSelectionMethod);
                 }
                 System.out.println("current evaluation " + evaluations);
-                transformationList = hc.getTransfomationList();
-                
-                transformationList = featureSelection(getMatrixOfObjetivesNormalized(population), transformationList, featureSelectionMethod);
+//
                 System.out.println(getAggregationString(transformationList));
                 saveCurrentAggregation(transformationList);
-                System.out.println("");
+//                System.out.println("");
                 for (int i = 0; i < population.size(); i++) {
                     int subProblemId = permutation[i];
                     NeighborType neighborType = chooseNeighborType(neighborhoodSelectionProbability);
@@ -635,7 +636,7 @@ public class EvolutionaryAlgorithms {
 
             combinedPareto.addAll(externalPopulation);
             long elapsed = System.currentTimeMillis() - start;
-            externalPopulation.forEach(u -> System.out.println(u));
+//            externalPopulation.forEach(u -> System.out.println(u));
             saveExecutionTime(elapsed - elapsedSaveTime);
             saveNonDominatedSolutionsFromCurrentExecution(population);
         }
@@ -646,9 +647,9 @@ public class EvolutionaryAlgorithms {
         if (selectionMethod == FeatureSelectionMethod.DISPERSION_RATION) {
             List<Double> ratio = new ArrayList<>();
             for (int i = 0; i < data[0].length; i++) {
-                ratio.add(arithmeticMean(getColumn(data, i))/geometricMean(getColumn(data, i)));
+                ratio.add(arithmeticMean(getColumn(data, i)) / geometricMean(getColumn(data, i)));
             }
-            
+
             List<List<Double>> ratioList = new ArrayList<>();
             List<Integer> positions = new ArrayList<>();
 
@@ -669,7 +670,7 @@ public class EvolutionaryAlgorithms {
             for (int i = 0; i < positions.size(); i++) {
                 emptyList.get(i).set(positions.get(i), 1);
             }
-            emptyList.forEach(u -> System.out.println(u));
+//            emptyList.forEach(u -> System.out.println(u));
             transformationList = emptyList;
 
             return transformationList;
@@ -699,7 +700,7 @@ public class EvolutionaryAlgorithms {
             for (int i = 0; i < positions.size(); i++) {
                 emptyList.get(i).set(positions.get(i), 1);
             }
-            emptyList.forEach(u -> System.out.println(u));
+//            emptyList.forEach(u -> System.out.println(u));
             transformationList = emptyList;
 
             return transformationList;
@@ -712,12 +713,13 @@ public class EvolutionaryAlgorithms {
         double sum = 1.0;
 
         for (int i = 0; i < data.length; i++) {
-            if (data[i] > 0)
+            if (data[i] > 0) {
                 sum *= data[i];
+            }
         }
         return Math.pow(sum, 1.0 / data.length);
     }
-    
+
     public static double arithmeticMean(double[] data) {
         double sum = data[0];
 
