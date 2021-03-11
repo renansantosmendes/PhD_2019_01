@@ -11,7 +11,7 @@ package Algorithms;
  */
 public enum FeatureSelectionMethod {
     
-    DISPERSION_RATION, VARIANCE;
+    DISPERSION_RATION, VARIANCE, RANDOM, LAPLACIAN_SCORE;
 
     private FeatureSelectionMethod(){
         // compiled code

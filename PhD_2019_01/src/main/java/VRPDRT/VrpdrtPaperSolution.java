@@ -148,15 +148,7 @@ public class VrpdrtPaperSolution {
                 requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, requestList,
                 loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode));
 
-        List<Integer> list = s.getLinkedRouteList();
         System.out.println(s.getSetOfRoutes());
-        System.out.println(requests);
-        System.out.println(list);
-        list.set(3, 7);
-        list.set(4, 5);
-        System.out.println(list);
-        System.out.println(requests);
-
         System.out.println("Attendance Request List");
         s.getSetOfRoutes().forEach(route -> System.out.println(route.getRequestAttendanceList()));
 

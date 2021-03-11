@@ -1,0 +1,6 @@
+resources/
+target/*
+deb_results/
+
+
+*.jar

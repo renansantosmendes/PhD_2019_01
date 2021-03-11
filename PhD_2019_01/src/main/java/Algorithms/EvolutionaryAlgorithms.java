@@ -566,7 +566,7 @@ public class EvolutionaryAlgorithms {
                     requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
 
             saveInitialPopulation(population, currentExecutionNumber);
-            population.forEach(u -> System.out.println(u));
+            //population.forEach(u -> System.out.println(u));
 
             int numberOfObjectives = reducedDimension;
             int[][] neighborhood = new int[populationSize][neighborSize];
@@ -590,7 +590,7 @@ public class EvolutionaryAlgorithms {
                     transformationList = featureSelection(getMatrixOfObjetivesNormalized(population), transformationList, featureSelectionMethod);
                 }
                 System.out.println("current evaluation " + evaluations);
-//
+
                 System.out.println(getAggregationString(transformationList));
                 saveCurrentAggregation(transformationList);
 //                System.out.println("");
@@ -704,9 +704,50 @@ public class EvolutionaryAlgorithms {
             transformationList = emptyList;
 
             return transformationList;
+
+        } else if (selectionMethod == FeatureSelectionMethod.RANDOM) {
+            Variance variance = new Variance();
+            List<Double> variances = new ArrayList<>();
+            for (int i = 0; i < data[0].length; i++) {
+                variances.add(randomNumberGenerator());
+            }
+            List<List<Double>> variancesList = new ArrayList<>();
+            List<Integer> positions = new ArrayList<>();
+
+            for (int i = 0; i < transformationList.size(); i++) {
+                List<Double> line = new ArrayList<>();
+                for (int j = 0; j < transformationList.get(0).size(); j++) {
+                    line.add(variances.get(j) * transformationList.get(i).get(j));
+                }
+                variancesList.add(line);
+            }
+
+            for (int i = 0; i < variancesList.size(); i++) {
+                positions.add(variancesList.get(i).indexOf(Collections.max(variancesList.get(i))));
+            }
+
+            List<List<Integer>> emptyList = generateEmptyTransformationList(transformationList.get(0).size(), transformationList.size());
+
+            for (int i = 0; i < positions.size(); i++) {
+                emptyList.get(i).set(positions.get(i), 1);
+            }
+            transformationList = emptyList;
+
+            return transformationList;
+        } else if (selectionMethod == FeatureSelectionMethod.LAPLACIAN_SCORE) {
+            
+            return null;
         } else {
             return transformationList;
         }
+    }
+
+    public static double randomNumberGenerator() {
+        double rangeMin = 0.0f;
+        double rangeMax = 1.0f;
+        Random r = new Random();
+        double createdRanNum = rangeMin + (rangeMax - rangeMin) * r.nextDouble();
+        return (createdRanNum);
     }
 
     public static double geometricMean(double[] data) {
