@@ -17,8 +17,10 @@ import RandomNumberGenerator.UniformRandomGenerator;
 import ReductionTechniques.CorrelationType;
 import ReductionTechniques.HierarchicalCluster;
 import Algorithms.FeatureSelectionMethod;
+import KFST.featureSelection.filter.unsupervised.LaplacianScore;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -670,7 +672,6 @@ public class EvolutionaryAlgorithms {
             for (int i = 0; i < positions.size(); i++) {
                 emptyList.get(i).set(positions.get(i), 1);
             }
-//            emptyList.forEach(u -> System.out.println(u));
             transformationList = emptyList;
 
             return transformationList;
@@ -700,7 +701,6 @@ public class EvolutionaryAlgorithms {
             for (int i = 0; i < positions.size(); i++) {
                 emptyList.get(i).set(positions.get(i), 1);
             }
-//            emptyList.forEach(u -> System.out.println(u));
             transformationList = emptyList;
 
             return transformationList;
@@ -735,8 +735,23 @@ public class EvolutionaryAlgorithms {
 
             return transformationList;
         } else if (selectionMethod == FeatureSelectionMethod.LAPLACIAN_SCORE) {
-            
-            return null;
+
+            LaplacianScore ls = new LaplacianScore(transformationList.size(), 2, 2);
+            ls.loadDataSet(data, transformationList.get(0).size(), 2);
+            ls.setNumSelectedFeature(transformationList.size());
+            ls.evaluateFeatures();
+            int[] featureSubset = ls.getSelectedFeatureSubset();
+            Arrays.sort(featureSubset);
+
+            List<List<Integer>> emptyList = generateEmptyTransformationList(transformationList.get(0).size(), transformationList.size());
+            List<Integer> featureSubsetList = Arrays.stream(featureSubset).boxed().collect(Collectors.toList());
+            for (int i = 0; i < featureSubsetList.size(); i++) {
+                emptyList.get(i).set(featureSubsetList.get(i), 1);
+            }
+
+            emptyList.forEach(u -> System.out.println(u));
+
+            return emptyList;
         } else {
             return transformationList;
         }

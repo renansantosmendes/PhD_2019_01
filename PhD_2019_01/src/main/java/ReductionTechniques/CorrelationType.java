@@ -11,7 +11,7 @@ package ReductionTechniques;
  */
 public enum CorrelationType {
     
-    PEARSON, SPEARMAN, KENDALL;
+    PEARSON, SPEARMAN, KENDALL, MUTUAL_INFORMATION;
 
     private CorrelationType(){
         // compiled code

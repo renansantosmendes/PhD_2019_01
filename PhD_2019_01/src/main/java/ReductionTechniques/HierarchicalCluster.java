@@ -6,6 +6,7 @@ import java.io.*;
 import java.util.*;
 import org.apache.commons.math3.linear.RealMatrix;
 import Correlations.KendallsCorrelation;
+import InformationTheory.MutualInformation;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import org.apache.commons.math3.stat.correlation.SpearmansCorrelation;
 
@@ -228,6 +229,9 @@ public class HierarchicalCluster {
         } else if (this.correlationType == CorrelationType.KENDALL) {
             KendallsCorrelation corr = new KendallsCorrelation(this.data);
             this.similarity = corr.getCorrelationMatrix().getData();
+        } else if (this.correlationType == CorrelationType.MUTUAL_INFORMATION) {
+            MutualInformation mi = new MutualInformation();
+//            double result = mi.calculateMutualInformation(x, y);
         } else {
             PearsonsCorrelation corr = new PearsonsCorrelation(this.data);
             this.similarity = corr.getCorrelationMatrix().getData();
@@ -244,6 +248,10 @@ public class HierarchicalCluster {
         } else if (this.correlationType == CorrelationType.KENDALL) {
             KendallsCorrelation corr = new KendallsCorrelation(data);
             return corr.getCorrelationMatrix().getData();
+        } else if (this.correlationType == CorrelationType.MUTUAL_INFORMATION) {
+            MutualInformation mi = new MutualInformation();
+//            double result = mi.calculateMutualInformation(x, y);
+            return null;
         } else {
             PearsonsCorrelation corr = new PearsonsCorrelation(data);
             return corr.getCorrelationMatrix().getData();
@@ -307,7 +315,6 @@ public class HierarchicalCluster {
 //            row = r2.nextInt(columns);
 //            System.out.println("random values " + row + " " + column);
 //        }
-
 //        printSimilarity();
 //        System.out.println("");
 //        printDissimilarity();

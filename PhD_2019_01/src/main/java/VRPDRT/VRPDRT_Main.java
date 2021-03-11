@@ -56,7 +56,7 @@ public class VRPDRT_Main {
         filePath = "/home/rmendes/VRPDRT/";
         filePath = "/home/cruzeiro/renan/instances/";
 
-        int numberOfRequests = 100;
+        int numberOfRequests = 50;
         int requestTimeWindows = 10;
         final Integer vehicleCapacity = 4;
         String instanceSize = "s";
@@ -70,13 +70,13 @@ public class VRPDRT_Main {
 
         Integer populationSize = 100;
         Integer maximumNumberOfGenerations = 1000;
-        Integer maximumNumberOfExecutions = 30;//21;//21
+        Integer maximumNumberOfExecutions = 3;//21;//21
         double probabilityOfMutation = 0.8;//0.9//0.02
         double probabilityOfCrossover = 0.7;
         double neighborhoodSelectionProbability = 0.02;//0.02//0.5
 
         int numberOfEvaluations = 60000;
-        int intervalOfAggregations = 100;//1//25//50//100
+        int intervalOfAggregations = 1;//1//25//50//100
         int neighborSize = 10;//10//3
         int maximumNumberOfReplacedSolutions = 1;//10//3//1//5
         int fileSize = populationSize;
