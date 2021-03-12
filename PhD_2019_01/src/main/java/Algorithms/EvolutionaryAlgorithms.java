@@ -589,7 +589,9 @@ public class EvolutionaryAlgorithms {
 
                     transformationList = hc.getTransfomationList();
 
-                    transformationList = featureSelection(getMatrixOfObjetivesNormalized(population), transformationList, featureSelectionMethod);
+                    if (featureSelectionMethod != null) {
+                        transformationList = featureSelection(getMatrixOfObjetivesNormalized(population), transformationList, featureSelectionMethod);
+                    }
                 }
                 System.out.println("current evaluation " + evaluations);
 

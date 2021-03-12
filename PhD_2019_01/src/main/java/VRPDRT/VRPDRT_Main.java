@@ -169,11 +169,18 @@ public class VRPDRT_Main {
 //                requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes,
 //                distanceBetweenNodes, timeWindows, currentTime, lastNode);
 //        
-        onMOEAD(instanceName, neighborSize, numberOfEvaluations, intervalOfAggregations, maximumNumberOfReplacedSolutions, reducedDimension, CorrelationType.PEARSON,
-                FeatureSelectionMethod.LAPLACIAN_SCORE, transformationList, parameters, nadirPoint, populationSize, maximumNumberOfGenerations, functionType,
+//        onMOEAD(instanceName, neighborSize, numberOfEvaluations, intervalOfAggregations, maximumNumberOfReplacedSolutions, reducedDimension, CorrelationType.PEARSON,
+//                FeatureSelectionMethod.LAPLACIAN_SCORE, transformationList, parameters, nadirPoint, populationSize, maximumNumberOfGenerations, functionType,
+//                maximumNumberOfExecutions, neighborhoodSelectionProbability, probabilityOfMutation, probabilityOfCrossover, requests, requestsWhichBoardsInNode,
+//                requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes,
+//                distanceBetweenNodes, timeWindows, currentTime, lastNode);
+
+        onMOEAD(instanceName, neighborSize, numberOfEvaluations, intervalOfAggregations, maximumNumberOfReplacedSolutions, reducedDimension, CorrelationType.MUTUAL_INFORMATION,
+                null, transformationList, parameters, nadirPoint, populationSize, maximumNumberOfGenerations, functionType,
                 maximumNumberOfExecutions, neighborhoodSelectionProbability, probabilityOfMutation, probabilityOfCrossover, requests, requestsWhichBoardsInNode,
                 requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes,
                 distanceBetweenNodes, timeWindows, currentTime, lastNode);
+
 //        for(int i=0;i<10;i++){
 //            System.out.println(randomNumberGenerator());
 //        }

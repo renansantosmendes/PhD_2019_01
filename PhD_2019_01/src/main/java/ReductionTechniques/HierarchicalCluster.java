@@ -230,8 +230,7 @@ public class HierarchicalCluster {
             KendallsCorrelation corr = new KendallsCorrelation(this.data);
             this.similarity = corr.getCorrelationMatrix().getData();
         } else if (this.correlationType == CorrelationType.MUTUAL_INFORMATION) {
-            MutualInformation mi = new MutualInformation();
-//            double result = mi.calculateMutualInformation(x, y);
+            this.similarity = calculateMutualInformation(this.data);
         } else {
             PearsonsCorrelation corr = new PearsonsCorrelation(this.data);
             this.similarity = corr.getCorrelationMatrix().getData();
@@ -249,13 +248,42 @@ public class HierarchicalCluster {
             KendallsCorrelation corr = new KendallsCorrelation(data);
             return corr.getCorrelationMatrix().getData();
         } else if (this.correlationType == CorrelationType.MUTUAL_INFORMATION) {
-            MutualInformation mi = new MutualInformation();
-//            double result = mi.calculateMutualInformation(x, y);
-            return null;
+            return calculateMutualInformation(data);
         } else {
             PearsonsCorrelation corr = new PearsonsCorrelation(data);
             return corr.getCorrelationMatrix().getData();
         }
+    }
+
+    private double[][] calculateMutualInformation(double[][] data) {
+        MutualInformation mi = new MutualInformation();
+        double[][] mutualInformationMatrix = new double[data[0].length][data[0].length];
+
+        for (int column = 0; column < data[0].length; column++) {
+            for (int line = 0; line < data[0].length; line++) {
+                mutualInformationMatrix[line][column] = -mi
+                        .calculateMutualInformation(getColumnVectorFromMatrix(data, line), getColumnVectorFromMatrix(data, column));
+            }
+        }
+
+        return mutualInformationMatrix;
+    }
+
+    private double[] getColumnVectorFromMatrix(double[][] data, int column) {
+        double[] values = new double[data.length];
+
+        for (int i = 0; i < data.length; i++) {
+            values[i] = data[i][column];
+        }
+        return values;
+    }
+
+    private double[] getLineVectorFromMatrix(double[][] data, int line) {
+        double[] values = new double[data.length];
+        for (int i = 0; i < data.length; i++) {
+            values[i] = data[line][i];
+        }
+        return values;
     }
 
     public void printSquareMatrix(double[][] matrix) {
