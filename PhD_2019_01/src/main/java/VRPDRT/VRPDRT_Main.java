@@ -54,6 +54,12 @@ public class VRPDRT_Main {
         String directionsApiKey = "AIzaSyD9W0em7H723uVOMD6QFe_1Mns71XAi5JU";
         String filePath = "C:\\Doutorado - Renan\\Excel Instances\\";
         filePath = "/home/rmendes/VRPDRT/";
+        String savePath = ".\\";
+//        filePath = "/home/rmendes/instances";
+
+//        for (String string : args) {
+//            System.out.println(string);
+//        }
         filePath = "/home/cruzeiro/renan/instances/";
 
         int numberOfRequests = 50;
@@ -64,13 +70,12 @@ public class VRPDRT_Main {
         int numberOfNodes = 12;
         String nodesData = "bh_n" + numberOfNodes + instanceSize;
         String adjacenciesData = "bh_adj_n" + numberOfNodes + instanceSize;
-        String instanceName = buildInstaceName(nodesData, adjacenciesData, numberOfRequests, numberOfNodes,
-                requestTimeWindows, instanceSize);
-        Integer numberOfVehicles = 250;
+
+        Integer numberOfVehicles = 200;
 
         Integer populationSize = 100;
         Integer maximumNumberOfGenerations = 1000;
-        Integer maximumNumberOfExecutions = 3;//21;//21
+        Integer maximumNumberOfExecutions = 30;//21;//21
         double probabilityOfMutation = 0.8;//0.9//0.02
         double probabilityOfCrossover = 0.7;
         double neighborhoodSelectionProbability = 0.02;//0.02//0.5
@@ -80,11 +85,29 @@ public class VRPDRT_Main {
         int neighborSize = 10;//10//3
         int maximumNumberOfReplacedSolutions = 1;//10//3//1//5
         int fileSize = populationSize;
+        int algorithm = 1;
         FunctionType functionType = FunctionType.PBI;//PBI
 
         List<Double> parameters = new ArrayList<>();
         List<List<Double>> nadirPoint = new ArrayList<>();
         List<List<Integer>> transformationList = new ArrayList<>();
+
+        System.out.println("Args");
+        if (args.length != 0) {
+            filePath = args[0];
+            numberOfRequests = Integer.parseInt(args[1]);
+            intervalOfAggregations = Integer.parseInt(args[2]);
+            savePath = args[3];
+            algorithm = Integer.parseInt(args[4]);
+            System.out.println("filePath = " + filePath);
+            System.out.println("numberOfRequests = " + numberOfRequests);
+            System.out.println("intervalOfAggregations = " + intervalOfAggregations);
+            System.out.println("savePath = " + savePath);
+        }
+
+        String instanceName = buildInstaceName(nodesData, adjacenciesData, numberOfRequests, numberOfNodes,
+                requestTimeWindows, instanceSize);
+
         if (numberOfRequests >= 250) {
             new ScriptGenerator(instanceName, instanceSize, vehicleCapacity)
                     .generate("30d", "lamho-0");
@@ -152,7 +175,7 @@ public class VRPDRT_Main {
 //        neighborhoodSelectionProbability, probabilityOfMutation, probabilityOfCrossover, requests,
 //        requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
 //        listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows,
-//        currentTime, lastNode);       
+//        currentTime, lastNode);
 //        onMOEAD(instanceName, neighborSize, numberOfEvaluations, intervalOfAggregations, maximumNumberOfReplacedSolutions, reducedDimension, CorrelationType.PEARSON, 
 //                FeatureSelectionMethod.DISPERSION_RATION, transformationList, parameters, nadirPoint, populationSize, maximumNumberOfGenerations, functionType,
 //                maximumNumberOfExecutions, neighborhoodSelectionProbability, probabilityOfMutation, probabilityOfCrossover, requests, requestsWhichBoardsInNode, 
@@ -169,21 +192,36 @@ public class VRPDRT_Main {
 //                requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes,
 //                distanceBetweenNodes, timeWindows, currentTime, lastNode);
 //        
-//        onMOEAD(instanceName, neighborSize, numberOfEvaluations, intervalOfAggregations, maximumNumberOfReplacedSolutions, reducedDimension, CorrelationType.PEARSON,
-//                FeatureSelectionMethod.LAPLACIAN_SCORE, transformationList, parameters, nadirPoint, populationSize, maximumNumberOfGenerations, functionType,
-//                maximumNumberOfExecutions, neighborhoodSelectionProbability, probabilityOfMutation, probabilityOfCrossover, requests, requestsWhichBoardsInNode,
-//                requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes,
-//                distanceBetweenNodes, timeWindows, currentTime, lastNode);
-
-        onMOEAD(instanceName, neighborSize, numberOfEvaluations, intervalOfAggregations, maximumNumberOfReplacedSolutions, reducedDimension, CorrelationType.MUTUAL_INFORMATION,
+        System.out.println("Start running Off-MOEAD...");
+        offMOEAD(instanceName, neighborSize, numberOfEvaluations, intervalOfAggregations, maximumNumberOfReplacedSolutions, reducedDimension, CorrelationType.PEARSON,
                 null, transformationList, parameters, nadirPoint, populationSize, maximumNumberOfGenerations, functionType,
                 maximumNumberOfExecutions, neighborhoodSelectionProbability, probabilityOfMutation, probabilityOfCrossover, requests, requestsWhichBoardsInNode,
                 requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes,
-                distanceBetweenNodes, timeWindows, currentTime, lastNode);
+                distanceBetweenNodes, timeWindows, currentTime, lastNode, savePath);
 
-//        for(int i=0;i<10;i++){
-//            System.out.println(randomNumberGenerator());
-//        }
+        if (algorithm == 1) {
+            System.out.println("Start running OnCL-MOEAD...");
+            onMOEAD(instanceName, neighborSize, numberOfEvaluations, intervalOfAggregations, maximumNumberOfReplacedSolutions, reducedDimension, CorrelationType.PEARSON,
+                    null, transformationList, parameters, nadirPoint, populationSize, maximumNumberOfGenerations, functionType,
+                    maximumNumberOfExecutions, neighborhoodSelectionProbability, probabilityOfMutation, probabilityOfCrossover, requests, requestsWhichBoardsInNode,
+                    requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes,
+                    distanceBetweenNodes, timeWindows, currentTime, lastNode, savePath);
+        } else if (algorithm == 2) {
+            System.out.println("Start running OnMI-MOEAD...");
+            onMOEAD(instanceName, neighborSize, numberOfEvaluations, intervalOfAggregations, maximumNumberOfReplacedSolutions, reducedDimension, CorrelationType.MUTUAL_INFORMATION,
+                    null, transformationList, parameters, nadirPoint, populationSize, maximumNumberOfGenerations, functionType,
+                    maximumNumberOfExecutions, neighborhoodSelectionProbability, probabilityOfMutation, probabilityOfCrossover, requests, requestsWhichBoardsInNode,
+                    requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes,
+                    distanceBetweenNodes, timeWindows, currentTime, lastNode, savePath);
+        } else if (algorithm == 3) {
+            System.out.println("Start running Off-MOEAD...");
+            offMOEAD(instanceName, neighborSize, numberOfEvaluations, intervalOfAggregations, maximumNumberOfReplacedSolutions, reducedDimension, CorrelationType.PEARSON,
+                    null, transformationList, parameters, nadirPoint, populationSize, maximumNumberOfGenerations, functionType,
+                    maximumNumberOfExecutions, neighborhoodSelectionProbability, probabilityOfMutation, probabilityOfCrossover, requests, requestsWhichBoardsInNode,
+                    requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes,
+                    distanceBetweenNodes, timeWindows, currentTime, lastNode, savePath);
+        }
+
     }
 
 }

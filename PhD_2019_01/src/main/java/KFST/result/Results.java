@@ -21,7 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package InformationTheory.KFST.result;
+package KFST.result;
 
 import KFST.classifier.ClassifierType;
 import KFST.classifier.evaluation.wekaClassifier.TrainTestEvaluation;

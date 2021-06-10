@@ -1,10 +1,8 @@
 package KFST.featureSelection.filter;
 
 import KFST.featureSelection.FeatureWeighting;
-import KFST.featureSelection.*;
 import KFST.featureSelection.filter.supervised.*;
-import KFST.featureSelection.filter.unsupervised.TermVariance;
-import KFST.featureSelection.filter.unsupervised.*;
+import KFST.featureSelection.filter.unsupervised.LaplacianScore;
 
 public abstract class WeightedFilterApproach extends FeatureWeighting {
 

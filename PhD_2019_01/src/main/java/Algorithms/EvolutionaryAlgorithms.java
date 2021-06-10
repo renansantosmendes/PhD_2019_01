@@ -221,14 +221,14 @@ public class EvolutionaryAlgorithms {
 
     }
 
-    private static void initializeStreams(String algorithmName) {
+    private static void initializeStreams(String algorithmName, String savePath) {
         LocalDateTime time = LocalDateTime.now();
         fileName = algorithmName;
 //        folderName = "Results_2020//" + fileName.toUpperCase() + "//" + instanceNameVariable + "k"
 //                + vehicleCapacityVariable + "_" + time.getYear() + "_" + time.getMonthValue()
 //                + "_" + time.getDayOfMonth();
 
-        folderName = "Results_2020//" + fileName.toUpperCase() + "//" + instanceNameVariable + "k"
+        folderName = savePath + "Results_2020//" + fileName.toUpperCase() + "//" + instanceNameVariable + "k"
                 + vehicleCapacityVariable;
 
         boolean success = (new File(folderName)).mkdirs();
@@ -306,12 +306,12 @@ public class EvolutionaryAlgorithms {
             Map<Integer, List<Request>> requestsWhichLeavesInNode, Integer numberOfNodes, Integer vehicleCapacity,
             Set<Integer> setOfVehicles, List<Request> listOfNonAttendedRequests, List<Request> requestList,
             List<Integer> loadIndexList, List<List<Long>> timeBetweenNodes, List<List<Long>> distanceBetweenNodes,
-            Long timeWindows, Long currentTime, Integer lastNode) throws IOException {
+            Long timeWindows, Long currentTime, Integer lastNode, String savePath) throws IOException {
 
         String output = "";
         instanceNameVariable = instanceName;
         vehicleCapacityVariable = vehicleCapacity;
-        initializeStreams("MOEAD_R" + reducedDimension);
+        initializeStreams("MOEAD_R" + reducedDimension, savePath);
 
         for (currentExecutionNumber = 0; currentExecutionNumber < maximumNumberOfExecutions; currentExecutionNumber++) {
             System.out.println("Current Execution = " + currentExecutionNumber);
@@ -536,11 +536,11 @@ public class EvolutionaryAlgorithms {
             Map<Integer, List<Request>> requestsWhichLeavesInNode, Integer numberOfNodes, Integer vehicleCapacity,
             Set<Integer> setOfVehicles, List<Request> listOfNonAttendedRequests, List<Request> requestList,
             List<Integer> loadIndexList, List<List<Long>> timeBetweenNodes, List<List<Long>> distanceBetweenNodes,
-            Long timeWindows, Long currentTime, Integer lastNode) throws IOException {
+            Long timeWindows, Long currentTime, Integer lastNode, String savePath) throws IOException {
 
         instanceNameVariable = instanceName;
         vehicleCapacityVariable = vehicleCapacity;
-        initializeStreams("ONMOEAD_" + correlation);
+        initializeStreams("ONMOEAD_" + correlation, savePath);
 
         for (currentExecutionNumber = 0; currentExecutionNumber < maximumNumberOfExecutions; currentExecutionNumber++) {
             System.out.println("Current execution = " + currentExecutionNumber);
@@ -640,7 +640,127 @@ public class EvolutionaryAlgorithms {
 
             combinedPareto.addAll(externalPopulation);
             long elapsed = System.currentTimeMillis() - start;
-//            externalPopulation.forEach(u -> System.out.println(u));
+            saveExecutionTime(elapsed - elapsedSaveTime);
+            saveNonDominatedSolutionsFromCurrentExecution(population);
+        }
+        saveCombinedPareto();
+    }
+
+    public static void offMOEAD(String instanceName, int neighborSize, int maxEvaluations, int intervalOfAggregations, int maximumNumberOfReplacedSolutions,
+            int reducedDimension, CorrelationType correlation, FeatureSelectionMethod featureSelectionMethod, List<List<Integer>> transformationList, List<Double> parameters,
+            List<List<Double>> nadirPoint, Integer populationSize,
+            Integer maximumNumberOfGenerations, EvolutionaryAlgorithms.FunctionType functionType,
+            Integer maximumNumberOfExecutions, double neighborhoodSelectionProbability, double probabilityOfMutation,
+            double probabilityOfCrossover, List<Request> requests, Map<Integer, List<Request>> requestsWhichBoardsInNode,
+            Map<Integer, List<Request>> requestsWhichLeavesInNode, Integer numberOfNodes, Integer vehicleCapacity,
+            Set<Integer> setOfVehicles, List<Request> listOfNonAttendedRequests, List<Request> requestList,
+            List<Integer> loadIndexList, List<List<Long>> timeBetweenNodes, List<List<Long>> distanceBetweenNodes,
+            Long timeWindows, Long currentTime, Integer lastNode, String savePath) throws IOException {
+
+        instanceNameVariable = instanceName;
+        vehicleCapacityVariable = vehicleCapacity;
+        initializeStreams("OffMOEAD_" + correlation, savePath);
+
+        System.out.println("Initializing random solutions for offline reduction...");
+
+        List<ProblemSolution> population = new ArrayList<>();
+        List<ProblemSolution> initialPopulation = new ArrayList<>();
+        List<ProblemSolution> externalPopulation = new ArrayList<>();
+
+        initializeRandomPopulation(nadirPoint, parameters, reducedDimension, initialPopulation, 2000, requests,
+                requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
+                requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
+        System.out.println("2000 Random population");
+        initialPopulation.forEach(u -> System.out.println(u));
+        int numberOfClusters = reducedDimension;
+        HierarchicalCluster hc = new HierarchicalCluster(getMatrixOfObjetives(initialPopulation, parameters),
+                numberOfClusters, correlation);
+        hc.reduce();
+        transformationList = hc.getTransfomationList();
+
+        for (currentExecutionNumber = 0; currentExecutionNumber < maximumNumberOfExecutions; currentExecutionNumber++) {
+            System.out.println("Current execution = " + currentExecutionNumber);
+            long start = System.currentTimeMillis();
+            long startSaveTime = 0, elapsedSaveTime = 0;
+            int currentGeneration = 0;
+            initializeCurrentExecutionStreams();
+
+            population = new ArrayList<>();
+            initialPopulation = new ArrayList<>();
+            externalPopulation = new ArrayList<>();
+
+            initializeRandomPopulation(nadirPoint, parameters, reducedDimension, initialPopulation, populationSize, requests,
+                    requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
+                    requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
+            population.forEach(u -> System.out.println(u));
+            numberOfClusters = reducedDimension;
+
+            initializeRandomPopulationForMaxMin(currentExecutionNumber, nadirPoint, transformationList, parameters, reducedDimension, population, populationSize, requests,
+                    requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles, listOfNonAttendedRequests,
+                    requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows, currentTime, lastNode);
+
+            saveInitialPopulation(population, currentExecutionNumber);
+            //population.forEach(u -> System.out.println(u));
+
+            int numberOfObjectives = reducedDimension;
+            int[][] neighborhood = new int[populationSize][neighborSize];
+            double[][] lambda = initializeUniformWeight(numberOfObjectives, populationSize);
+            initializeNeighborhood(populationSize, neighborSize, lambda, neighborhood);
+            double[] idealPoint = new double[numberOfObjectives];
+            initializeIdealPoint(idealPoint, numberOfObjectives, populationSize, population);
+            int evaluations = population.size();
+
+            do {
+                int[] permutation = new int[populationSize];
+                MOEADUtils.randomPermutation(permutation, populationSize);
+
+                System.out.println("current evaluation " + evaluations);
+
+                System.out.println(getAggregationString(transformationList));
+                saveCurrentAggregation(transformationList);
+//                System.out.println("");
+                for (int i = 0; i < population.size(); i++) {
+                    int subProblemId = permutation[i];
+                    NeighborType neighborType = chooseNeighborType(neighborhoodSelectionProbability);
+                    List<ProblemSolution> parents = parentSelection(population, neighborhood, subProblemId, neighborType);
+                    List<ProblemSolution> children = new ArrayList<>();
+
+                    int maximumSize = parents.size();
+
+                    twoPointsCrossoverForMOEAD(reducedDimension, nadirPoint, transformationList, parameters, children, population,
+                            maximumSize, probabilityOfCrossover, parents, requests, requestList, setOfVehicles, listOfNonAttendedRequests,
+                            requestsWhichBoardsInNode, requestsWhichLeavesInNode, timeBetweenNodes, distanceBetweenNodes, numberOfNodes,
+                            vehicleCapacity, timeWindows);
+
+                    ProblemSolution child = children.get(0);
+
+                    mutation2ShuffleForMOEAD(reducedDimension, nadirPoint, transformationList, parameters, child, probabilityOfMutation, requests,
+                            requestsWhichBoardsInNode, requestsWhichLeavesInNode, numberOfNodes, vehicleCapacity, setOfVehicles,
+                            listOfNonAttendedRequests, requestList, loadIndexList, timeBetweenNodes, distanceBetweenNodes, timeWindows,
+                            currentTime, lastNode);
+
+                    evaluations++;
+
+                    updateIdealPoint(idealPoint, child, numberOfObjectives);
+                    updateNeighborhood(child, neighborhood, population, subProblemId, neighborType, lambda,
+                            idealPoint, maximumNumberOfReplacedSolutions, numberOfObjectives, functionType);
+                }
+
+                List<ProblemSolution> intermediatePopulation = new ArrayList<>();
+                intermediatePopulation.addAll(population);
+                intermediatePopulation.addAll(externalPopulation);
+                genericDominanceAlgorithm(intermediatePopulation, externalPopulation);
+
+                if (evaluations % populationSize == 0) {
+                    startSaveTime = System.currentTimeMillis();
+                    saveNonDominatedSolutionsFromCurrentExecution(externalPopulation);
+                    elapsedSaveTime = System.currentTimeMillis() - startSaveTime;
+                }
+                currentGeneration++;
+            } while (evaluations < maxEvaluations);
+
+            combinedPareto.addAll(externalPopulation);
+            long elapsed = System.currentTimeMillis() - start;
             saveExecutionTime(elapsed - elapsedSaveTime);
             saveNonDominatedSolutionsFromCurrentExecution(population);
         }

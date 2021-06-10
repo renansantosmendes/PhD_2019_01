@@ -4,7 +4,7 @@ import KFST.featureSelection.embedded.SVMBasedMethods.MSVM_RFE;
 import KFST.featureSelection.embedded.SVMBasedMethods.OVA_SVM_RFE;
 import KFST.featureSelection.embedded.SVMBasedMethods.OVO_SVM_RFE;
 import KFST.featureSelection.embedded.SVMBasedMethods.SVM_RFE;
-import KFST.featureSelection.embedded.TreeBasedMethods.RandomForestMethod;
+//import KFST.featureSelection.embedded.TreeBasedMethods.RandomForestMethod;
 import KFST.featureSelection.embedded.TreeBasedMethods.DecisionTreeBasedMethod;
 import KFST.dataset.DatasetInfo;
 import KFST.featureSelection.FeatureSelection;
@@ -59,7 +59,7 @@ public abstract class EmbeddedApproach extends FeatureSelection {
         if (type == EmbeddedType.DECISION_TREE_BASED) {
             return new DecisionTreeBasedMethod(arguments);
         } else if (type == EmbeddedType.RANDOM_FOREST_METHOD) {
-            return new RandomForestMethod(arguments);
+            return null;
         } else if (type == EmbeddedType.SVM_RFE) {
             return new SVM_RFE(arguments);
         } else if (type == EmbeddedType.MSVM_RFE) {
